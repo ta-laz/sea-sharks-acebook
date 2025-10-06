@@ -1,0 +1,11 @@
+<h1>Posts</h1>
+
+<form action="/posts" method="post">
+  <input type="text" name="content"/>
+  <input type="submit" value="Submit"/>
+</form>
+
+@foreach (Post post in ViewBag.Posts)
+{
+  <p>@post.Content</p>
+}
