@@ -7,7 +7,7 @@ public class Post
   public int Id { get; set; }
   public string? Content { get; set; }
   public int UserId { get; set; }
-  public int WallID { get; set; }
+  public int WallId { get; set; }
   public DateTime CreatedOn { get; set; }
   public User? User { get; set; }
 }
