@@ -43,7 +43,7 @@ public class UserManagementPlaywright : PageTest
       await Page.Locator("#confirmpassword").FillAsync("password123");
       await Page.Locator("#submit").ClickAsync();
 
-      await Expect(Page).ToHaveURLAsync($"{BaseUrl}/signin");
+      await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts");
     }
 
     [Test]

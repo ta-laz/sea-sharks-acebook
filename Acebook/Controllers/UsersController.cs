@@ -37,7 +37,8 @@ public class UsersController : Controller
         user.Password = hashed;
         dbContext.Users.Add(user);
         dbContext.SaveChanges();
-        return new RedirectResult("/signin");
+        HttpContext.Session.SetInt32("user_id", user.Id);
+        return new RedirectResult("/posts");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
