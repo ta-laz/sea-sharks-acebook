@@ -9,6 +9,14 @@
     <link rel="stylesheet" href="~/acebook.styles.css" asp-append-version="true" />
 </head>
 <body>
+    @using acebook.Models
+    @using System.Linq
+
+    @{
+        int? userId = Context.Session.GetInt32("user_id");
+        string? userName = Context.Session.GetString("user_name");
+
+    }
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -27,6 +35,28 @@
                         </li>
                     </ul>
                 </div>
+                <ul class="navbar-nav ms-auto">
+                        @if (userId != null && userName != null)
+                            {
+                                <li class="nav-item">
+                                    <span class="navbar-text me-2">Signed in as @userName</span>
+                                </li>
+                                <li class="nav-item">
+                                    <form asp-controller="Sessions" asp-action="Signout" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-link nav-link text-dark" style="border:none; padding:0;">Sign Out</button>
+                                    </form>
+                                </li>
+                            }
+                        else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Users" asp-action="New">Sign Up</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Sessions" asp-action="New">Sign In</a>
+                                </li>
+                            }
+                    </ul>
             </div>
         </nav>
     </header>

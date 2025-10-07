@@ -23,10 +23,10 @@ public class UsersController : Controller
     [Route("/users")]
     [HttpPost]
     public RedirectResult Create(User user) {
-      AcebookDbContext dbContext = new AcebookDbContext();
-      dbContext.Users.Add(user);
-      dbContext.SaveChanges();
-      return new RedirectResult("/signin");
+        AcebookDbContext dbContext = new AcebookDbContext();
+        dbContext.Users.Add(user);
+        dbContext.SaveChanges();
+        return new RedirectResult("/signin");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
