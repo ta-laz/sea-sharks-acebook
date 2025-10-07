@@ -1,13 +1,16 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - acebook</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/acebook.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/acebook.styles.css" asp-append-version="true" /> *@
 </head>
+
 <body>
     @using acebook.Models
     @using System.Linq
@@ -18,47 +21,122 @@
 
     }
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">acebook</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+            <nav class="relative bg-sky-600">
+                <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+                    <div class="relative flex h-16 items-center justify-between">
+                        <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                            <div class="flex shrink-0 items-center">
+                                <img src="images/screenshot.png"
+                                    alt="SeaShark Logo" class="h-8 w-auto" />
+                            </div>
+                            <div class="hidden sm:ml-6 sm:block">
+                                <div class="flex space-x-4">
+                                    <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-white/5 hover:text-white" -->
+                                    <a href="#" aria-current="page"
+                                        class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/15 hover:text-white">My Profile</a>
+                                    <a href="#"
+                                        class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/15 hover:text-white">Search</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                            <button type="button"
+                                class="relative rounded-full p-1 text-gray-400 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500">
+                                <span class="absolute -inset-1.5"></span>
+                                <span class="sr-only">View notifications</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    data-slot="icon" aria-hidden="true" class="size-6">
+                                    <path
+                                        d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </button>
+
+                            <!-- Profile dropdown -->
+                            @* <el-dropdown class="relative ml-3"> *@
+                                @* <button 
+                                    class="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+                                    <span class="absolute -inset-1.5"></span>
+                                    <span class="sr-only">Open user menu</span>
+                                    <img src="/images/Placeholder.png"
+                                        alt=""
+                                        class="size-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/20" /> *@
+                            @if (userId != null && userName != null)
+                            {
+                                <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="flex items-center rounded-full focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800" type="button">
+                                    <img 
+                                        src="images/Placeholder.png" 
+                                        alt="User menu" 
+                                        class="h-8 w-8 rounded-full border-2 border-white"
+                                    />
+                                </button>
+
+                                <!-- Dropdown menu -->
+                                <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
+                                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                                    <li>
+                                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">My Profile</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Account Settings</a>
+                                    </li>
+                                    <li>
+                                        <form asp-controller="Sessions" asp-action="Signout" method="post" class="d-inline">
+                                        <button type="submit" id="signout" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign Out</button>
+                                        </form>
+                                    </li>
+                                    </ul>
+                                </div>
+                            }
+                            else
+                            {<a >
+                                <a class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/15 hover:text-white" asp-controller="Users" asp-action="New">Sign Up</a>
+                            </a>   
+                            }
+
+                                @* <el-menu anchor="bottom end" popover
+                                    class="w-48 origin-top-right rounded-md bg-white py-1 shadow-lg outline outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in">
+                                    <a href="#"
+                                        class="block px-4 py-2 text-sm text-gray-700 focus:bg-gray-100 focus:outline-hidden">Your
+                                        profile</a>
+                                    <a href="#"
+                                        class="block px-4 py-2 text-sm text-gray-700 focus:bg-gray-100 focus:outline-hidden">Settings</a>
+                                    <a href="#"
+                                        class="block px-4 py-2 text-sm text-gray-700 focus:bg-gray-100 focus:outline-hidden">Sign
+                                        out</a>
+                                </el-menu> *@
+                            @* </el-dropdown> *@
+                        </div>
+                    </div>
                 </div>
-                <ul class="navbar-nav ms-auto">
-                        @if (userId != null && userName != null)
-                            {
-                                <li class="nav-item">
-                                    <span class="navbar-text me-2">Signed in as @userName</span>
-                                </li>
-                                <li class="nav-item">
-                                    <form asp-controller="Sessions" asp-action="Signout" method="post" class="d-inline">
-                                        <button type="submit" class="btn btn-link nav-link text-dark" style="border:none; padding:0;">Sign Out</button>
-                                    </form>
-                                </li>
-                            }
-                        else
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Users" asp-action="New">Sign Up</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Sessions" asp-action="New">Sign In</a>
-                                </li>
-                            }
-                    </ul>
-            </div>
-        </nav>
+
+            </nav>
+
+            @* <ul class="navbar-nav ms-auto">
+                @if (userId != null && userName != null)
+                {
+                    <li class="nav-item">
+                        <span class="navbar-text me-2">Signed in as @userName</span>
+                    </li>
+                    <li class="nav-item">
+                        <form asp-controller="Sessions" asp-action="Signout" method="post" class="d-inline">
+                            <button type="submit" id="signout" class="btn btn-link nav-link text-dark"
+                                style="border:none; padding:0;">Sign Out</button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Users" asp-action="New">Sign Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Sessions" asp-action="New">Sign In</a>
+                    </li>
+                }
+            </ul> *@
+            
     </header>
     <div class="container">
         <main role="main" class="pb-3">
@@ -71,9 +149,11 @@
             &copy; 2022 - acebook - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @* <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script> *@
+    <script src="https://unpkg.com/flowbite@2.5.1/dist/flowbite.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
