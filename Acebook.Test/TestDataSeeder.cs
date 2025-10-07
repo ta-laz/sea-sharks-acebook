@@ -118,19 +118,36 @@ internal static class TestDataSeeder
         await db.SaveChangesAsync();
 
         // ───────────── FRIENDSHIPS ─────────────
-        var friends = new (int requester, int accepter)[]
+        var friends = new (int requester, int accepter, FriendStatus status)[]
         {
-            (1,2), (1,3), (2,4), (3,5), (4,5), (6,7), (6,8),
-            (7,9), (10,11), (10,12), (11,13), (12,14), (15,16),
-            (15,17), (16,18), (17,19), (18,20), (1,10), (5,15)
+            (1, 2, FriendStatus.Accepted),
+            (1, 3, FriendStatus.Accepted),
+            (2, 4, FriendStatus.Pending),
+            (3, 5, FriendStatus.Accepted),
+            (4, 5, FriendStatus.Pending),
+            (6, 7, FriendStatus.Accepted),
+            (6, 8, FriendStatus.Pending),
+            (7, 9, FriendStatus.Accepted),
+            (10, 11, FriendStatus.Accepted),
+            (10, 12, FriendStatus.Pending),
+            (11, 13, FriendStatus.Accepted),
+            (12, 14, FriendStatus.Accepted),
+            (15, 16, FriendStatus.Accepted),
+            (15, 17, FriendStatus.Pending),
+            (16, 18, FriendStatus.Accepted),
+            (17, 19, FriendStatus.Accepted),
+            (18, 20, FriendStatus.Pending),
+            (1, 10, FriendStatus.Accepted),
+            (5, 15, FriendStatus.Accepted)
         };
-        foreach (var (r, a) in friends)
+
+        foreach (var (r, a, status) in friends)
         {
             db.Add(new Friend
             {
                 RequesterId = r,
                 AccepterId = a,
-                Status = FriendStatus.Accepted,
+                Status = status,
             });
         }
         await db.SaveChangesAsync();
