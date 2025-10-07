@@ -46,6 +46,8 @@ namespace Acebook.Tests
       emailField.SendKeys("francine@sharkmail.ocean");
       IWebElement passwordField = driver.FindElement(By.Id("password"));
       passwordField.SendKeys("password123");
+      IWebElement confirmPasswordField = driver.FindElement(By.Id("confirmpassword"));
+      confirmPasswordField.SendKeys("password123");
       IWebElement submitButton = driver.FindElement(By.Id("submit"));
       submitButton.Click();
       string currentUrl = driver.Url;
