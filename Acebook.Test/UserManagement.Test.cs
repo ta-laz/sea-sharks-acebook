@@ -1,6 +1,8 @@
 using NUnit.Framework;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
+using Acebook.Test;
+using acebook.Models;
 
 namespace Acebook.Tests
 {
@@ -8,10 +10,20 @@ namespace Acebook.Tests
   {
     ChromeDriver driver;
 
+
+    [OneTimeSetUp]
+    public async Task OneTime()
+    {
+        await using var context = new AcebookDbContext();
+        await TestDataSeeder.EnsureDbReadyAsync(context);
+    }
+
     [SetUp]
-    public void Setup()
+    public async Task Setup()
     {
       driver = new ChromeDriver();
+        await using var context = new AcebookDbContext();
+        await TestDataSeeder.ResetAndSeedAsync(context);
     }
 
     [TearDown]
