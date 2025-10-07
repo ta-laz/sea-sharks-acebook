@@ -30,7 +30,7 @@ public class UsersController : Controller
         if (user.Password != confirmPassword)
         {
             ViewBag.Error = "Passwords do not match.";
-            return View("New",user); // or whatever your signup view is called
+            return View("New", user);
         }
         AcebookDbContext dbContext = new AcebookDbContext();
         string hashed = HashPassword(user.Password);
@@ -48,7 +48,6 @@ public class UsersController : Controller
     
     private static string HashPassword(string password)
     {
-        // Minimal example; prefer ASP.NET Core Identity's PasswordHasher<TUser>
         using var sha256 = SHA256.Create();
         var bytes = System.Text.Encoding.UTF8.GetBytes(password);
         var hash = sha256.ComputeHash(bytes);
