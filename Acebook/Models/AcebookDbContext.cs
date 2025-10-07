@@ -5,8 +5,12 @@ public class AcebookDbContext : DbContext
 {
     public DbSet<Post>? Posts { get; set; }
     public DbSet<User>? Users { get; set; }
+  public DbSet<ProfileBio>? ProfileBios { get; set; }
+  public DbSet<Like>? Likes { get; set; }
+  public DbSet<Comment>? Comments { get; set; }
+  public DbSet<Friend>? Friends { get; set; }
 
-    public string? DbPath { get; }
+  public string? DbPath { get; }
 
     public string? GetDatabaseName() {
       string? DatabaseNameArg = Environment.GetEnvironmentVariable("DATABASE_NAME");
