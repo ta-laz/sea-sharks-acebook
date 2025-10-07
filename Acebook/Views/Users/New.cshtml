@@ -5,4 +5,8 @@
   <div><label> Password<input type='password' id='password' name='password'/></label></div>
   <div><label> Confirm Password <input type='password' id='confirmpassword' name='confirmpassword'/></label></div>
   <input type='submit' id='submit' value='Submit' />
+  @if(ViewBag.Error != null){
+    <div id="error-message"> @ViewBag.Error </div>
+  }
+
 </form>
