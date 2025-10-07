@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using acebook.Models;
+using System.Security.Cryptography;
 
 namespace acebook.Controllers;
 
@@ -22,34 +23,35 @@ public class SessionsController : Controller
 
   [Route("/signin")]
   [HttpPost]
-  public RedirectResult Create(string email, string password)
+  public IActionResult Create(string email, string password)
   {
     AcebookDbContext dbContext = new AcebookDbContext();
-    User? user = dbContext.Users.Where(user => user.Email == email).First();
-    HttpContext.Session.SetString("user_name", user.FirstName);
-    if (user != null && user.Password == password)
+    string hashed = HashPassword(password);
+
+    User? user = dbContext.Users.FirstOrDefault(user => user.Email == email);
+    if (user != null && user.Password == hashed)
     {
       HttpContext.Session.SetInt32("user_id", user.Id);
       return new RedirectResult("/posts");
     }
     else
     {
-      return new RedirectResult("/signin");
+      ViewBag.Error = "Incorrect email or password.";
+      return View("New");
     }
-  }
-
-  [Route("/Signout")]
-  [HttpPost]
-  public IActionResult Signout()
-  {
-    HttpContext.Session.Clear();
-
-    return RedirectToAction("Index", "Home");
   }
 
   [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
   public IActionResult Error()
   {
     return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+  }
+    
+  private static string HashPassword(string password)
+  {
+      using var sha256 = SHA256.Create();
+      var bytes = System.Text.Encoding.UTF8.GetBytes(password);
+      var hash = sha256.ComputeHash(bytes);
+      return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
   }
 }

@@ -21,7 +21,7 @@ internal static class TestDataSeeder
         """);
 
         var createdAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        var pwHash = "da2cb7f780b225403e5487ce7d40feaa0283f663ce05c7882df100110e8aae86";
+        var pwHash = "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f"; //password123
 
         // ───────────── USERS ─────────────
         var users = new List<User>

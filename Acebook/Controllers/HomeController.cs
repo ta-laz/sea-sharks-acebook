@@ -17,7 +17,7 @@ public class HomeController : Controller
     [Route("/")]
     public IActionResult Index()
     {
-        return View();
+        return Redirect("/signin");
     }
 
     public IActionResult Privacy()
