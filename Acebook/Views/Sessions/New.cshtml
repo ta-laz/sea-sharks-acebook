@@ -1,5 +1,13 @@
-<form action="/signin" method="post">
-  <input type='text' id='email' name='email' placeholder='email' />
-  <input type='password' id='password' name='password'/>
-  <input type='submit' id='submit' value='Submit' />
-</form>
+<div class="text-center">
+    <h1 id="greeting" class="display-4">Welcome To Acebook</h1>
+    
+    <form action="/signin" method="post">
+      <input type='text' id='email' name='email' placeholder='email' />
+      <input type='password' id='password' name='password'/>
+      <input type='submit' id='submit' value='Submit' />
+      @if(ViewBag.Error != null){
+        <div id="error-message"> @ViewBag.Error </div>
+      }
+    </form>
+    <a href="/signup" id="signup">Not a user? Sign up here!</a>
+</div>
