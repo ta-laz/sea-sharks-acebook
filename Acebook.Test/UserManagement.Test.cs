@@ -14,20 +14,21 @@ namespace Acebook.Tests
     [OneTimeSetUp]
     public async Task OneTime()
     {
-        await using var context = new AcebookDbContext();
-        await TestDataSeeder.EnsureDbReadyAsync(context);
+      await using var context = new AcebookDbContext();
+      await TestDataSeeder.EnsureDbReadyAsync(context);
     }
 
     [SetUp]
     public async Task Setup()
     {
       driver = new ChromeDriver();
-        await using var context = new AcebookDbContext();
-        await TestDataSeeder.ResetAndSeedAsync(context);
+      await using var context = new AcebookDbContext();
+      await TestDataSeeder.ResetAndSeedAsync(context);
     }
 
     [TearDown]
-    public void TearDown() {
+    public void TearDown()
+    {
       driver.Quit();
       driver.Dispose();
     }
@@ -55,7 +56,7 @@ namespace Acebook.Tests
     }
 
     [Test]
-    public void SignUp_InValidCredentials_RedirectToSignIn()
+    public void SignUp_InValidCredentials_Error()
     {
       driver.Navigate().GoToUrl("http://127.0.0.1:5287");
       IWebElement signUpButton = driver.FindElement(By.Id("signup"));
@@ -77,7 +78,8 @@ namespace Acebook.Tests
     }
 
     [Test]
-    public void SignIn_ValidCredentials_RedirectToPosts() {
+    public void SignIn_ValidCredentials_RedirectToPosts()
+    {
 
       driver.Navigate().GoToUrl("http://127.0.0.1:5287/signin");
       IWebElement emailField = driver.FindElement(By.Id("email"));
@@ -88,6 +90,35 @@ namespace Acebook.Tests
       submitButton.Click();
       string currentUrl = driver.Url;
       Assert.That(currentUrl, Is.EqualTo("http://127.0.0.1:5287/posts"));
+    }
+
+    [Test]
+    public void SignIn_InValidPassword_Error()
+    {
+
+      driver.Navigate().GoToUrl("http://127.0.0.1:5287/signin");
+      IWebElement emailField = driver.FindElement(By.Id("email"));
+      IWebElement passwordField = driver.FindElement(By.Id("password"));
+      IWebElement submitButton = driver.FindElement(By.Id("submit"));
+      emailField.SendKeys("finn.white@sharkmail.ocean");
+      passwordField.SendKeys("password12");
+      submitButton.Click();
+      IWebElement error = driver.FindElement(By.Id("error-message"));
+      Assert.That(error.Text, Is.EqualTo("Incorrect email or password."));
+    }
+    
+    [Test]
+    public void SignIn_InValidEmail_Error() {
+
+      driver.Navigate().GoToUrl("http://127.0.0.1:5287/signin");
+      IWebElement emailField = driver.FindElement(By.Id("email"));
+      IWebElement passwordField = driver.FindElement(By.Id("password"));
+      IWebElement submitButton = driver.FindElement(By.Id("submit"));
+      emailField.SendKeys("finn.white@sharkmail.com");
+      passwordField.SendKeys("password123");
+      submitButton.Click();
+      IWebElement error = driver.FindElement(By.Id("error-message"));
+      Assert.That(error.Text, Is.EqualTo("Incorrect email or password."));
     }
   }
 }
