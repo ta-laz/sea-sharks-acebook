@@ -55,6 +55,28 @@ namespace Acebook.Tests
     }
 
     [Test]
+    public void SignUp_InValidCredentials_RedirectToSignIn()
+    {
+      driver.Navigate().GoToUrl("http://127.0.0.1:5287");
+      IWebElement signUpButton = driver.FindElement(By.Id("signup"));
+      signUpButton.Click();
+      IWebElement firstNameField = driver.FindElement(By.Id("firstname"));
+      firstNameField.SendKeys("Francine");
+      IWebElement lastNameField = driver.FindElement(By.Id("lastname"));
+      lastNameField.SendKeys("Gills");
+      IWebElement emailField = driver.FindElement(By.Id("email"));
+      emailField.SendKeys("francine@sharkmail.ocean");
+      IWebElement passwordField = driver.FindElement(By.Id("password"));
+      passwordField.SendKeys("password123");
+      IWebElement confirmPasswordField = driver.FindElement(By.Id("confirmpassword"));
+      confirmPasswordField.SendKeys("password12");
+      IWebElement submitButton = driver.FindElement(By.Id("submit"));
+      submitButton.Click();
+      IWebElement error = driver.FindElement(By.Id("error-message"));
+      Assert.That(error.Text, Is.EqualTo("Passwords do not match."));
+    }
+
+    [Test]
     public void SignIn_ValidCredentials_RedirectToPosts() {
 
       driver.Navigate().GoToUrl("http://127.0.0.1:5287/signin");
