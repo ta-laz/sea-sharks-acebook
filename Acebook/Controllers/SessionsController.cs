@@ -23,12 +23,12 @@ public class SessionsController : Controller
 
   [Route("/signin")]
   [HttpPost]
-  public RedirectResult Create(string email, string password)
+  public IActionResult Create(string email, string password)
   {
     AcebookDbContext dbContext = new AcebookDbContext();
     string hashed = HashPassword(password);
 
-    User? user = dbContext.Users.Where(user => user.Email == email).First();
+    User? user = dbContext.Users.FirstOrDefault(user => user.Email == email);
     if (user != null && user.Password == hashed)
     {
       HttpContext.Session.SetInt32("user_id", user.Id);
@@ -36,7 +36,8 @@ public class SessionsController : Controller
     }
     else
     {
-      return new RedirectResult("/signin");
+      ViewBag.Error = "Incorrect email or password.";
+      return View("New");
     }
   }
 
@@ -48,7 +49,6 @@ public class SessionsController : Controller
     
   private static string HashPassword(string password)
   {
-      // Minimal example; prefer ASP.NET Core Identity's PasswordHasher<TUser>
       using var sha256 = SHA256.Create();
       var bytes = System.Text.Encoding.UTF8.GetBytes(password);
       var hash = sha256.ComputeHash(bytes);
