@@ -4,6 +4,7 @@
     <form action="/signin" method="post">
       <input type='text' id='email' name='email' placeholder='email' />
       <input type='password' id='password' name='password'/>
+      <input type="checkbox" onclick="myFunction()">Show Password
       <input type='submit' id='submit' value='Submit' />
       @if(ViewBag.Error != null){
         <div id="error-message"> @ViewBag.Error </div>
@@ -11,3 +12,14 @@
     </form>
     <a href="/signup" id="signup">Not a user? Sign up here!</a>
 </div>
+
+<script>
+function myFunction() {
+  var x = document.getElementById("password");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+</script>
