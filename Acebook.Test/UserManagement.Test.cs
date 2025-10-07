@@ -38,12 +38,14 @@ namespace Acebook.Tests
       driver.Navigate().GoToUrl("http://127.0.0.1:5287");
       IWebElement signUpButton = driver.FindElement(By.Id("signup"));
       signUpButton.Click();
-      IWebElement nameField = driver.FindElement(By.Id("name"));
-      nameField.SendKeys("francine");
+      IWebElement firstNameField = driver.FindElement(By.Id("firstname"));
+      firstNameField.SendKeys("Francine");
+      IWebElement lastNameField = driver.FindElement(By.Id("lastname"));
+      lastNameField.SendKeys("Gills");
       IWebElement emailField = driver.FindElement(By.Id("email"));
-      emailField.SendKeys("francine@email.com");
+      emailField.SendKeys("francine@sharkmail.ocean");
       IWebElement passwordField = driver.FindElement(By.Id("password"));
-      passwordField.SendKeys("12345678");
+      passwordField.SendKeys("password123");
       IWebElement submitButton = driver.FindElement(By.Id("submit"));
       submitButton.Click();
       string currentUrl = driver.Url;
