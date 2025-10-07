@@ -9,4 +9,5 @@ public class Post
   public int UserId { get; set; }
   public int WallID { get; set; }
   public DateTime CreatedOn { get; set; }
+  public User? User { get; set; }
 }
