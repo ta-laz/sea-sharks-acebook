@@ -1,11 +1,12 @@
-<h1>Posts</h1>
 
-<form action="/posts" method="post">
-  <input type="text" name="content"/>
-  <input type="submit" value="Submit"/>
-</form>
+  <div class="bg-white rounded-lg w-full max-w-md p-4 items-center">
+  <h2 class="text-lg font-bold mb-3">Create a Post</h2>
+  <textarea class="w-full resize-none border border-blue-500 p-3 rounded-md" maxlength=500 placeholder="Make a splash! (max 500 characters)"></textarea>
+  <div class="flex justify-between items-center mt-3">
+  <label class="flex items-center text-sm text-blue-500 hover:underline">Attach Image</label>
 
-@foreach (Post post in ViewBag.Posts)
-{
-  <p>@post.Content</p>
-}
+
+  </div>
+
+
+</div>

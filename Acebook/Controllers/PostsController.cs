@@ -5,7 +5,7 @@ using acebook.ActionFilters;
 
 namespace acebook.Controllers;
 
-[ServiceFilter(typeof(AuthenticationFilter))]
+// [ServiceFilter(typeof(AuthenticationFilter))]
 public class PostsController : Controller
 {
     private readonly ILogger<PostsController> _logger;
