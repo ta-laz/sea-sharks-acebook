@@ -1,70 +1,107 @@
+using Microsoft.Playwright;
+using Microsoft.Playwright.NUnit;
 using NUnit.Framework;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium;
-using Acebook.Test;
-using acebook.Models;
+using acebook.Models; 
+using Acebook.Test;     
 
 namespace Acebook.Tests
 {
-  public class UserManagement
+public class UserManagementPlaywright : PageTest
   {
-    ChromeDriver driver;
-
+    private const string BaseUrl = "http://127.0.0.1:5287";
 
     [OneTimeSetUp]
     public async Task OneTime()
     {
-        await using var context = new AcebookDbContext();
-        await TestDataSeeder.EnsureDbReadyAsync(context);
+      await using var context = new AcebookDbContext();
+      await TestDataSeeder.EnsureDbReadyAsync(context);
     }
 
     [SetUp]
-    public async Task Setup()
+    public async Task SetupDb()
     {
-      driver = new ChromeDriver();
-        await using var context = new AcebookDbContext();
-        await TestDataSeeder.ResetAndSeedAsync(context);
+      await using var context = new AcebookDbContext();
+      await TestDataSeeder.ResetAndSeedAsync(context);
     }
 
-    [TearDown]
-    public void TearDown() {
-      driver.Quit();
-      driver.Dispose();
+    public override BrowserNewContextOptions ContextOptions()
+      => new BrowserNewContextOptions
+      {
+        BaseURL = BaseUrl
+      };
+
+    [Test]
+    public async Task SignUp_ValidCredentials_RedirectToSignIn()
+    {
+      await Page.GotoAsync("/");
+
+      await Page.Locator("#signup").ClickAsync();
+      await Page.Locator("#firstname").FillAsync("Francine");
+      await Page.Locator("#lastname").FillAsync("Gills");
+      await Page.Locator("#email").FillAsync("francine@sharkmail.ocean");
+      await Page.Locator("#password").FillAsync("password123");
+      await Page.Locator("#confirmpassword").FillAsync("password123");
+      await Page.Locator("#submit").ClickAsync();
+
+      await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts");
     }
 
     [Test]
-    public void SignUp_ValidCredentials_RedirectToSignIn()
+    public async Task SignUp_InValidCredentials_Error()
     {
-      driver.Navigate().GoToUrl("http://127.0.0.1:5287");
-      IWebElement signUpButton = driver.FindElement(By.Id("signup"));
-      signUpButton.Click();
-      IWebElement nameField = driver.FindElement(By.Id("name"));
-      nameField.SendKeys("francine");
-      IWebElement emailField = driver.FindElement(By.Id("email"));
-      emailField.SendKeys("francine@email.com");
-      IWebElement passwordField = driver.FindElement(By.Id("password"));
-      passwordField.SendKeys("12345678");
-      IWebElement submitButton = driver.FindElement(By.Id("submit"));
-      submitButton.Click();
-      string currentUrl = driver.Url;
-      Assert.That(currentUrl, Is.EqualTo("http://127.0.0.1:5287/signin"));
+      await Page.GotoAsync("/");
+
+      await Page.Locator("#signup").ClickAsync();
+      await Page.Locator("#firstname").FillAsync("Francine");
+      await Page.Locator("#lastname").FillAsync("Gills");
+      await Page.Locator("#email").FillAsync("francine@sharkmail.ocean");
+      await Page.Locator("#password").FillAsync("password123");
+      await Page.Locator("#confirmpassword").FillAsync("password12");
+      await Page.Locator("#submit").ClickAsync();
+
+      var error = Page.Locator("#error-message");
+      await Expect(error).ToBeVisibleAsync();
+      await Expect(error).ToHaveTextAsync("Passwords do not match.");
     }
 
     [Test]
-    public void SignIn_ValidCredentials_RedirectToPosts() {
+    public async Task SignIn_ValidCredentials_RedirectToPosts()
+    {
+      await Page.GotoAsync("/signin");
 
-      driver.Navigate().GoToUrl("http://127.0.0.1:5287/signin");
-      IWebElement emailField = driver.FindElement(By.Id("email"));
-      IWebElement passwordField = driver.FindElement(By.Id("password"));
-      IWebElement submitButton = driver.FindElement(By.Id("submit"));
-      // emailField = driver.FindElement(By.Id("email"));
-      emailField.SendKeys("finn.white@sharkmail.ocean");
-      // passwordField = driver.FindElement(By.Id("password"));
-      passwordField.SendKeys("da2cb7f780b225403e5487ce7d40feaa0283f663ce05c7882df100110e8aae86");
-      // submitButton = driver.FindElement(By.Id("submit"));
-      submitButton.Click();
-      string currentUrl = driver.Url;
-      Assert.That(currentUrl, Is.EqualTo("http://127.0.0.1:5287/posts"));
+      await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+      await Page.Locator("#password").FillAsync("password123");
+      await Page.Locator("#submit").ClickAsync();
+
+      await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts");
+    }
+
+    [Test]
+    public async Task SignIn_InValidPassword_Error()
+    {
+      await Page.GotoAsync("/signin");
+
+      await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+      await Page.Locator("#password").FillAsync("password12");
+      await Page.Locator("#submit").ClickAsync();
+
+      var error = Page.Locator("#error-message");
+      await Expect(error).ToBeVisibleAsync();
+      await Expect(error).ToHaveTextAsync("Incorrect email or password.");
+    }
+
+    [Test]
+    public async Task SignIn_InValidEmail_Error()
+    {
+      await Page.GotoAsync("/signin");
+
+      await Page.Locator("#email").FillAsync("finn.white@sharkmail.com");
+      await Page.Locator("#password").FillAsync("password123");
+      await Page.Locator("#submit").ClickAsync();
+
+      var error = Page.Locator("#error-message");
+      await Expect(error).ToBeVisibleAsync();
+      await Expect(error).ToHaveTextAsync("Incorrect email or password.");
     }
   }
 }
