@@ -83,11 +83,8 @@ namespace Acebook.Tests
       IWebElement emailField = driver.FindElement(By.Id("email"));
       IWebElement passwordField = driver.FindElement(By.Id("password"));
       IWebElement submitButton = driver.FindElement(By.Id("submit"));
-      // emailField = driver.FindElement(By.Id("email"));
       emailField.SendKeys("finn.white@sharkmail.ocean");
-      // passwordField = driver.FindElement(By.Id("password"));
-      passwordField.SendKeys("da2cb7f780b225403e5487ce7d40feaa0283f663ce05c7882df100110e8aae86");
-      // submitButton = driver.FindElement(By.Id("submit"));
+      passwordField.SendKeys("password123");
       submitButton.Click();
       string currentUrl = driver.Url;
       Assert.That(currentUrl, Is.EqualTo("http://127.0.0.1:5287/posts"));
