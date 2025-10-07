@@ -52,23 +52,23 @@ namespace Acebook.Tests
 
     [Test]
     public void SignIn_ValidCredentials_RedirectToPosts() {
-      driver.Navigate().GoToUrl("http://127.0.0.1:5287");
+      // driver.Navigate().GoToUrl("http://127.0.0.1:5287");
       IWebElement signUpButton = driver.FindElement(By.Id("signup"));
-      signUpButton.Click();
+      // signUpButton.Click();
       IWebElement nameField = driver.FindElement(By.Id("name"));
-      nameField.SendKeys("francine");
+      // nameField.SendKeys("francine");
       IWebElement emailField = driver.FindElement(By.Id("email"));
-      emailField.SendKeys("francine@email.com");
+      // emailField.SendKeys("finn.white@sharkmail.ocean");
       IWebElement passwordField = driver.FindElement(By.Id("password"));
-      passwordField.SendKeys("12345678");
+      // passwordField.SendKeys("password123");
       IWebElement submitButton = driver.FindElement(By.Id("submit"));
-      submitButton.Click();
+      // submitButton.Click();
 
       driver.Navigate().GoToUrl("http://127.0.0.1:5287/signin");
       emailField = driver.FindElement(By.Id("email"));
-      emailField.SendKeys("francine@email.com");
+      emailField.SendKeys("finn.white@sharkmail.ocean");
       passwordField = driver.FindElement(By.Id("password"));
-      passwordField.SendKeys("12345678");
+      passwordField.SendKeys("password123");
       submitButton = driver.FindElement(By.Id("submit"));
       submitButton.Click();
       string currentUrl = driver.Url;

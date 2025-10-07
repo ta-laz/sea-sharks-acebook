@@ -1,6 +1,5 @@
 namespace Acebook.Test;
 using Microsoft.EntityFrameworkCore;
-using Acebook.Models;
 using acebook.Models;
 
 internal static class TestDataSeeder
@@ -16,7 +15,7 @@ internal static class TestDataSeeder
     {
         await db.Database.OpenConnectionAsync();
         await db.Database.ExecuteSqlRawAsync("""
-            TRUNCATE TABLE "Notifications","Likes","Comments","Posts",
+            TRUNCATE TABLE "Likes","Comments","Posts",
                              "Friends","ProfileBios","Users"
             RESTART IDENTITY CASCADE;
         """);
@@ -132,7 +131,6 @@ internal static class TestDataSeeder
                 RequesterId = r,
                 AccepterId = a,
                 Status = FriendStatus.Accepted,
-                CreatedOn = createdAt
             });
         }
         await db.SaveChangesAsync();
@@ -141,18 +139,18 @@ internal static class TestDataSeeder
         var posts = new List<Post>
         {
             // self-posts
-            new() { UserId = 1, WallId = 1, Text = "Just circled the reef with @Shelly Tiger — great current today!", CreatedOn = createdAt },
-            new() { UserId = 2, WallId = 2, Text = "Early morning hunt with Bruce Hammerhead. The ocean was ours.", CreatedOn = createdAt },
-            new() { UserId = 3, WallId = 3, Text = "Every wave is an opportunity to reflect… or to eat.", CreatedOn = createdAt },
-            new() { UserId = 4, WallId = 4, Text = "Grateful for my coral friends. @Reef Blue keeps me inspired.", CreatedOn = createdAt },
+            new() { UserId = 1, WallId = 1, Content = "Just circled the reef with @Shelly Tiger — great current today!", CreatedOn = createdAt },
+            new() { UserId = 2, WallId = 2, Content = "Early morning hunt with Bruce Hammerhead. The ocean was ours.", CreatedOn = createdAt },
+            new() { UserId = 3, WallId = 3, Content = "Every wave is an opportunity to reflect… or to eat.", CreatedOn = createdAt },
+            new() { UserId = 4, WallId = 4, Content = "Grateful for my coral friends. @Reef Blue keeps me inspired.", CreatedOn = createdAt },
 
             // cross-wall posts (only if they’re friends)
-            new() { UserId = 1, WallId = 2, Text = "Dropped by @Shelly Tiger’s reef to say hi!", CreatedOn = createdAt },
-            new() { UserId = 2, WallId = 1, Text = "Appreciate @Finn White for helping find tuna today!", CreatedOn = createdAt },
-            new() { UserId = 3, WallId = 5, Text = "@Reef Blue — let’s patrol the western trench soon!", CreatedOn = createdAt },
-            new() { UserId = 6, WallId = 7, Text = "Always a pleasure working with @Basky Bull on reef patrol!", CreatedOn = createdAt },
-            new() { UserId = 7, WallId = 8, Text = "Teamwork makes the fin work @Makko Sandbar!", CreatedOn = createdAt },
-            new() { UserId = 10, WallId = 1, Text = "Visiting @Finn White’s kelp bar — great service!", CreatedOn = createdAt },
+            new() { UserId = 1, WallId = 2, Content = "Dropped by @Shelly Tiger’s reef to say hi!", CreatedOn = createdAt },
+            new() { UserId = 2, WallId = 1, Content = "Appreciate @Finn White for helping find tuna today!", CreatedOn = createdAt },
+            new() { UserId = 3, WallId = 5, Content = "@Reef Blue — let’s patrol the western trench soon!", CreatedOn = createdAt },
+            new() { UserId = 6, WallId = 7, Content = "Always a pleasure working with @Basky Bull on reef patrol!", CreatedOn = createdAt },
+            new() { UserId = 7, WallId = 8, Content = "Teamwork makes the fin work @Makko Sandbar!", CreatedOn = createdAt },
+            new() { UserId = 10, WallId = 1, Content = "Visiting @Finn White’s kelp bar — great service!", CreatedOn = createdAt },
         };
 
         db.AddRange(posts);
