@@ -6,7 +6,7 @@ using Acebook.Test;
 
 namespace Acebook.Tests
 {
-public class UserManagementPlaywright : PageTest
+  public class UserManagementPlaywright : PageTest
   {
     private const string BaseUrl = "http://127.0.0.1:5287";
 
@@ -87,13 +87,14 @@ public class UserManagementPlaywright : PageTest
       await Page.Locator("#password").FillAsync("password12");
       await Page.Locator("#submit").ClickAsync();
 
-      var error = Page.Locator("#error-message");
-      await Expect(error).ToBeVisibleAsync();
-      await Expect(error).ToHaveTextAsync("Incorrect email or password.");
+      //var error = Page.Locator("#error-message");
+      //await Expect(error).ToBeVisibleAsync();
+      //await Expect(error).ToHaveTextAsync("Incorrect email or password.");
+      await Expect(Page.GetByText("Incorrect email or password.")).ToBeVisibleAsync();
     }
 
     [Test]
-    public async Task SignIn_InValidEmail_Error()
+    public async Task SignIn_UnRegisteredEmail_Error()
     {
       await Page.GotoAsync("/signin");
 
@@ -101,9 +102,53 @@ public class UserManagementPlaywright : PageTest
       await Page.Locator("#password").FillAsync("password123");
       await Page.Locator("#submit").ClickAsync();
 
-      var error = Page.Locator("#error-message");
-      await Expect(error).ToBeVisibleAsync();
-      await Expect(error).ToHaveTextAsync("Incorrect email or password.");
+      // var error = Page.Locator("#error-message");
+      // await Expect(error).ToBeVisibleAsync();
+      // await Expect(error).ToHaveTextAsync("Incorrect email or password.");
+      await Expect(Page.GetByText("Incorrect email or password.")).ToBeVisibleAsync();
+
     }
+    [Test]
+    public async Task SignIn_InvalidEmail_Error()
+    {
+      await Page.GotoAsync("/signin");
+
+      await Page.Locator("#email").FillAsync("finn.whitesharkmail.com");
+      await Page.Locator("#password").FillAsync("password123");
+      await Page.Locator("#submit").ClickAsync();
+
+      // var error = Page.Locator("#error-message");
+      // await Expect(error).ToBeVisibleAsync();
+      // await Expect(error).ToHaveTextAsync("Incorrect email or password.");
+      await Expect(Page.GetByText("enter a valid email address")).ToBeVisibleAsync();
+
+    }
+    [Test]
+    public async Task SignIn_BlankEmail_Error()
+    {
+      await Page.GotoAsync("/signin");
+      await Page.Locator("#password").FillAsync("password123");
+      await Page.Locator("#submit").ClickAsync();
+
+      // var error = Page.Locator("#error-message");
+      // await Expect(error).ToBeVisibleAsync();
+      // await Expect(error).ToHaveTextAsync("Incorrect email or password.");
+      await Expect(Page.GetByText("email is required")).ToBeVisibleAsync();
+
+    }
+    [Test]
+    public async Task SignIn_BlankPassword_Error()
+    {
+      await Page.GotoAsync("/signin");
+      await Page.Locator("#email").FillAsync("finn.white@sharkmail.com");
+      await Page.Locator("#submit").ClickAsync();
+
+      // var error = Page.Locator("#error-message");
+      // await Expect(error).ToBeVisibleAsync();
+      // await Expect(error).ToHaveTextAsync("Incorrect email or password.");
+      await Expect(Page.GetByText("password is required")).ToBeVisibleAsync();
+
+    }
+    
   }
 }
