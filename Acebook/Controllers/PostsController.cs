@@ -2,6 +2,8 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using acebook.Models;
 using acebook.ActionFilters;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace acebook.Controllers;
 
@@ -20,8 +22,10 @@ public class PostsController : Controller
   public IActionResult Index()
   {
     AcebookDbContext dbContext = new AcebookDbContext();
-    List<Post> posts = dbContext.Posts.ToList();
-    ViewBag.Posts = posts;
+    var posts = dbContext.Posts
+                               .Include(p => p.User);
+    ViewBag.Posts = posts.ToList();
+
     return View();
   }
 

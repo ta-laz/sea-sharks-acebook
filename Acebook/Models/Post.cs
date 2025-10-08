@@ -12,7 +12,7 @@ public class Post
   public DateTime CreatedOn { get; set; }
   public User? User { get; set; }
 
-[NotMapped] // prevents EF from treating it as a DB column
+  [NotMapped] // prevents EF from treating it as a DB column
   public string FormattedCreatedOn
   {
     get
@@ -24,6 +24,15 @@ public class Post
                     : "th";
       return CreatedOn.ToString($"dddd d'{suffix}' MMMM yyyy");
     }
+  }
+
+  public bool CheckLength()
+  {
+    if (this.Content.Length <= 500)
+    {
+      return true;
+    }
+    else return false;
   }
 }
 
