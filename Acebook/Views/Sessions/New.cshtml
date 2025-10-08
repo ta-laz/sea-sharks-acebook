@@ -1,37 +1,72 @@
 @model Acebook.ViewModels.SignInViewModel
-
-<div class="text-center">
-    <h1 id="greeting" class="display-4">Welcome To Acebook</h1>
-    
-    <form action="/signin" method="post">
-      <input type='text' id='email' name='email' placeholder='email' />
-      <input type='password' id='password' name='password'/>
-      <input type="checkbox" onclick="myFunction()">Show Password
-      <input type='submit' id='submit' value='Submit' />
-      @if(ViewBag.Error != null){
-        <div id="error-message"> @ViewBag.Error </div>
-      }
-    </form>
-    <a href="/signup" id="signup">Not a user? Sign up here!</a>
-</div>
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
-<script>
-function myFunction() {
-  var x = document.getElementById("password");
-  if (x.type === "password") {
-    x.type = "text";
-  } else {
-    x.type = "password";
+<!-- Makes it so when auto filled it defaults to white rather than highlighting blue -->
+<style>
+  input:-webkit-autofill {
+    box-shadow: 0 0 0px 1000px white inset !important;
+    -webkit-box-shadow: 0 0 0px 1000px white inset !important;
   }
-}
-</script>
+</style>
+<!-- Logo -->
+<div class="min-h-screen flex flex-col items-center justify-start p-4">
+  <img src="images/light_grey.png" alt="SeaShark Logo" class="h-24 w-24" />
 
-line 5 
- <form asp-action="Create" asp-controller="Sessions" method="post" novalidate>
-      <div asp-validation-summary = "ModelOnly" class="text-danger" id="error-message"> </div>
-      <div><input asp-for='Email' id='email' placeholder='Email' /><span asp-validation-for="Email" id="Email-error"></span></div>
-      <div><input asp-for='Password' id='password' placeholder="Password" /><span asp-validation-for="Password" id="Password-error"></span></div>
-      <div><input type="checkbox" onclick="myFunction()">Show Password</div>
-      <div><input type='submit' id='submit' value='Sign in' /></div>
+<!-- Welcome to seashark/sign text  -->
+
+  <h1 id="greeting" class="text-3xl font-bold text-teal-600 text-center">Welcome To Sea Shark!</h1>
+  <h2 class="text-xl font-semibold text-teal-600 text-center mb-6">Sign In</h2>
+
+<!-- Form container -->
+
+  <div class="bg-white rounded-lg p-6 shadow-md w-full max-w-md">
+
+    <form asp-action="Create" asp-controller="Sessions" method="post" class="flex flex-col space-y-4" novalidate>
+      
+      <!-- Display Model Errors -->
+      <div asp-validation-summary="ModelOnly" class="text-teal-600 mb-2"></div>
+
+      <!-- Email  -->
+      <div>
+        <label for="email" class="mb-1 block text-sm text-gray-700">Email</label>
+        <input asp-for="Email" id="email" class="w-full border border-gray-400 rounded-lg p-2" placeholder="email" />
+        <span asp-validation-for="Email" class="text-teal-600 text-sm font-bold"></span>
+      </div>
+
+      <!-- Password  -->
+      <div>
+        <label for="password" class="mb-1 block text-sm text-gray-700">Password</label>
+        <input asp-for="Password" id="password" class="w-full border border-gray-400 rounded-lg p-2" placeholder="password" />
+        <span asp-validation-for="Password" class="text-teal-600 text-sm font-bold"></span>
+      </div>
+
+      <!-- Show Password Checkbox -->
+      <div class="flex items-center mt-2">
+        <input id="Show-Password" class="h-4 w-4" type="checkbox" onclick="myFunction()">
+        <label for="Show-Password" class="ml-2 text-md text-gray-700">Show Password</label>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex justify-center">
+        <button type="submit"
+          class="bg-teal-600 text-white text-sm font-medium w-48 px-4 py-2 rounded-md hover:bg-teal-400">Sign In</button>
+      </div>
+
+      <!-- Server-side Error -->
+      @if (ViewBag.Error != null)
+      {
+        <div id="error-message" class="text-teal-600 mt-2">@ViewBag.Error</div>
+      }
+
+    </form>
+
+    <div class="text-center mt-4">
+      <a class="text-teal-600 hover:underline" href="/signup" id="signup">Not a user? Sign up here!</a>
+    </div>
+
+    <script>
+      function myFunction() {
+        var x = document.getElementById("password");
+        x.type = x.type === "password" ? "text" : "password";
+      }
+    </script>
+  </div>
+</div>
