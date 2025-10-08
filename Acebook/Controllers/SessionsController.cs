@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using acebook.Models;
 using System.Security.Cryptography;
-using acebook.ViewModels;
+using Acebook.ViewModels;
 
 namespace acebook.Controllers;
 
@@ -31,7 +31,7 @@ public class SessionsController : Controller
       return View("New", sivm);
     }
     AcebookDbContext dbContext = new AcebookDbContext();
-    string hashed = HashPassword(password);
+    string hashed = HashPassword(sivm.Password);
 
     User? user = dbContext.Users.FirstOrDefault(user => user.Email == sivm.Email);
     if (user != null && user.Password == hashed)
@@ -41,8 +41,8 @@ public class SessionsController : Controller
     }
     else
     {
-      ViewBag.Error = "Incorrect email or password.";
-      return View("New");
+      ModelState.AddModelError("", "Incorrect email or password.");
+      return View("New", sivm);
     }
   }
 
