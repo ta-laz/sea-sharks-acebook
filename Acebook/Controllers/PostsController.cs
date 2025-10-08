@@ -24,8 +24,8 @@ public class PostsController : Controller
     AcebookDbContext dbContext = new AcebookDbContext();
     var posts = dbContext.Posts
                                .Include(p => p.User);
-    posts.Reverse();
     ViewBag.Posts = posts.ToList();
+    ViewBag.Posts.Reverse();
 
     return View();
   }
@@ -37,6 +37,7 @@ public class PostsController : Controller
     AcebookDbContext dbContext = new AcebookDbContext();
     int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
     post.UserId = currentUserId;
+    post.CreatedOn = DateTime.UtcNow;
     dbContext.Posts.Add(post);
     dbContext.SaveChanges();
     return new RedirectResult("/posts");
