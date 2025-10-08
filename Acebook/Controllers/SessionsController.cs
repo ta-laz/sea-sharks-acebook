@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using acebook.Models;
 using System.Security.Cryptography;
+using acebook.ViewModels;
 
 namespace acebook.Controllers;
 
@@ -23,12 +24,16 @@ public class SessionsController : Controller
 
   [Route("/signin")]
   [HttpPost]
-  public IActionResult Create(string email, string password)
+  public IActionResult Create(SignInViewModel sivm)
   {
+    if (!ModelState.IsValid)
+    {
+      return View("New", sivm);
+    }
     AcebookDbContext dbContext = new AcebookDbContext();
     string hashed = HashPassword(password);
 
-    User? user = dbContext.Users.FirstOrDefault(user => user.Email == email);
+    User? user = dbContext.Users.FirstOrDefault(user => user.Email == sivm.Email);
     if (user != null && user.Password == hashed)
     {
       HttpContext.Session.SetInt32("user_id", user.Id);
