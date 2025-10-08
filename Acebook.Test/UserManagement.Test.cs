@@ -120,7 +120,7 @@ namespace Acebook.Tests
       // var error = Page.Locator("#error-message");
       // await Expect(error).ToBeVisibleAsync();
       // await Expect(error).ToHaveTextAsync("Incorrect email or password.");
-      await Expect(Page.GetByText("enter a valid email address")).ToBeVisibleAsync();
+      await Expect(Page.GetByText("Enter a valid email address")).ToBeVisibleAsync();
 
     }
     [Test]
@@ -133,7 +133,7 @@ namespace Acebook.Tests
       // var error = Page.Locator("#error-message");
       // await Expect(error).ToBeVisibleAsync();
       // await Expect(error).ToHaveTextAsync("Incorrect email or password.");
-      await Expect(Page.GetByText("email is required")).ToBeVisibleAsync();
+      await Expect(Page.GetByText("Email is required")).ToBeVisibleAsync();
 
     }
     [Test]
@@ -146,7 +146,7 @@ namespace Acebook.Tests
       // var error = Page.Locator("#error-message");
       // await Expect(error).ToBeVisibleAsync();
       // await Expect(error).ToHaveTextAsync("Incorrect email or password.");
-      await Expect(Page.GetByText("password is required")).ToBeVisibleAsync();
+      await Expect(Page.GetByText("Password is required")).ToBeVisibleAsync();
 
     }
     
