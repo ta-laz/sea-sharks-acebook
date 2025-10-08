@@ -38,6 +38,7 @@ public class UserManagementPlaywright : PageTest
       await Page.Locator("#signup").ClickAsync();
       await Page.Locator("#firstname").FillAsync("Francine");
       await Page.Locator("#lastname").FillAsync("Gills");
+      await Page.Locator("#dob").FillAsync("1995-08-10");
       await Page.Locator("#email").FillAsync("francine@sharkmail.ocean");
       await Page.Locator("#password").FillAsync("password123");
       await Page.Locator("#confirmpassword").FillAsync("password123");
@@ -54,6 +55,7 @@ public class UserManagementPlaywright : PageTest
       await Page.Locator("#signup").ClickAsync();
       await Page.Locator("#firstname").FillAsync("Francine");
       await Page.Locator("#lastname").FillAsync("Gills");
+      await Page.Locator("#dob").FillAsync("1995-08-10");
       await Page.Locator("#email").FillAsync("francine@sharkmail.ocean");
       await Page.Locator("#password").FillAsync("password123");
       await Page.Locator("#confirmpassword").FillAsync("password12");
