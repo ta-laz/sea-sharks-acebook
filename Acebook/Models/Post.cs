@@ -1,6 +1,6 @@
 namespace acebook.Models;
-
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Post
 {
@@ -12,6 +12,7 @@ public class Post
   public DateTime CreatedOn { get; set; }
   public User? User { get; set; }
 
+[NotMapped] // prevents EF from treating it as a DB column
   public string FormattedCreatedOn
   {
     get
