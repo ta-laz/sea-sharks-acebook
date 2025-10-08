@@ -1,51 +1,70 @@
-<div class="bg-white rounded-lg w-full max-w-md p-4 items-center">
-  <h2 class="text-lg font-bold mb-3">Create a Post</h2>
-  <textarea class="w-full resize-none border border-blue-500 p-3 rounded-md" maxlength=500
-    placeholder="Make a splash! (max 500 characters)"></textarea>
-  <div class="flex justify-between items-center mt-3">
-    <label class="flex items-center text-sm text-blue-500 hover:underline">Attach Image</label>
-    <button class="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-blue-400">Submit</button>
+<div class="relative flex justify-center w-full mt-8">
+
+  <div class="flex flex-col items-center space-y-4 w-full max-w-md">
+    <div class="bg-white rounded-lg w-full max-w-md p-4 items-center">
+      <h2 class="text-lg font-bold mb-3">Create a Post</h2>
+      <textarea class="w-full resize-none border border-blue-500 p-3 rounded-md" maxlength=500
+        placeholder="Make a splash! (max 500 characters)"></textarea>
+      <div class="flex justify-between items-center mt-3">
+        <label class="flex items-center text-sm text-blue-500 hover:underline">Attach Image</label>
+        <button
+          class="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-blue-400">Submit</button>
+      </div>
+    </div>
+
+    <div class="flex mt-4" role=group aria-label="post filters">
+      <button
+        class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md hover:bg-gray-200">All
+        Posts</button>
+      <button
+        class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md hover:bg-gray-200">Friends'
+        Posts</button>
+    </div>
+
+    <div class="bg-white rounded-lg w-full max-w-md p-4 mt-4">
+      <h3 class="text-md font-semibold text-gray-800">John Doe</h3>
+      <p class="text-gray-700 mt-2 leading-relaxed">Today I woke up and then went back to bed, it was such a lovely day.
+      </p>
+      <div class="flex justify-end mt-2"><button class="text-blue-600 text-sm hover:underline">see more</button></div>
+      <p class="text-xs text-gray-400 mt-4">Created on: Friday 14th February at 23:59</p>
+      <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
+        <button
+          class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+          <span
+            class="absolute w-56 h-48 bg-blue-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+          <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white"> Like
+            (12)
+          </span>
+        </button>
+        <button
+          class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+          <span
+            class="absolute w-56 h-48 bg-blue-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+          <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+            Comment (0)
+          </span>
+        </button>
+        <button
+          class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+          <span
+            class="absolute w-56 h-48 bg-blue-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+          <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white"> View
+            Profile
+          </span>
+        </button>
+      </div>
+    </div>
   </div>
-</div>
 
-<div class="flex mt-4" role=group aria-label="post filters">
-  <button
-    class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md hover:bg-gray-200">All
-    Posts</button>
-  <button
-    class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md hover:bg-gray-200">Friends'
-    Posts</button>
-</div>
 
-<div class="bg-white rounded-lg w-full max-w-md p-4 mt-4">
-  <h3 class="text-md font-semibold text-gray-800">John Doe</h3>
-  <p class="text-gray-700 mt-2 leading-relaxed">Today I woke up and then went back to bed, it was such a lovely day.</p>
-  <div class="flex justify-end mt-2"><button class="text-blue-600 text-sm hover:underline">see more</button></div>
-  <p class="text-xs text-gray-400 mt-4">Created on: Friday 14th February at 23:59</p>
-  <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
-    <button
-      class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-      <span
-        class="absolute w-56 h-48 bg-blue-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-      <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white"> Like (12)
-      </span>
-    </button>
-    <button
-      class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-      <span
-        class="absolute w-56 h-48 bg-blue-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-      <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white"> Comment (0)
-      </span>
-    </button>
-    <button
-      class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-      <span
-        class="absolute w-56 h-48 bg-blue-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-      <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white"> View
-        Profile
-      </span>
-    </button>
-
+  <div class="absolute right-[10%] top-0 bg-white rounded-lg w-64 p-4 shadow-md hidden md:block">
+    <h2 class="text-md font-bold mb-3 text-gray-400">Sponsored</h2>
+    <p class="text-blue-400 mb-2">Create Ad</p>
+    <img
+      src="https://gloimg.rglcdn.com/rosegal/pdm-provider-img/straight-product-img/20180105/T015169/T0151690088/source-img/111828-3811.jpg"
+      alt="Woman wearing a watch" class="rounded-lg w-full h-auto object-cover mb-2">
+    <p class="text-blue-400">£160 at Amazon</p>
+    <p class="text-blue-400">Daniel Wellington Watch for Women</p>
   </div>
 
 </div>
