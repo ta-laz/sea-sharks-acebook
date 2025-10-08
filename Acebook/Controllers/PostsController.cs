@@ -2,6 +2,8 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using acebook.Models;
 using acebook.ActionFilters;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace acebook.Controllers;
 
@@ -20,9 +22,11 @@ public class PostsController : Controller
   public IActionResult Index()
   {
     AcebookDbContext dbContext = new AcebookDbContext();
-    List<Post> posts = dbContext.Posts.ToList();
-    posts.Reverse();
-    ViewBag.Posts = posts;
+    var posts = dbContext.Posts
+                               .Include(p => p.User);
+    ViewBag.Posts = posts.ToList();
+    ViewBag.Posts.Reverse();
+
     return View();
   }
 
@@ -33,6 +37,7 @@ public class PostsController : Controller
     AcebookDbContext dbContext = new AcebookDbContext();
     int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
     post.UserId = currentUserId;
+    post.CreatedOn = DateTime.UtcNow;
     dbContext.Posts.Add(post);
     dbContext.SaveChanges();
     return new RedirectResult("/posts");
@@ -43,5 +48,4 @@ public class PostsController : Controller
   {
     return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
   }
-    
 }
