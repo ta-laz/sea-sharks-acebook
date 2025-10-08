@@ -2,8 +2,8 @@
     <h1 id="greeting" class="display-4">Welcome To Acebook</h1>
     
     <form action="/signin" method="post">
-      <div><input type='email' id='email' name='email' placeholder='email' required/></div>
-      <div><input type='password' id='password' name='password' required/></div>
+      <div><input type='email' id='email' name='email' placeholder='Email' required/></div>
+      <div><input type='password' id='password' name='password' placeholder="Password" required/></div>
       <div><input type="checkbox" onclick="myFunction()">Show Password</div>
       <div><input type='submit' id='submit' value='Sign in' /></div>
       @if(ViewBag.Error != null){
