@@ -12,7 +12,6 @@ public class SignUpViewModel : IValidatableObject
     public string LastName { get; set; } = "";
 
     [Required(ErrorMessage = "Date of birth is required")]
-    []
     public DateOnly DOB { get; set; }
 
     [Required(ErrorMessage = "Email is required")]
