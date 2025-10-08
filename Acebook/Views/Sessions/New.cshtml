@@ -1,18 +1,20 @@
+@model Acebook.ViewModels.SignInViewModel
 <div class="text-center">
     <h1 id="greeting" class="display-4">Welcome To Acebook</h1>
     
-    <form action="/signin" method="post">
-      <input type='text' id='email' name='email' placeholder='email' />
-      <input type='password' id='password' name='password'/>
-      <input type="checkbox" onclick="myFunction()">Show Password
-      <input type='submit' id='submit' value='Submit' />
-      @if(ViewBag.Error != null){
-        <div id="error-message"> @ViewBag.Error </div>
-      }
+    <form asp-action="Create" asp-controller="Sessions" method="post" novalidate>
+      <div asp-validation-summary = "ModelOnly" class="text-danger" id="error-message"> </div>
+      <div><input asp-for='Email' id='email' placeholder='Email' /><span asp-validation-for="Email" id="Email-error"></span></div>
+      <div><input asp-for='Password' id='password' placeholder="Password" /><span asp-validation-for="Password" id="Password-error"></span></div>
+      <div><input type="checkbox" onclick="myFunction()">Show Password</div>
+      <div><input type='submit' id='submit' value='Sign in' /></div>
+
     </form>
     <a href="/signup" id="signup">Not a user? Sign up here!</a>
 </div>
-
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
 <script>
 function myFunction() {
   var x = document.getElementById("password");
