@@ -2,13 +2,13 @@
 <div class="text-center">
   <h1 id="signup" class="display-10">Sign up</h1> 
   <form asp-action="Create" asp-controller="Users" method="post" novalidate>
-    <div asp-validation-summary = "ModelOnly" class="text-danger"> </div>
-    <div><input asp-for='FirstName' id='firstname' placeholder="First Name"/><span asp-validation-for="FirstName"></span></div>
-    <div><input asp-for='LastName' id='lastname' placeholder="Last Name"/><span asp-validation-for="LastName"></span></div>
-    <div><input type="date" asp-for='DOB' id='dob' /><span asp-validation-for="DOB"></span></div>
-    <div><input asp-for='Email' id='email'  placeholder="Email" /><span asp-validation-for="Email"></span></div>
-    <div><input asp-for='Password' id='password' placeholder="Password"/><span asp-validation-for="Password"></span></div> 
-    <div> <input asp-for='ConfirmPassword' id='confirmpassword' placeholder="Confirm Password"/><span asp-validation-for="ConfirmPassword"></span></div>
+    <div asp-validation-summary = "ModelOnly" class="text-danger" id="error-message"> </div>
+    <div><input asp-for='FirstName' id='firstname' placeholder="First Name"/><span asp-validation-for="FirstName"  id ="firstname-error"></span></div>
+    <div><input asp-for='LastName' id='lastname' placeholder="Last Name"/><span asp-validation-for="LastName" id ="lastname-error"></span></div>
+    <div><input type="date" asp-for='DOB' id='dob' value="2025-08-10"/><span asp-validation-for="DOB" id ="dob-error"></span></div>
+    <div><input asp-for='Email' id='email'  placeholder="Email" /><span asp-validation-for="Email" id ="email-error"></span></div>
+    <div><input asp-for='Password' id='password' placeholder="Password"/><span asp-validation-for="Password" id ="password-error"></span></div> 
+    <div> <input asp-for='ConfirmPassword' id='confirmpassword' placeholder="Confirm Password"/><span asp-validation-for="ConfirmPassword" id ="confirmpassword-error"></span></div>
     <div><input type="checkbox" onclick="myFunction()">Show Password</div>
     <input type='submit' id='submit' value='Submit' />
   </form>
