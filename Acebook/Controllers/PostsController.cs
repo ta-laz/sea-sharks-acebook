@@ -24,6 +24,7 @@ public class PostsController : Controller
     AcebookDbContext dbContext = new AcebookDbContext();
     var posts = dbContext.Posts
                                .Include(p => p.User);
+    posts.Reverse();
     ViewBag.Posts = posts.ToList();
 
     return View();

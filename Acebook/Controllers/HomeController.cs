@@ -20,6 +20,7 @@ public class HomeController : Controller
         return Redirect("/signin");
     }
 
+    [Route("/Privacy")]
     public IActionResult Privacy()
     {
         return View();
