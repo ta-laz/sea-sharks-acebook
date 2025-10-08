@@ -8,9 +8,7 @@
       <div><input asp-for='Password' id='password' placeholder="Password" /><span asp-validation-for="Password"></span></div>
       <div><input type="checkbox" onclick="myFunction()">Show Password</div>
       <div><input type='submit' id='submit' value='Sign in' /></div>
-      @if(ViewBag.Error != null){
-        <div id="error-message"> @ViewBag.Error </div>
-      }
+
     </form>
     <a href="/signup" id="signup">Not a user? Sign up here!</a>
 </div>
