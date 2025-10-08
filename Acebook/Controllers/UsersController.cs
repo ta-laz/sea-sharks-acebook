@@ -32,6 +32,13 @@ public class UsersController : Controller
         //     ViewBag.Error = "Passwords do not match.";
         //     return View("New", user);
         // }
+
+        
+        if (!ModelState.IsValid)
+        {
+            return View("New", suvm);
+        }
+
         AcebookDbContext dbContext = new AcebookDbContext();
         string hashed = HashPassword(suvm.Password);
         User user = new User
@@ -41,12 +48,14 @@ public class UsersController : Controller
             Email = suvm.Email,
             Password = hashed
         };
-        ProfileBio bio = new ProfileBio
-        {
-            DOB = suvm.DOB
-        };
         dbContext.Users.Add(user);
         dbContext.SaveChanges();
+
+        ProfileBio bio = new ProfileBio
+        {
+            UserId = user.Id,
+            DOB = suvm.DOB
+        };
         dbContext.ProfileBios.Add(bio);
         dbContext.SaveChanges();
 
