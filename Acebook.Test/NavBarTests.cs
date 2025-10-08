@@ -40,11 +40,11 @@ namespace Acebook.Tests
             await Page.Locator("#password").FillAsync("password123");
             await Page.Locator("#submit").ClickAsync();
             await Expect(Page.GetByTestId("post filters")).ToBeVisibleAsync();
+            await Page.ClickAsync("#dropdownDefaultButton");
+            await Page.Locator("#signout").WaitForAsync(new() { State = WaitForSelectorState.Visible });
+            await Page.ClickAsync("#signout");
 
-            await Page.GetByTestId("dropdown").ClickAsync();
-            await Page.Locator("#signout").ClickAsync();
-
-            await Expect(Page.GetByText("Welcome To Acebook")).ToBeVisibleAsync();
+            await Expect(Page.GetByText("Welcome To Sea Shark!")).ToBeVisibleAsync();
         }
     }
 }
