@@ -3,11 +3,11 @@ namespace Acebook.ViewModels;
 
 public class SignInViewModel : IValidatableObject
 {
-    [Required(ErrorMessage = "email is required")]
-    [EmailAddress(ErrorMessage = "enter a valid email address")]
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Enter a valid email address")]
     public string Email { get; set; } = "";
 
-    [Required(ErrorMessage = "password is required")]
+    [Required(ErrorMessage = "Password is required")]
     [DataType(DataType.Password)]
     //[RegularExpression(@"^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$",
         //ErrorMessage = "Password must be ≥ 8 chars and include an uppercase letter and a special character.")]
