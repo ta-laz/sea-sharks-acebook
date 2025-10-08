@@ -2,12 +2,12 @@
     <h1 id="greeting" class="display-4">Welcome To Acebook</h1>
     
     <form action="/signin" method="post">
-      <input type='text' id='email' name='email' placeholder='email' />
-      <input type='password' id='password' name='password'/>
-      <input type="checkbox" onclick="myFunction()">Show Password
-      <input type='submit' id='submit' value='Submit' />
+      <div><input type='text' id='email' name='email' placeholder='email' /></div>
+      <div><input type='password' id='password' name='password'/></div>
+      <div><input type="checkbox" onclick="myFunction()">Show Password</div>
+      <div><input type='submit' id='submit' value='Submit' /></div>
       @if(ViewBag.Error != null){
-        <div id="error-message"> @ViewBag.Error </div>
+        <div> id="error-message"> @ViewBag.Error </div>
       }
     </form>
     <a href="/signup" id="signup">Not a user? Sign up here!</a>
