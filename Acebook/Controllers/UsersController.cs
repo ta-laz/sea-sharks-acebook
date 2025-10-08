@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using acebook.Models;
 using System.Security.Cryptography;
-
+using Acebook.ViewModels;
 
 namespace acebook.Controllers;
 
@@ -24,19 +24,32 @@ public class UsersController : Controller
 
     [Route("/users")]
     [HttpPost]
-    public IActionResult Create(User user, string confirmPassword)
+    public IActionResult Create(SignUpViewModel suvm)
     {
 
-        if (user.Password != confirmPassword)
-        {
-            ViewBag.Error = "Passwords do not match.";
-            return View("New", user);
-        }
+        // if (user.Password != confirmPassword)
+        // {
+        //     ViewBag.Error = "Passwords do not match.";
+        //     return View("New", user);
+        // }
         AcebookDbContext dbContext = new AcebookDbContext();
-        string hashed = HashPassword(user.Password);
-        user.Password = hashed;
+        string hashed = HashPassword(suvm.Password);
+        User user = new User
+        {
+            FirstName = suvm.FirstName,
+            LastName = suvm.LastName,
+            Email = suvm.Email,
+            Password = hashed
+        };
+        ProfileBio bio = new ProfileBio
+        {
+            DOB = suvm.DOB
+        };
         dbContext.Users.Add(user);
         dbContext.SaveChanges();
+        dbContext.ProfileBios.Add(bio);
+        dbContext.SaveChanges();
+
         HttpContext.Session.SetInt32("user_id", user.Id);
         return new RedirectResult("/posts");
     }
