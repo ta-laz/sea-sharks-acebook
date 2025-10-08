@@ -40,6 +40,12 @@ public class UsersController : Controller
         }
 
         AcebookDbContext dbContext = new AcebookDbContext();
+        if (dbContext.Users.Any(user => user.Email == suvm.Email))
+        {
+            ModelState.AddModelError("", "Email already registered.");
+            return View("New", suvm);
+        }
+
         string hashed = HashPassword(suvm.Password);
         User user = new User
         {
