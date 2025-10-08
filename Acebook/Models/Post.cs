@@ -34,5 +34,14 @@ public class Post
     }
     else return false;
   }
+
+  public string FormatPostContent()
+  {
+    if (!this.CheckLength())
+    {
+      return $"{this.Content.Substring(0, 500)}...";
+    }
+    else return null;
+  }
 }
 
