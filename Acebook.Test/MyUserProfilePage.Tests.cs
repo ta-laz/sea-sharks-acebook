@@ -30,6 +30,19 @@ namespace Acebook.Tests
               BaseURL = BaseUrl
           };
 
-    
+        [Test]
+        public async Task X()
+        {
+            await Page.GotoAsync("/signin");
+
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Page.Locator("#submit").ClickAsync();
+
+            await Page.ClickAsync("#dropdownDefaultButton");
+            await Page.ClickAsync("#MyProfile");
+
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
+        }
     }
 }
