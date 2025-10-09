@@ -55,9 +55,9 @@ public class PostsController : Controller
 
     return View(post);
   }
-  
 
-//   [Route("/post")]
+
+  //   [Route("/post")]
   //   [HttpGet]
   //   public IActionResult Post(int id) {
   //         AcebookDbContext dBContext = new AcebookDbContext();
