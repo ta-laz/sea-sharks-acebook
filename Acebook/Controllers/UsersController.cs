@@ -24,12 +24,13 @@ public class UsersController : Controller
         return View();
     }
 
-    [Route("/users")]
+    [Route("/users/{id}")]
     [HttpGet]
-    public IActionResult Index()
+    public IActionResult Index(int id)
     {
         AcebookDbContext dbContext = new AcebookDbContext();
-        var posts = dbContext.Posts
+
+        var posts = dbContext.Posts.Where(u => u.UserId == id)
                                    .Include(p => p.User);
         ViewBag.Posts = posts.ToList();
         ViewBag.Posts.Reverse();
@@ -37,29 +38,10 @@ public class UsersController : Controller
         return View();
     }
 
-    // [Route("/users")]
-    // [HttpPost]
-    // public RedirectResult Create(Post post)
-    // {
-    //     AcebookDbContext dbContext = new AcebookDbContext();
-    //     int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
-    //     post.UserId = currentUserId;
-    //     post.CreatedOn = DateTime.UtcNow;
-    //     dbContext.Posts.Add(post);
-    //     dbContext.SaveChanges();
-    //     return new RedirectResult("/posts");
-    // }
-
     [Route("/users")]
     [HttpPost]
     public IActionResult Create(SignUpViewModel suvm)
     {
-
-        // if (user.Password != confirmPassword)
-        // {
-        //     ViewBag.Error = "Passwords do not match.";
-        //     return View("New", user);
-        // }
 
 
         if (!ModelState.IsValid)
