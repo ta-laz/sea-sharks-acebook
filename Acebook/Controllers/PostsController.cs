@@ -49,7 +49,7 @@ public class PostsController : Controller
   {
     AcebookDbContext dbContext = new AcebookDbContext();
     var post = dbContext.Posts.Include(p => p.Comments).FirstOrDefault(p => p.Id == id);
-    var comments = dbContext.Comments.Where(c => c.PostId == id).ToList();
+    var comments = dbContext.Comments.Include(c => c.User).Where(c => c.PostId == id).ToList();
     ViewBag.post = post;
     ViewBag.comments = comments;
 

@@ -11,7 +11,11 @@ public class User
   public string? LastName { get; set; }
   public string? Email { get; set; }
   public string? Password { get; set; }
+
+  // Navigation Properties:
   public ICollection<Post>? Posts { get; set; }
   public ICollection<Friend> FriendRequestsSent { get; set; } = new List<Friend>();
   public ICollection<Friend> FriendRequestsReceived { get; set; } = new List<Friend>();
+  public ICollection<Comment>? Comments { get; set; } = new List<Comment>();
+
 }

@@ -1,5 +1,7 @@
 @model acebook.Models.Post
 
+<!-- Individual Post -->
+
 <div class="flex flex-col items-center w-full mt-8 space-y-6">
     <div class="bg-white rounded-lg w-full p-4 shadow-md">
         <div class="flex justify-between items-center">
@@ -37,11 +39,13 @@
             </button>
         </div>
     </div>
+
+    <!-- Comments for each post -->
     @foreach (Comment comment in ViewBag.comments)
     {
         <div class="bg-white rounded-lg w-full p-4 mt-4 shadow-md hidden md:block">
             <div class="flex justify-between items-center">
-                <h3 class="text-md font-semibold text-gray-800">TEST</h3>
+                <h3 class="text-md font-semibold text-gray-800">@comment.User.FirstName @comment.User.LastName</h3>
                 <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400">
             </div>
 
@@ -71,8 +75,10 @@
             </div>
         </div>
     }
+
+    <!-- Add a Comment -->
     <div class="bg-white rounded-lg w-full p-4 shadow-md">
-        <h2 class="text-lg font-bold mb-3">Create a comment</h2>
+        <h2 class="text-lg font-bold mb-3">Add a comment</h2>
         <form action="@Url.Action("Create", "Comments")" method="post">
             <input type="hidden" name="returnURL" value="@Url.Action("Post", "Comments", new { id = Model.Id })" />
             <input type="hidden" name="postId" value="@Model.Id" />

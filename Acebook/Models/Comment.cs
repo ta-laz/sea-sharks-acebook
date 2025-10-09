@@ -11,5 +11,7 @@ public class Comment
     public string? Content { get; set; }
     public DateTime CreatedOn { get; set; }
 
+    // Navigation Properties:
     public Post? Post { get; set; }
+    public User? User { get; set; }
 }
