@@ -54,16 +54,6 @@ public class PostsController : Controller
         }
         return View(indiPost);
 }
-  // public IActionResult Post(int id)
-  // {
-  //   AcebookDbContext dbContext = new AcebookDbContext();
-  //   Post indiPost = dbContext.Posts.FirstOrDefault(p => p.Id == id);
-  //   //.Include(p => p.User);
-
-  //   if (indiPost == null)
-
-  //   return View();
-  // }
 
   [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
   public IActionResult Error()
