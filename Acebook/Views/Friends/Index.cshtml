@@ -5,23 +5,25 @@
     <div class="flex flex-col items-center space-y-4 w-full max-w-3xl">
 
         <!-- Filter buttons -->
+        <!-- Filter buttons -->
         <div class="flex justify-center mt-4" role="group" aria-label="requests filters">
-            <label for="received"
-                class="[&:has(#received:checked)]:bg-blue-500 [&:has(#received:checked)]:text-white w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md cursor-pointer hover:bg-gray-200 text-center">
+            <label id="received-label" for="received"
+                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md cursor-pointer hover:bg-gray-200 text-center transition-colors">
                 Friend Requests
             </label>
-            <label for="sent"
-                class="[&:has(#sent:checked)]:bg-blue-500 [&:has(#sent:checked)]:text-white w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md cursor-pointer hover:bg-gray-200 text-center">
+            <label id="sent-label" for="sent"
+                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md cursor-pointer hover:bg-gray-200 text-center transition-colors">
                 Sent Requests
             </label>
         </div>
+
 
         <!-- Requests Section -->
         <div class="bg-white rounded-lg w-full p-4 shadow-md hidden md:block">
             <input type="radio" id="received" name="request-toggle" class="hidden peer/received" checked>
             <input type="radio" id="sent" name="request-toggle" class="hidden peer/sent">
 
-            <h2 class="text-lg font-bold mb-3">Your Requests</h2>
+            <h2 id="requests-header" class="text-lg font-bold mb-3">Your Requests</h2>
 
             <!-- Received Requests -->
             <div id="received-requests" class="space-y-2">
@@ -35,7 +37,8 @@
                             class="w-12 h-12 rounded-full object-cover border border-gray-400" />
                         <span class="font-medium text-gray-800">@sender.FirstName @sender.LastName</span>
 
-                        <form asp-action="Accept" asp-controller="Friends" method="post" onsubmit="return confirm('Are you sure you want to be friends?');" class="ml-auto">
+                        <form asp-action="Accept" asp-controller="Friends" method="post"
+                            onsubmit="return confirm('Are you sure you want to be friends?');" class="ml-auto">
                             <input type="hidden" name="friendId" value="@request.Id" />
                             <button type="submit"
                                 class="bg-teal-600 hover:bg-teal-700 text-white text-xs font-medium py-1 px-2 rounded">
@@ -43,7 +46,8 @@
                             </button>
                         </form>
 
-                        <form asp-action="Reject" asp-controller="Friends" method="post" onsubmit="return confirm('Are you sure you do not want to be friends?');">
+                        <form asp-action="Reject" asp-controller="Friends" method="post"
+                            onsubmit="return confirm('Are you sure you do not want to be friends?');">
                             <input type="hidden" name="friendId" value="@request.Id" />
                             <button type="submit"
                                 class="bg-gray-400 hover:bg-gray-500 text-white text-xs font-medium py-1 px-2 rounded">
@@ -67,7 +71,8 @@
                             class="w-12 h-12 rounded-full object-cover border border-gray-400" />
                         <span class="font-medium text-gray-800">@receiver.FirstName @receiver.LastName</span>
 
-                        <form asp-action="Reject" asp-controller="Friends" method="post" onsubmit="return confirm('Are you sure you want to cancel your request?');" class="ml-auto">
+                        <form asp-action="Reject" asp-controller="Friends" method="post"
+                            onsubmit="return confirm('Are you sure you want to cancel your request?');" class="ml-auto">
                             <input type="hidden" name="friendId" value="@request.Id" />
                             <button type="submit"
                                 class="bg-red-500 hover:bg-red-600 text-white text-xs font-medium py-1 px-2 rounded">
@@ -133,3 +138,36 @@
         </div>
     </div>
 </div>
+
+<!-- JS to try and make the buttons work more easily-->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const receivedRadio = document.getElementById("received");
+    const sentRadio = document.getElementById("sent");
+    const header = document.getElementById("requests-header");
+    const receivedLabel = document.getElementById("received-label");
+    const sentLabel = document.getElementById("sent-label");
+
+    function updateUI() {
+      // Change header text
+      if (receivedRadio.checked) {
+        header.textContent = "Your Received Requests";
+      } else if (sentRadio.checked) {
+        header.textContent = "Your Sent Requests";
+      } else {
+        header.textContent = "Your Requests";
+      }
+
+      // Handle label colors
+      receivedLabel.classList.toggle("bg-teal-500", receivedRadio.checked);
+      receivedLabel.classList.toggle("text-white", receivedRadio.checked);
+      sentLabel.classList.toggle("bg-teal-500", sentRadio.checked);
+      sentLabel.classList.toggle("text-white", sentRadio.checked);
+    }
+
+    // Run on load and whenever radios change
+    updateUI();
+    receivedRadio.addEventListener("change", updateUI);
+    sentRadio.addEventListener("change", updateUI);
+  });
+</script>

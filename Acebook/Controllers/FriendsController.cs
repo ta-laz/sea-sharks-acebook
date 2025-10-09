@@ -48,6 +48,9 @@ public class FriendsController : Controller
         return View();
     }
 
+
+    // this Unfriend method and the Reject method are identical, you ok with me just calling it Remove and using the same thing? 
+    
     [Route("/friends/unfriend")]
     [HttpPost]
     public IActionResult Unfriend(int friendId)
