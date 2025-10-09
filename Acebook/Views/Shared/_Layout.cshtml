@@ -18,34 +18,74 @@
 
     }
     <header>
-            <nav class="relative bg-teal-600">
-                <div id="navbar" class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 relative flex h-16 justify-between">
+            <nav class="fixed top-0 py-2 left-0 w-full bg-teal-600">
+                <div id="navbar" class="mx-auto max-w px-2 sm:px-6 lg:px-8 relative flex h-16 justify-between">
                         <div class="flex flex-1 items-center justify-center sm:justify-start">
                             <div class="flex shrink-0 items-center">
+                                
+                                <!-- SeaShark Logo -->
                                 <a asp-action="Index" asp-controller="Home" method ="get">
                                     <img src="images/light_grey.png"
-                                    alt="SeaShark Logo" class="h-8 w-auto"  />
+                                    alt="SeaShark Logo" class="h-14 w-auto"  />
                                 </a>
                             </div>
                         
+                        <!--  If statement for different views if user is/isn't signed in  -->
                             @if (userId != null)
                             {
                                 <div class="hidden sm:ml-6 sm:block">
-                                    <div class="flex space-x-4">
+
+                                    <!-- Original Search 'box' -->
+                                    @* <div class="flex space-x-4">
                                         <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-white/5 hover:text-white" -->
-                                        <a href="#" aria-current="page"
-                                            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/15 hover:text-white">PAGE TITLE</a>
                                         <a href="#"
-                                            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/15 hover:text-white">Search</a>
-                                    </div>
+                                            class="rounded-md px-3 py-2 text-lg font-medium text-gray-300 hover:bg-white/15 hover:text-white">Search</a>
+                                    </div> *@
+
+                                    <!-- New style search bar -->
+                                    <form class="max-w-lg mx-auto">
+                                        <div class="flex">
+                                            <label for="search-dropdown" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Your Email</label>
+                                            <button id="dropdown-button" data-dropdown-toggle="dropdown" class="shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600" type="button">All categories <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                    </svg></button>
+                                            <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
+                                                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
+                                                <li>
+                                                    <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Mockups</button>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Templates</button>
+                                                </li>
+                                                <li> 87
+                                                    <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Design</button>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Logos</button>
+                                                </li>
+                                                </ul>
+                                            </div>
+                                            <div class="relative w-full">
+                                                <input type="search" id="search-dropdown" class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" placeholder="Search Mockups, Logos, Design Templates..." required />
+                                                <button type="submit" class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                                                    </svg>
+                                                    <span class="sr-only">Search</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+
                                 </div>
+
                             <!-- Profile dropdown -->
                                 <div>
-                                    <button data-testid="dropdown" id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="absolute top-1/2 -translate-y-1/2 right-2 rounded-full ring-offset-0 focus:ring-4 focus:outline-none focus:ring-teal-900 dark:focus:ring-blue-800" type="button">
+                                    <button data-testid="dropdown" id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="absolute top-1/2 -translate-y-1/2 right-6 rounded-full ring-offset-0 focus:ring-4 focus:outline-none focus:ring-teal-900 dark:focus:ring-blue-800" type="button">
                                         <img 
                                             src="images/Placeholder.png" 
                                             alt="User menu" 
-                                            class="h-8 w-8 rounded-full border-2 border-white"
+                                            class="h-12 w-12 rounded-full border-2 border-white"
                                         />
                                     </button>
 
@@ -79,37 +119,16 @@
 
             </nav>
 
-            @* <ul class="navbar-nav ms-auto">
-                @if (userId != null && userName != null)
-                {
-                    <li class="nav-item">
-                        <span class="navbar-text me-2">Signed in as @userName</span>
-                    </li>
-                    <li class="nav-item">
-                        <form asp-controller="Sessions" asp-action="Signout" method="post" class="d-inline">
-                            <button type="submit" id="signout" class="btn btn-link nav-link text-dark"
-                                style="border:none; padding:0;">Sign Out</button>
-                        </form>
-                    </li>
-                }
-                else
-                {
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Users" asp-action="New">Sign Up</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Sessions" asp-action="New">Sign In</a>
-                    </li>
-                }
-            </ul> *@
+
+
             
     </header>
-        <main role="main" class="container mx-auto flex-grow pb-3 mb-8 pt-6">
+        <main role="main" class="container mx-auto flex-grow pb-3 mb-8 pt-24">
             @RenderBody()
         </main>
 
 
-    <footer class="bg-white rounded-lg shadow-sm m-4 dark:bg-gray-800">
+    <footer class="bg-white rounded-lg shadow-sm m-4">
     <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
         <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 <a asp-action="Index" asp-controller="Home" method ="get" class="hover:underline">SeaShark™</a>. All Rights Reserved.
     </span>
@@ -141,3 +160,28 @@
                                         stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
                             </button> *@
+
+<!-- Code to get name/id from session -->
+  @* <ul class="navbar-nav ms-auto">
+                @if (userId != null && userName != null)
+                {
+                    <li class="nav-item">
+                        <span class="navbar-text me-2">Signed in as @userName</span>
+                    </li>
+                    <li class="nav-item">
+                        <form asp-controller="Sessions" asp-action="Signout" method="post" class="d-inline">
+                            <button type="submit" id="signout" class="btn btn-link nav-link text-dark"
+                                style="border:none; padding:0;">Sign Out</button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Users" asp-action="New">Sign Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Sessions" asp-action="New">Sign In</a>
+                    </li>
+                }
+            </ul> *@
