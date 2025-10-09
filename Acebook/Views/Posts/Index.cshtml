@@ -1,89 +1,289 @@
-<div class="relative flex justify-center w-full mt-8">
+<div class="flex justify-center w-full mt-8">
+  <!-- Outer container holding sidebar, posts, and advert -->
+  <div class="flex justify-between w-full max-w-7xl relative">
 
-  <div class="flex flex-col items-center space-y-4 w-full max-w-4xl">
-    <div class="bg-white rounded-lg w-full max-w-4xl p-4 items-center shadow-md hidden md:block">
-      <h2 class="text-lg font-bold mb-3">Create a Post</h2>
-      <form action="/posts" method="post">
-
-        <textarea
-          class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
-          name="content" maxlength=2000 placeholder="Make a splash! (max 2000 characters)"></textarea>
-        <div class="flex justify-between items-center mt-3">
-          <label class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
-          <button type="submit"
-            class="bg-teal-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-teal-400">Submit</button>
-        </div>
-      </form>
-    </div>
-
-    <div data-testid="post filters" class="flex justify-center  mt-4" role=group aria-label="post filters">
-      <button
-        class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md hover:bg-gray-200">All
-        Posts</button>
-      <button
-        class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md hover:bg-gray-200">Friends'
-        Posts</button>
-    </div>
+    <!-- 🦈 Left Sidebar -->
+    <div class="hidden lg:block sticky top-20 mr-8 self-start w-52">
+      <div class="bg-white rounded-lg p-4 shadow-md">
 
 
-
-    <!-- Posts 'cards' current placeholder text in name, description, time of post, and picture. Needs to be modular once Post model is further complete -->
-    @foreach (Post post in ViewBag.Posts)
-    {
-      <div class="bg-white rounded-lg w-full max-w-4xl p-4 mt-4 relative shadow-md hidden md:block">
-        <div class="flex justify-between items-center">
-          <h3 class="text-md font-semibold text-gray-800">@post.User.FirstName @post.User.LastName</h3>
-          <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400">
+        <!-- Example sidebar item -->
+        <div class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-lg mb-1 transition">
+          <div class="flex items-center space-x-3">
+            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+            <button class="text-xs font-medium text-gray-700 hover:text-teal-600">John Doe</button>
+          </div>
+          <!-- Dots only appear on hover -->
+          <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
+            </svg>
+          </button>
         </div>
 
-        <p class="text-gray-700 mt-2 leading-relaxed">@if(@post.CheckLength()) {
-          @post.Content
-        } else
-        {
 
-          @post.FormatPostContent()
-        }
-      </p>
+        <!-- Example sidebar item -->
+        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+          <div class="flex items-center space-x-3">
+            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+            <button class="text-xs font-medium text-gray-700 hover:text-teal-600">The Aquarium</button>
+          </div>
+          <!-- Dots only appear on hover -->
+          <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
+            </svg>
+          </button>
+        </div>
 
-      <div class="flex justify-end mt-2"><button class="text-teal-600 text-sm hover:underline">see more</button></div>
-      <p class="text-xs text-gray-400 mt-4">Created on: @post.FormattedCreatedOn</p>
-      <!-- Button box below for Like, Comment, and View Profile with transitions - to add JS for onclick styling (once filtered) -->
-      <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
-        <button
-          class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-          <span
-            class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-          <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white"> Like
-            (12)
-          </span>
-        </button>
-        <button
-          class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-          <span
-            class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-          <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-            Comment (0)
-          </span>
-        </button>
-        <button
-          class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-          <span
-            class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-          <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white"> View
-            Profile
-          </span>
-        </button>
+        <!-- Example sidebar item -->
+        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+          <div class="flex items-center space-x-3">
+            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+            <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Messages</button>
+          </div>
+          <!-- Dots only appear on hover -->
+          <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
+            </svg>
+          </button>
+        </div>
+
+
+        <h2 class="text-sm font-semibold text-gray-400 mb-3 mt-3">EXPLORE</h2>
+
+        <!-- Example sidebar item -->
+        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+          <div class="flex items-center space-x-3">
+            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+            <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Pages</button>
+          </div>
+          <!-- Dots only appear on hover -->
+          <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
+            </svg>
+          </button>
+        </div>
+
+
+        <!-- Example sidebar item -->
+        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+          <div class="flex items-center space-x-3">
+            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+            <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Groups</button>
+          </div>
+          <!-- Dots only appear on hover -->
+          <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Example sidebar item -->
+        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+          <div class="flex items-center space-x-3">
+            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+            <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Saved</button>
+          </div>
+          <!-- Dots only appear on hover -->
+          <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Example sidebar item -->
+        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+          <div class="flex items-center space-x-3">
+            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+            <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Events</button>
+          </div>
+          <!-- Dots only appear on hover -->
+          <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Example sidebar item -->
+        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+          <div class="flex items-center space-x-3">
+            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+            <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Photos</button>
+          </div>
+          <!-- Dots only appear on hover -->
+          <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
+            </svg>
+          </button>
+        </div>
+
+
+        <!-- Example sidebar item -->
+        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+          <div class="flex items-center space-x-3">
+            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+            <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Insights</button>
+          </div>
+          <!-- Dots only appear on hover -->
+          <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Example sidebar item -->
+        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+          <div class="flex items-center space-x-3">
+            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+            <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Moments</button>
+          </div>
+          <!-- Dots only appear on hover -->
+          <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Example sidebar item -->
+        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+          <div class="flex items-center space-x-3">
+            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+            <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Games</button>
+          </div>
+          <!-- Dots only appear on hover -->
+          <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
+            </svg>
+          </button>
+        </div>
+
+        <h2 class="text-sm font-semibold text-teal-400 mb-3 mt-3">See More...</h2>
+
+        <h2 class="text-xs font-semibold text-gray-300 mb-3 mt-3">CREATE</h2>
+
+        <h2 class="text-xs font-semibold text-teal-400 mb-3 mt-3">Ad - Page - Group - Event</h2>
 
       </div>
     </div>
-        }
 
-    <div class="fixed right-10 top-50 bg-white rounded-lg max-w-80 p-4 shadow-md hidden md:block"> 
-    <h2 class="text-md mb-3 text-gray-400">Sponsored</h2>
-      <img
-        src="https://gloimg.rglcdn.com/rosegal/pdm-provider-img/straight-product-img/20180105/T015169/T0151690088/source-img/111828-3811.jpg"
-        alt="Woman wearing a watch" class="rounded-lg w-full h-auto object-cover mb-2">
-      <p class="text-teal-500 underline">£160 at Amazon</p>
-      <p class="text-gray-500">Daniel Wellington Watch for Women</p>
+    <!-- 🧭 Center column (posts) -->
+    <div class="flex flex-col items-center space-y-4 w-full max-w-3xl">
+      <div class="bg-white rounded-lg w-full p-4 shadow-md hidden md:block">
+        <h2 class="text-lg font-bold mb-3">Create a Post</h2>
+        <form action="/posts" method="post">
+          <textarea
+            class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
+            name="content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)">
+          </textarea>
+          <div class="flex justify-between items-center mt-3">
+            <label class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
+            <button type="submit"
+              class="bg-teal-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-teal-400">
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Filter buttons -->
+      <div class="flex justify-center mt-4" role="group" aria-label="post filters">
+        <button
+          class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md hover:bg-gray-200">
+          All Posts
+        </button>
+        <button
+          class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md hover:bg-gray-200">
+          Friends' Posts
+        </button>
+      </div>
+
+      <!-- Posts -->
+      @foreach (Post post in ViewBag.Posts)
+      {
+        <div class="bg-white rounded-lg w-full p-4 mt-4 shadow-md hidden md:block">
+          <div class="flex justify-between items-center">
+            <h3 class="text-md font-semibold text-gray-800">@post.User.FirstName @post.User.LastName</h3>
+            <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400">
+          </div>
+
+          <p class="text-gray-700 mt-2 leading-relaxed">
+            @if (@post.CheckLength())
+            {
+              @post.Content
+            }
+            else
+            {
+              @post.FormatPostContent()
+            }
+          </p>
+
+          <div class="flex justify-end mt-2">
+            <button class="text-teal-600 text-sm hover:underline">see more</button>
+          </div>
+
+          <p class="text-xs text-gray-400 mt-4">Created on: @post.FormattedCreatedOn</p>
+
+          <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
+            <button
+              class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+              <span
+                class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+              <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                Like (12)
+              </span>
+            </button>
+            <button
+              class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+              <span
+                class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+              <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                Comment (0)
+              </span>
+            </button>
+            <button
+              class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+              <span
+                class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+              <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                View Profile
+              </span>
+            </button>
+          </div>
+        </div>
+      }
     </div>
-  </div>  
+
+    <!-- 🪧 Advert -->
+    <div class="hidden lg:block sticky top-20 ml-8 self-start w-64">
+      <div class="bg-white rounded-lg p-4 shadow-md">
+        <h2 class="text-md mb-3 text-gray-400 font-semibold">Sponsored</h2>
+        <img
+          src="https://gloimg.rglcdn.com/rosegal/pdm-provider-img/straight-product-img/20180105/T015169/T0151690088/source-img/111828-3811.jpg"
+          alt="Woman wearing a watch" class="rounded-lg w-full h-auto object-cover mb-2">
+        <p class="text-teal-500 underline">£160 at Amazon</p>
+        <p class="text-gray-500">Daniel Wellington Watch for Women</p>
+      </div>
+    </div>
+  </div>
+</div>
