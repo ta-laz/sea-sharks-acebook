@@ -3,42 +3,69 @@
 <!-- Main Body -->
 <div class="flex justify-center w-full">
     <div class="flex flex-col items-center space-y-4 w-full max-w-3xl">
-       
+
         <!-- Filter buttons -->
-        <div class="flex justify-center mt-4" role="group" aria-label="post filters">
-            <button id="btn-received"
-                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md hover:bg-gray-200">
+        <div class="flex justify-center mt-4" role="group" aria-label="requests filters">
+            <label for="received"
+                class="[&:has(#received:checked)]:bg-blue-500 [&:has(#received:checked)]:text-white w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md cursor-pointer hover:bg-gray-200 text-center">
                 Friend Requests
-            </button>
-            <button id="btn-sent"
-                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md hover:bg-gray-200">
+            </label>
+            <label for="sent"
+                class="[&:has(#sent:checked)]:bg-blue-500 [&:has(#sent:checked)]:text-white w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md cursor-pointer hover:bg-gray-200 text-center">
                 Sent Requests
-            </button>
+            </label>
         </div>
 
         <!-- Requests Section -->
         <div class="bg-white rounded-lg w-full p-4 shadow-md hidden md:block">
+            <input type="radio" id="received" name="request-toggle" class="hidden peer/received" checked>
+            <input type="radio" id="sent" name="request-toggle" class="hidden peer/sent">
+
             <h2 class="text-lg font-bold mb-3">Requests</h2>
 
             <!-- Received Requests -->
-            <div id="received-requests" class="space-y-2"
+            <div id="received-requests" class="space-y-2">
                 <p class="text-gray-600 text-sm">Request you've received:</p>
                 <div class="flex items-center gap-3">
-                    <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400" />
+                    <img src="/images/Placeholder.png"
+                        class="w-12 h-12 rounded-full object-cover border border-gray-400" />
                     <span class="font-medium text-gray-800">Example Received Request</span>
-                    <button class="ml-auto bg-teal-600 hover:bg-teal-700 text-white text-xs font-medium py-1 px-2 rounded">Accept</button>
-                    <button class="bg-gray-400 hover:bg-gray-500 text-white text-xs font-medium py-1 px-2 rounded">Decline</button>
+                    <button
+                        class="ml-auto bg-teal-600 hover:bg-teal-700 text-white text-xs font-medium py-1 px-2 rounded">Accept</button>
+                    <button
+                        class="bg-gray-400 hover:bg-gray-500 text-white text-xs font-medium py-1 px-2 rounded">Decline</button>
                 </div>
-
-            <!-- Sent Requests -->
-                <div id="sent-requests" class="space-y-2"
-                <p class="text-gray-600 text-sm">Request you've sent:</p>
+            </div <!-- Sent Requests -->
+            <div class="space-y-2 peer-checked/sent:block hidden" id="sent-requests">
+                <p class="text-gray-600 text-sm">Requests you've sent:</p>
                 <div class="flex items-center gap-3">
-                    <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400" />
+                    <img src="/images/Placeholder.png"
+                        class="w-12 h-12 rounded-full object-cover border border-gray-400" />
                     <span class="font-medium text-gray-800">Example Sent Request</span>
-                    <button class="ml-auto bg-teal-600 hover:bg-teal-700 text-white text-xs font-medium py-1 px-2 rounded">Accept</button>
-                    <button class="bg-gray-400 hover:bg-gray-500 text-white text-xs font-medium py-1 px-2 rounded">Decline</button>
+                    <button
+                        class="ml-auto bg-red-500 hover:bg-red-600 text-white text-xs font-medium py-1 px-2 rounded">Cancel</button>
                 </div>
+            </div>
+
+            <!-- Getting the buttons to hide stuff -->
+            <style>
+                /* Hide both by default */
+                #received-requests,
+                #sent-requests {
+                    display: none;
+                }
+
+                /* Show received when its radio is checked */
+                #received:checked~#received-requests {
+                    display: block;
+                }
+
+                /* Show sent when its radio is checked */
+                #sent:checked~#sent-requests {
+                    display: block;
+                }
+            </style>
+
         </div>
 
         <!-- Friend List Section -->
@@ -56,6 +83,7 @@
                 {
                     other = friend.Requester;
                 }
+
                 <div class="flex items-center justify-between gap-3 mb-2 p-2 rounded-lg hover:bg-gray-100 transition">
                     <div class="flex items-center gap-3 mb-2">
                         <img src="/images/Placeholder.png"
