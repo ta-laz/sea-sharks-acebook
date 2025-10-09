@@ -58,14 +58,6 @@
           In</button>
       </div>
 
-      @if (!ViewData.ModelState.IsValid) // move this to be under the box
-      {
-        var error = ViewData.ModelState[string.Empty]?.Errors.FirstOrDefault()?.ErrorMessage;
-        if (!string.IsNullOrEmpty(error))
-        {
-          <div data-testid="error" class="text-teal-600 mt-2">@error</div>
-        }
-      }
 
     </form>
 
