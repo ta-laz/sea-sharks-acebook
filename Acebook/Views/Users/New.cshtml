@@ -18,7 +18,19 @@
       <div asp-validation-summary="All"
         class="bg-red-50 border border-red-400 text-red-700 rounded p-3 mb-4 text-sm">
       </div>
-<!-- First name block with validation -->
+
+
+      <style>
+        /* Hides the summary until there are errors */
+        .validation-summary-valid {
+          display: none;       
+        }
+
+        .validation-summary-errors {
+          display: block;      /* shown when client/server validation adds errors */
+        }
+      </style>
+      <!-- First name block with validation -->
 
       <div>
         <label for="firstname" class="mb-1 block text-sm text-gray-700">First Name</label>
