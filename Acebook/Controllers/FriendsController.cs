@@ -4,6 +4,7 @@ using acebook.Models;
 using System.Security.Cryptography;
 using Acebook.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using System.Data.Common;
 
 namespace acebook.Controllers;
 
@@ -24,10 +25,25 @@ public class FriendsController : Controller
 
         int? currentUserId = HttpContext.Session.GetInt32("user_id");
 
-        var friends = dbContext.Friends.Include(f => f.Requester).Include(f => f.Accepter).Where(f => f.RequesterId == currentUserId || f.AccepterId == currentUserId && f.Status == FriendStatus.Accepted);
+        var friends = dbContext.Friends
+        .Include(f => f.Requester)
+        .Include(f => f.Accepter)
+        .Where(f => f.RequesterId == currentUserId || f.AccepterId == currentUserId && f.Status == FriendStatus.Accepted);
+
+        var receivedRequests = dbContext.Friends
+        .Include(f => f.Requester)
+        .Include(f => f.Accepter)
+        .Where(f => f.AccepterId == currentUserId && f.Status == FriendStatus.Pending);
+
+        var sentRequests = dbContext.Friends
+        .Include(f => f.Requester)
+        .Include(f => f.Accepter)
+        .Where(f => f.RequesterId == currentUserId && f.Status == FriendStatus.Pending);
 
         ViewBag.Friends = friends.ToList();
         ViewBag.currentUserId = currentUserId;
+        ViewBag.ReceivedRequests = receivedRequests.ToList();
+        ViewBag.SentRequests = sentRequests.ToList();
 
         return View();
     }

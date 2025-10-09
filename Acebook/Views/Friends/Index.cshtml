@@ -1,47 +1,76 @@
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
-<!-- 🧭 Center column (posts) -->
-<div class="flex flex-col items-center space-y-4 w-full max-w-3xl">
-    <!-- Filter buttons -->
-    <div class="flex justify-center mt-4" role="group" aria-label="post filters">
-        <button
-            class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md hover:bg-gray-200">
-            Friend Requests
-        </button>
-        <button
-            class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md hover:bg-gray-200">
-            Sent Requests
-        </button>
-    </div>
 
-    <div class="bg-white rounded-lg w-full p-4 shadow-md hidden md:block">
-        <h2 class="text-lg font-bold mb-3">Requests</h2>
-    </div>
-    <div class="bg-white rounded-lg w-full p-4 shadow-md hidden md:block">
-        <h2 class="text-lg font-bold mb-3">Friend List</h2>
+<!-- Main Body -->
+<div class="flex justify-center w-full">
+    <div class="flex flex-col items-center space-y-4 w-full max-w-3xl">
+       
+        <!-- Filter buttons -->
+        <div class="flex justify-center mt-4" role="group" aria-label="post filters">
+            <button id="btn-received"
+                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md hover:bg-gray-200">
+                Friend Requests
+            </button>
+            <button id="btn-sent"
+                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md hover:bg-gray-200">
+                Sent Requests
+            </button>
+        </div>
 
-        @foreach (var friend in ViewBag.Friends)
-        {
-            User other;
-            if (friend.RequesterId == ViewBag.CurrentUserId)
-            {
-                other = friend.Accepter;
-            }
-            else
-            {
-                other = friend.Requester;
-            }
-            <div class="flex items-center justify-between gap-3 mb-2 p-2 rounded-lg hover:bg-gray-100 transition">
-                <div class="flex items-center gap-3 mb-2">
-                    <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400">
-                    <h3 class="text-md font-semibold text-gray-800">@other.FirstName @other.LastName</h3>
+        <!-- Requests Section -->
+        <div class="bg-white rounded-lg w-full p-4 shadow-md hidden md:block">
+            <h2 class="text-lg font-bold mb-3">Requests</h2>
+
+            <!-- Received Requests -->
+            <div id="received-requests" class="space-y-2"
+                <p class="text-gray-600 text-sm">Request you've received:</p>
+                <div class="flex items-center gap-3">
+                    <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400" />
+                    <span class="font-medium text-gray-800">Example Received Request</span>
+                    <button class="ml-auto bg-teal-600 hover:bg-teal-700 text-white text-xs font-medium py-1 px-2 rounded">Accept</button>
+                    <button class="bg-gray-400 hover:bg-gray-500 text-white text-xs font-medium py-1 px-2 rounded">Decline</button>
                 </div>
 
-                <form asp-action="Unfriend" asp-controller="Friends" method="post" onsubmit="return confirm('Are you sure you want to unfriend this person?');">
-                    <input type="hidden" name='friendId' value="@friend.Id" />
-                    <button type="submit"
-                        class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-1 px-3 rounded">Unfriend</button>
-                </form>
-            </div>
-        }
+            <!-- Sent Requests -->
+                <div id="sent-requests" class="space-y-2"
+                <p class="text-gray-600 text-sm">Request you've sent:</p>
+                <div class="flex items-center gap-3">
+                    <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400" />
+                    <span class="font-medium text-gray-800">Example Sent Request</span>
+                    <button class="ml-auto bg-teal-600 hover:bg-teal-700 text-white text-xs font-medium py-1 px-2 rounded">Accept</button>
+                    <button class="bg-gray-400 hover:bg-gray-500 text-white text-xs font-medium py-1 px-2 rounded">Decline</button>
+                </div>
+        </div>
+
+        <!-- Friend List Section -->
+        <div class="bg-white rounded-lg w-full p-4 shadow-md hidden md:block">
+            <h2 class="text-lg font-bold mb-3">Friend List</h2>
+
+            @foreach (var friend in ViewBag.Friends)
+            {
+                User other;
+                if (friend.RequesterId == ViewBag.CurrentUserId)
+                {
+                    other = friend.Accepter;
+                }
+                else
+                {
+                    other = friend.Requester;
+                }
+                <div class="flex items-center justify-between gap-3 mb-2 p-2 rounded-lg hover:bg-gray-100 transition">
+                    <div class="flex items-center gap-3 mb-2">
+                        <img src="/images/Placeholder.png"
+                            class="w-12 h-12 rounded-full object-cover border border-gray-400">
+                        <h3 class="text-md font-semibold text-gray-800">@other.FirstName @other.LastName</h3>
+                    </div>
+
+                    <form asp-action="Unfriend" asp-controller="Friends" method="post"
+                        onsubmit="return confirm('Are you sure you want to unfriend this person?');">
+                        <input type="hidden" name='friendId' value="@friend.Id" />
+                        <button type="submit"
+                            class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-1 px-3 rounded">Unfriend</button>
+                    </form>
+                </div>
+            }
+        </div>
     </div>
 </div>
