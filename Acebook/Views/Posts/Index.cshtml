@@ -239,7 +239,9 @@
           </p>
 
           <div class="flex justify-end mt-2">
-            <button class="text-teal-600 text-sm hover:underline">see more</button>
+            <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" method="get">
+              <button class="text-teal-600 text-sm hover:underline">see more</button>
+            </a>
           </div>
 
           <p class="text-xs text-gray-400 mt-4">Created on: @post.FormattedCreatedOn</p>

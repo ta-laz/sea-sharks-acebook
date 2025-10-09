@@ -43,6 +43,28 @@ public class PostsController : Controller
     return new RedirectResult("/posts");
   }
 
+  [Route("/post")]
+  [HttpGet]
+  public IActionResult Post(int id) {
+        AcebookDbContext dBContext = new AcebookDbContext();
+        Post? indiPost = dBContext.Posts.Include(p => p.User).FirstOrDefault(p => p.Id == id);
+        if (indiPost == null)
+        {
+            return new RedirectResult("/posts");
+        }
+        return View(indiPost);
+}
+  // public IActionResult Post(int id)
+  // {
+  //   AcebookDbContext dbContext = new AcebookDbContext();
+  //   Post indiPost = dbContext.Posts.FirstOrDefault(p => p.Id == id);
+  //   //.Include(p => p.User);
+
+  //   if (indiPost == null)
+
+  //   return View();
+  // }
+
   [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
   public IActionResult Error()
   {
