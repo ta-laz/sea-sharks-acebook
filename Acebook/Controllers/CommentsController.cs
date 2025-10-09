@@ -30,36 +30,18 @@ public class CommentsController : Controller
     //     return View();
     // }
 
-    // [Route("/post")]
+    [Route("post/create")]
     [HttpPost]
-    public IActionResult Create(Comment comment)
+    public IActionResult Create(int postId, Comment comment, string returnURL)
     {
-        AcebookDbContext dbContext = new AcebookDbContext();
         int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
+        AcebookDbContext dbContext = new AcebookDbContext();
         comment.UserId = currentUserId;
         comment.CreatedOn = DateTime.UtcNow;
-        //comment.PostId = PostId;
+        comment.PostId = postId;
         dbContext.Comments.Add(comment);
         dbContext.SaveChanges();
-        return View();
+    return new RedirectResult($"/posts/{postId}");
     }
 
-    // [Route("/post")]
-    // [HttpGet]
-    // public IActionResult Post(int id)
-    // {
-    //     AcebookDbContext dBContext = new AcebookDbContext();
-    //     Post? indiPost = dBContext.Posts.Include(p => p.User).FirstOrDefault(p => p.Id == id);
-    //     if (indiPost == null)
-    //     {
-    //         return new RedirectResult("/posts");
-    //     }
-    //     return View(indiPost);
-    // }
-
-    // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    // public IActionResult Error()
-    // {
-    //     return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    // }
 }
