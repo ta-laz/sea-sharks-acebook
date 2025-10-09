@@ -29,7 +29,13 @@ public class UsersController : Controller
     public IActionResult Index(int id)
     {
         AcebookDbContext dbContext = new AcebookDbContext();
-        User user = dbContext.Users.Find(id);
+        var user = dbContext.Users
+                  .Include(u => u.ProfileBio)
+                  .Include(u => u.Posts)
+                  .FirstOrDefault(u => u.Id == id);
+
+        if (user == null)
+            return NotFound();
 
         var posts = dbContext.Posts.Where(u => u.UserId == id)
                                    .Include(p => p.User);

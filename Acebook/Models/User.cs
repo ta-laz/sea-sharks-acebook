@@ -14,5 +14,5 @@ public class User
   public ICollection<Post>? Posts { get; set; }
   public ICollection<Friend> FriendRequestsSent { get; set; } = new List<Friend>();
   public ICollection<Friend> FriendRequestsReceived { get; set; } = new List<Friend>();
-  public ProfileBio? profileBio { get; set; }
+  public ProfileBio? ProfileBio { get; set; }
 }

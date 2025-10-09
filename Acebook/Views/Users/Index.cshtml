@@ -47,9 +47,20 @@
       <!-- Profile Info -->
       <div class="bg-white rounded-lg p-6 shadow-md">
         <h1 class="text-2xl font-bold text-teal-700">@Model.FirstName @Model.LastName</h1>
-        <p class="text-gray-600 mt-1">Age: 32</p>
-        <p class="text-gray-700 mt-4 leading-relaxed">
-          Profile Details
+        @if (Model.ProfileBio != null)
+        {
+          <p class="italic text-gray-400 mt-1">@Model.ProfileBio.Tagline</p>
+          <p class="text-gray-400 mt-1">Age: @Model.ProfileBio.Age</p>
+          <p class="text-gray-400 mt-1">Relationship Status: @Model.ProfileBio.RelationshipStatus</p>
+          <p class="text-gray-400 mt-1">Pets: @Model.ProfileBio.Pets</p>
+          <p class="text-gray-400 mt-1">Job: @Model.ProfileBio.Job</p>
+        }
+        else
+        {
+          <p class="text-gray-400 mt-1 italic text-gray-400">(No profile info added)</p>
+        }
+        <p class="mt-2 text-teal-500 hover:underline text-sm cursor-pointer">
+          Edit Bio
         </p>
       </div>
 
