@@ -140,27 +140,18 @@ namespace Acebook.Tests
       await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
       await Page.Locator("#password").FillAsync("password12");
       await Page.Locator("#submit").ClickAsync();
-
-      var error = Page.Locator("#error-message");
-      await Expect(error).ToBeVisibleAsync();
-      // await Expect(error).ToHaveTextAsync("Incorrect email or password.");
-      // await Expect(Page.GetByText("Incorrect email or password.")).ToBeVisibleAsync();
+      await Expect(Page.GetByTestId("error")).ToHaveTextAsync("Incorrect email or password.");
     }
 
     [Test]
     public async Task SignIn_UnRegisteredEmail_Error()
     {
+      SetDefaultExpectTimeout(1000);
       await Page.GotoAsync("/signin");
-
       await Page.Locator("#email").FillAsync("finn.white@sharkmail.com");
       await Page.Locator("#password").FillAsync("password123");
       await Page.Locator("#submit").ClickAsync();
-
-      var error = Page.Locator("#error-message");
-      await Expect(error).ToBeVisibleAsync();
-      // await Expect(error).ToHaveTextAsync("Incorrect email or password.");
-      // await Expect(Page.GetByText("Incorrect email or password.")).ToBeVisibleAsync();
-
+      await Expect(Page.GetByTestId("error")).ToHaveTextAsync("Incorrect email or password.");
     }
     [Test]
     public async Task SignIn_InvalidEmail_Error()
