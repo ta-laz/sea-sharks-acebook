@@ -29,13 +29,14 @@ public class UsersController : Controller
     public IActionResult Index(int id)
     {
         AcebookDbContext dbContext = new AcebookDbContext();
+        User user = dbContext.Users.Find(id);
 
         var posts = dbContext.Posts.Where(u => u.UserId == id)
                                    .Include(p => p.User);
         ViewBag.Posts = posts.ToList();
         ViewBag.Posts.Reverse();
 
-        return View();
+        return View(user);
     }
 
     [Route("/users")]
