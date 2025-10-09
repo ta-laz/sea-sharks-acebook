@@ -29,7 +29,7 @@ public class PostsController : Controller
     return View();
   }
 
-
+  [Route("/posts/create")]
   [HttpPost]
   public IActionResult Create(Post post, string returnUrl)
   {
