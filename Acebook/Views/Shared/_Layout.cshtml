@@ -25,8 +25,9 @@
                                 
                                 <!-- SeaShark Logo -->
                                 <a asp-action="Index" asp-controller="Home" method ="get">
-                                    <img src="images/light_grey.png"
+                                    <img src="@Url.Content("~/images/light_grey.png")"
                                     alt="SeaShark Logo" class="h-14 w-auto"  />
+                                
                                 </a>
                             </div>
                         
@@ -83,7 +84,7 @@
                                 <div>
                                     <button data-testid="dropdown1" id="dropdownDefaultButton" data-dropdown-toggle="dropdown1" class="absolute top-1/2 -translate-y-1/2 right-6 rounded-full ring-offset-0 focus:ring-4 focus:outline-none focus:ring-teal-900 dark:focus:ring-blue-800" type="button">
                                         <img 
-                                            src="images/Placeholder.png" 
+                                            src="@Url.Content("~/images/placeholder.png")" 
                                             alt="User menu" 
                                             class="h-12 w-12 rounded-full border-2 border-white"
                                         />
