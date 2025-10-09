@@ -40,8 +40,8 @@ namespace Acebook.Tests
       await Page.Locator("#lastname").FillAsync("Gills");
       await Page.Locator("#dob").FillAsync("1995-08-10");
       await Page.Locator("#email").FillAsync("francine@sharkmail.ocean");
-      await Page.Locator("#password").FillAsync("password123");
-      await Page.Locator("#confirmpassword").FillAsync("password123");
+      await Page.Locator("#password").FillAsync("Password123!");
+      await Page.Locator("#confirmpassword").FillAsync("Password123!");
       await Page.Locator("#submit").ClickAsync();
 
       await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts");
