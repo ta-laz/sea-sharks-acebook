@@ -6,9 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - acebook</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/acebook.styles.css" asp-append-version="true" /> *@
 </head>
 
 <body class="flex flex-col min-h-screen">
@@ -26,8 +23,8 @@
                         <div class="flex flex-1 items-center justify-center sm:justify-start">
                             <div class="flex shrink-0 items-center">
                                 
-                                <!-- SeaShark Logo --> 
-                                <a href="https://localhost:7196/">
+                                <!-- SeaShark Logo -->
+                                <a asp-action="Index" asp-controller="Home" method ="get">
                                     <img src="images/light_grey.png"
                                     alt="SeaShark Logo" class="h-14 w-auto"  />
                                 </a>
@@ -112,7 +109,7 @@
                             }
                             else
                             {<a>
-                                <a class="absolute right-2 flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/15 hover:text-white" href="https://localhost:7196/signup">Sign Up</a>
+                                <a class="absolute right-2 flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/15 hover:text-white" asp-action="New" asp-controller="Users" method ="get">Sign Up</a>
                             </a>   
                             }
 
@@ -133,11 +130,11 @@
 
     <footer class="bg-white rounded-lg shadow-sm m-4">
     <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
-        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 <a href="https://localhost:7196/" class="hover:underline">SeaShark™</a>. All Rights Reserved.
+        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 <a asp-action="Index" asp-controller="Home" method ="get" class="hover:underline">SeaShark™</a>. All Rights Reserved.
     </span>
     <ul class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
         <li>
-            <a href="https://localhost:7196/Privacy" class="hover:underline me-4 md:me-6"> Privacy Policy</a>
+            <a asp-action="Privacy" asp-controller="Home" method ="get" class="hover:underline me-4 md:me-6"> Privacy Policy</a>
         </li>
     </ul>
     </div>
