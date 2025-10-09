@@ -28,7 +28,7 @@ public class FriendsController : Controller
         var friends = dbContext.Friends
         .Include(f => f.Requester)
         .Include(f => f.Accepter)
-        .Where(f => f.RequesterId == currentUserId || f.AccepterId == currentUserId && f.Status == FriendStatus.Accepted);
+        .Where(f => (f.RequesterId == currentUserId || f.AccepterId == currentUserId) && f.Status == FriendStatus.Accepted);
 
         var receivedRequests = dbContext.Friends
         .Include(f => f.Requester)
@@ -48,6 +48,7 @@ public class FriendsController : Controller
         return View();
     }
 
+    [Route("/friends/unfriend")]
     [HttpPost]
     public IActionResult Unfriend(int friendId)
     {
@@ -59,4 +60,31 @@ public class FriendsController : Controller
 
         return RedirectToAction("Index");
     }
+    [Route("/friends/accept")]
+    [HttpPost]
+    public IActionResult Accept(int friendId)
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+
+        var friend = dbContext.Friends.Find(friendId);
+        friend.Status = FriendStatus.Accepted;
+        dbContext.SaveChanges();
+
+        return RedirectToAction("Index");
+    }
+
+    [Route("/friends/reject")]
+    [HttpPost]
+    public IActionResult Reject(int friendId)
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+
+        var friend = dbContext.Friends.Find(friendId);
+        dbContext.Friends.Remove(friend);
+        dbContext.SaveChanges();
+
+        return RedirectToAction("Index");
+    }
+
+
 }
