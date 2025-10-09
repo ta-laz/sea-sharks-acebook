@@ -10,4 +10,6 @@ public class Comment
     public int PostId { get; set; }
     public string? Content { get; set; }
     public DateTime CreatedOn { get; set; }
+
+    public Post? Post { get; set; }
 }

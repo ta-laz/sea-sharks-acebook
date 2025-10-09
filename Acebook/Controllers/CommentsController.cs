@@ -17,18 +17,18 @@ public class CommentsController : Controller
         _logger = logger;
     }
 
-    // [Route("/posts")]
-    // [HttpGet]
-    // public IActionResult Index()
-    // {
-    //     AcebookDbContext dbContext = new AcebookDbContext();
-    //     var posts = dbContext.Posts
-    //                                .Include(p => p.User);
-    //     ViewBag.Posts = posts.ToList();
-    //     ViewBag.Posts.Reverse();
+    [Route("post/")]
+    [HttpGet]
+    public IActionResult Index()
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+        var posts = dbContext.Posts
+                                   .Include(p => p.User);
+        ViewBag.Posts = posts.ToList();
+        ViewBag.Posts.Reverse();
 
-    //     return View();
-    // }
+        return View();
+    }
 
     [Route("post/create")]
     [HttpPost]

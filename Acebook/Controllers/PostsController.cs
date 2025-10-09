@@ -42,16 +42,18 @@ public class PostsController : Controller
     dbContext.SaveChanges();
     return new RedirectResult("/posts");
   }
-  
+
   [Route("/posts/{id}")]
   [HttpGet]
   public IActionResult Post(int id)
   {
     AcebookDbContext dbContext = new AcebookDbContext();
-    var post = dbContext.Posts.FirstOrDefault(p => p.Id == id);
+    var post = dbContext.Posts.Include(p => p.Comments).FirstOrDefault(p => p.Id == id);
+    var comments = dbContext.Comments.Where(c => c.PostId == id).ToList();
     ViewBag.post = post;
-    return View(post);
+    ViewBag.comments = comments;
 
+    return View(post);
   }
   
 
