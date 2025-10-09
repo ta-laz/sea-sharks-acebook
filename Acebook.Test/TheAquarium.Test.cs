@@ -6,7 +6,7 @@ using Acebook.Test;
 
 namespace Acebook.Tests
 {
-    public class MyUserProfilePagePlaywright : PageTest
+    public class TheAquariumPlaywright : PageTest
     {
         private const string BaseUrl = "http://127.0.0.1:5287";
 
@@ -31,7 +31,7 @@ namespace Acebook.Tests
           };
 
         [Test]
-        public async Task CreatePost_MyUserProfilePage_DisplaysPostOnSamePage()
+        public async Task CreatePost_PostsIndexPage_DisplaysPostOnSamePage()
         {
             // Go to sign-in page
             SetDefaultExpectTimeout(1000);
@@ -45,18 +45,12 @@ namespace Acebook.Tests
                 Page.WaitForURLAsync($"{BaseUrl}/posts"),
                 Page.Locator("#signin-submit").ClickAsync()
             );
-            // Open profile dropdown
-            await Page.WaitForSelectorAsync("#dropdownDefaultButton");
-            await Page.ClickAsync("#dropdownDefaultButton");
-            await Page.ClickAsync("#MyProfile");
-            // Wait for profile page to load
-            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
             // Create post
             await Page.Locator("#post-content").FillAsync("Test content");
             // Wait for post submission + redirect
             await Task.WhenAll(
                 Page.Locator("#post-submit").ClickAsync(),
-                Page.WaitForURLAsync($"{BaseUrl}/users/1")
+                Page.WaitForURLAsync($"{BaseUrl}/posts")
             );
             await Expect(Page.GetByText("Test content")).ToBeVisibleAsync();
         }

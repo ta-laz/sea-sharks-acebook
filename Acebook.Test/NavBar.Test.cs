@@ -38,13 +38,24 @@ namespace Acebook.Tests
 
             await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
             await Page.Locator("#password").FillAsync("password123");
-            await Page.Locator("#submit").ClickAsync();
-            await Expect(Page.GetByTestId("post filters")).ToBeVisibleAsync();
+            await Page.Locator("#signin-submit").ClickAsync();
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts");
             await Page.ClickAsync("#dropdownDefaultButton");
             await Page.Locator("#signout").WaitForAsync(new() { State = WaitForSelectorState.Visible });
             await Page.ClickAsync("#signout");
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/signin");
+        }
 
-            await Expect(Page.GetByText("Welcome To Sea Shark!")).ToBeVisibleAsync();
+        [Test]
+        public async Task MyProfileButton_SignedInUser_RedirectsToUserIndexPage()
+        {
+            await Page.GotoAsync("/signin");
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Page.Locator("#signin-submit").ClickAsync();
+            await Page.ClickAsync("#dropdownDefaultButton");
+            await Page.ClickAsync("#MyProfile");
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
         }
     }
 }

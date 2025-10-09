@@ -5,8 +5,7 @@
   <div class="flex flex-col lg:flex-row w-full max-w-7xl gap-8">
 
     <!-- 🧍 Left column: profile picture + friends -->
-    <div class="flex flex-col items-center lg:items-start w-full lg:w-1/3 space-y-6">
-
+    <div class="flex flex-col top-20 self-start top-32 sticky items-center lg:items-start w-full lg:w-1/3 space-y-6">
       <!-- Profile Picture (hover reveal) -->
       <div class="relative group flex justify-center">
         <img src="/images/Placeholder.png" alt="Profile Picture"
@@ -58,14 +57,14 @@
       <div class="bg-white rounded-lg w-full p-4 shadow-md">
         <h2 class="text-lg font-bold mb-3">Create a Post</h2>
         <form action="@Url.Action("Create", "Posts")" method="post">
-          <textarea
+          <textarea id="post-content"
             class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
             name="content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)"></textarea>
 
           <div class="flex justify-between items-center mt-3">
             <label class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
             <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Users", new { id = Model.Id })" />
-            <button type="submit"
+            <button id="post-submit" type="submit"
               class="bg-teal-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-teal-400 transition">
               Submit
             </button>

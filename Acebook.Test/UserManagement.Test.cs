@@ -127,7 +127,7 @@ namespace Acebook.Tests
 
       await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
       await Page.Locator("#password").FillAsync("password123");
-      await Page.Locator("#submit").ClickAsync();
+      await Page.Locator("#signin-submit").ClickAsync();
 
       await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts");
     }
@@ -139,7 +139,7 @@ namespace Acebook.Tests
 
       await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
       await Page.Locator("#password").FillAsync("password12");
-      await Page.Locator("#submit").ClickAsync();
+      await Page.Locator("#signin-submit").ClickAsync();
       await Expect(Page.GetByTestId("error")).ToHaveTextAsync("Incorrect email or password.");
     }
 
@@ -150,7 +150,7 @@ namespace Acebook.Tests
       await Page.GotoAsync("/signin");
       await Page.Locator("#email").FillAsync("finn.white@sharkmail.com");
       await Page.Locator("#password").FillAsync("password123");
-      await Page.Locator("#submit").ClickAsync();
+      await Page.Locator("#signin-submit").ClickAsync();
       await Expect(Page.GetByTestId("error")).ToHaveTextAsync("Incorrect email or password.");
     }
     [Test]
@@ -160,7 +160,7 @@ namespace Acebook.Tests
 
       await Page.Locator("#email").FillAsync("finn.whitesharkmail.com");
       await Page.Locator("#password").FillAsync("password123");
-      await Page.Locator("#submit").ClickAsync();
+      await Page.Locator("#signin-submit").ClickAsync();
 
       var error = Page.Locator("#Email-error");
       await Expect(error).ToBeVisibleAsync();
@@ -173,7 +173,7 @@ namespace Acebook.Tests
     {
       await Page.GotoAsync("/signin");
       await Page.Locator("#password").FillAsync("password123");
-      await Page.Locator("#submit").ClickAsync();
+      await Page.Locator("#signin-submit").ClickAsync();
 
       var error = Page.Locator("#Email-error");
       await Expect(error).ToBeVisibleAsync();
@@ -186,7 +186,7 @@ namespace Acebook.Tests
     {
       await Page.GotoAsync("/signin");
       await Page.Locator("#email").FillAsync("finn.white@sharkmail.com");
-      await Page.Locator("#submit").ClickAsync();
+      await Page.Locator("#signin-submit").ClickAsync();
 
       var error = Page.Locator("#Password-error");
       await Expect(error).ToBeVisibleAsync();
