@@ -34,17 +34,31 @@ namespace Acebook.Tests
         [Test]
         public async Task SignOut_WhenUserSignedIn_SignsOut()
         {
-            SetDefaultExpectTimeout(1000);
+
             await Page.GotoAsync("/signin");
 
             await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
             await Page.Locator("#password").FillAsync("password123");
-            await Page.Locator("#submit").ClickAsync();
+            await Page.Locator("#signin-submit").ClickAsync();
+            await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts");
             await Page.ClickAsync("#dropdownDefaultButton");
-            await Page.GetByTestId("signout").WaitForAsync(new() { State = WaitForSelectorState.Visible });
+            await Expect(Page.Locator("#signout")).ToBeVisibleAsync(); // key wait
             await Page.ClickAsync("#signout");
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/signin");
+        }
+
+        [Test]
+        public async Task MyProfileButton_SignedInUser_RedirectsToUserIndexPage()
+        {
+            await Page.GotoAsync("/signin");
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Page.Locator("#signin-submit").ClickAsync();
+            await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await Page.ClickAsync("#dropdownDefaultButton");
+            await Page.ClickAsync("#MyProfile");
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
         }
     }
 }

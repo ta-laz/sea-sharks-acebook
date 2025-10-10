@@ -12,5 +12,16 @@ public class ProfileBio
     public string? RelationshipStatus { get; set; }
     public string? Pets { get; set; }
     public string? Job { get; set; }
+    public User? user { get; set; }
 
+    public int Age
+    {
+        get
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            int age = today.Year - DOB.Year;
+            if (DOB > today.AddYears(-age)) age--;
+            return age;
+        }
+    }
 }

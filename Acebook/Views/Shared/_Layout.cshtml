@@ -25,8 +25,9 @@
                                 
                                 <!-- SeaShark Logo -->
                                 <a asp-action="Index" asp-controller="Home" method ="get">
-                                    <img src="images/light_grey.png"
+                                    <img src="@Url.Content("~/images/light_grey.png")"
                                     alt="SeaShark Logo" class="h-14 w-auto"  />
+                                
                                 </a>
                             </div>
                         
@@ -66,7 +67,7 @@
                                                 </ul>
                                             </div>
                                             <div class="relative w-full">
-                                                <input type="search" id="search-dropdown" class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" placeholder="Search Mockups, Logos, Design Templates..." required />
+                                                <input type="search" id="search-dropdown" class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" placeholder="@(ViewData["SearchPlaceholder"] ?? "Search everything...")" required />
                                                 <button type="submit" class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                                     <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
@@ -83,7 +84,7 @@
                                 <div>
                                     <button data-testid="dropdown1" id="dropdownDefaultButton" data-dropdown-toggle="dropdown1" class="absolute top-1/2 -translate-y-1/2 right-6 rounded-full ring-offset-0 focus:ring-4 focus:outline-none focus:ring-teal-900 dark:focus:ring-blue-800" type="button">
                                         <img 
-                                            src="images/Placeholder.png" 
+                                            src="@Url.Content("~/images/placeholder.png")" 
                                             alt="User menu" 
                                             class="h-12 w-12 rounded-full border-2 border-white"
                                         />
@@ -93,14 +94,14 @@
                                     <div id="dropdown1" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
                                         <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
                                         <li>
-                                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">My Profile</a>
+                                            <a asp-controller="Users" asp-action="Index" asp-route-id="@userId" method="get" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" id="MyProfile">My Profile</a>
                                         </li>
                                         <li>
                                             <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Account Settings</a>
                                         </li>
                                         <li>
                                             <form asp-controller="Sessions" asp-action="Signout" method="post" class="d-inline">
-                                            <button type="submit" id="signout" class="block w-full text-left px-4 py-2 appearance-none hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign Out</button>
+                                            <button type="submit" data-testid="signout" id="signout" class="block w-full text-left px-4 py-2 appearance-none hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign Out</button>
                                             </form>
                                         </li>
                                         </ul>
