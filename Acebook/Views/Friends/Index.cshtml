@@ -1,9 +1,9 @@
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
 
 <!-- Main Body -->
-<div class="flex justify-center w-full">
-    <div class="flex flex-col items-center space-y-4 w-full max-w-3xl">
-
+<div class="min-h-screen flex flex-col items-center justify-start px-4 sm:px-6 py-6">
+    <div class="flex flex-col items-center space-y-4 w-full max-w-screen-lg">
+        <h1 class="text-3xl font-bold mb-3">My Friends List</h1>
         <!-- Filter buttons -->
         <!-- Filter buttons -->
         <div class="flex justify-center mt-4" role="group" aria-label="requests filters">
@@ -19,7 +19,7 @@
 
 
         <!-- Requests Section -->
-        <div class="bg-white rounded-lg w-full p-4 shadow-md hidden md:block">
+        <div class="flex bg-gray-50 border rounded-lg w-full p-4 shadow-md hidden md:block">
             <input type="radio" id="received" name="request-toggle" class="hidden peer/received" checked>
             <input type="radio" id="sent" name="request-toggle" class="hidden peer/sent">
 
@@ -105,9 +105,14 @@
         </div>
 
         <!-- Friend List Section -->
-        <div class="bg-white rounded-lg w-full p-4 shadow-md hidden md:block">
-            <h2 class="text-lg font-bold mb-3">Friend List</h2>
-
+        <div class="bg-white rounded-lg w-full p-4 shadow-md hidden md:block border">
+            <div class="flex justify-between mb-3">
+                <h2 class="text-xl font-bold mb-3">Friend List</h2>
+                <form asp-action="Index" asp-controller="Friends" method="get" class="pr-2"> 
+                    <input type="text" name="SearchQuery" placeholder="Search friends..." class="border rounded px-3 py-1" value="@ViewBag.SearchQuery"/>
+                    <button type="submit" class="bg-teal-600 text-white px-3 py-1 rounded hover:bg-teal-700">Search</button>
+                </form>
+            </div>
             @foreach (var friend in ViewBag.Friends)
             {
                 User other;
@@ -151,11 +156,11 @@
     function updateUI() {
       // Change header text
       if (receivedRadio.checked) {
-        header.textContent = "Your Received Requests";
+        header.textContent = "My Received Requests";
       } else if (sentRadio.checked) {
-        header.textContent = "Your Sent Requests";
+        header.textContent = "My Sent Requests";
       } else {
-        header.textContent = "Your Requests";
+        header.textContent = "My Requests";
       }
 
       // Handle label colors

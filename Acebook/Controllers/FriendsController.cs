@@ -77,6 +77,7 @@ public class FriendsController : Controller
 
         return RedirectToAction("Index");
     }
+    
     [Route("/friends/accept")]
     [HttpPost]
     public IActionResult Accept(int friendId)
