@@ -34,17 +34,17 @@ namespace Acebook.Tests
         [Test]
         public async Task SignOut_WhenUserSignedIn_SignsOut()
         {
-            await Page.GotoAsync("/");
+            SetDefaultExpectTimeout(1000);
+            await Page.GotoAsync("/signin");
 
             await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
             await Page.Locator("#password").FillAsync("password123");
             await Page.Locator("#submit").ClickAsync();
-            await Expect(Page.GetByTestId("post filters")).ToBeVisibleAsync();
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts");
             await Page.ClickAsync("#dropdownDefaultButton");
-            await Page.Locator("#signout").WaitForAsync(new() { State = WaitForSelectorState.Visible });
+            await Page.GetByTestId("signout").WaitForAsync(new() { State = WaitForSelectorState.Visible });
             await Page.ClickAsync("#signout");
-
-            await Expect(Page.GetByText("Welcome To Sea Shark!")).ToBeVisibleAsync();
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/signin");
         }
     }
 }
