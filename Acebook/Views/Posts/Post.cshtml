@@ -43,63 +43,58 @@
         </div>
     </div>
 
-    <!-- Background for comments section -->
-    @* <div class="flex flex-col w-2/3 px-4 py-4 bg-teal-700/10"> <!-- bg-gray-50 --> *@
-    <div class="flex flex-col w-2/3 bg-teal-700/10 rounded-b-lg shadow-[0_0_15px_rgba(15,118,110,0.3)] max-h-[70vh] overflow-hidden">
+    <div
+        class="flex flex-col w-2/3 bg-teal-700/10 rounded-b-lg shadow-[0_0_15px_rgba(15,118,110,0.3)] max-h-[70vh] overflow-hidden">
 
-    <div class="flex-1 overflow-y-auto px-4 py-4">
-    <!-- Comments for each post -->
-    @foreach (Comment comment in ViewBag.comments)
-    {
-        <div class="bg-white rounded-lg w-full p-4 mt-4 shadow-md hidden md:block">
-            <div class="flex justify-between items-center">
-                <h3 class="text-md font-semibold text-gray-800">@comment.User.FirstName @comment.User.LastName</h3>
-                <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400">
-            </div>
+        <div class="flex-1 overflow-y-auto px-4 py-4">
+            @foreach (Comment comment in ViewBag.comments)
+            {
+                <div class="bg-white rounded w-full p-2 mt-2 shadow-md hidden md:flex items-start relative">
+                    <img src="/images/Placeholder.png"
+                        class="w-8 h-8 rounded-full object-cover border border-gray-400 mr-3">
 
-            <p class="text-gray-700 mt-2 leading-relaxed">@comment.Content</p>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-sm font-semibold text-gray-800">
+                                @comment.User.FirstName @comment.User.LastName
+                            </h3>
 
-            <p class="text-xs text-gray-400 mt-4">Created on: @comment.FormattedCreatedOn</p>
+                            <form action="@Url.Action()" method="post">
+                                <button type="submit"
+                                    class="relative inline-flex items-center justify-center overflow-hidden text-gray-600 text-xs bg-transparent hover:bg-white group py-1 px-3 font-medium rounded-md transition-all border border-gray-200 shadow-sm">
+                                    <span
+                                        class="absolute inset-0 bg-teal-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
+                                    <span
+                                        class="relative flex items-center text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                                        <span class="ml-1">Like (10)</span>
+                                    </span>
+                                </button>
+                            </form>
+                        </div>
 
-            @* <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
-                <button
-                    class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                    <span
-                        class="absolute inset-0 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-                    <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                        Like (12)
-                    </span>
-                </button>
+                        <p class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
 
-                <button
-                    class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                    <span
-                        class="absolute inset-0 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-                    <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                        View Profile
-                    </span>
-                </button>
+                        <p class="text-xs text-gray-400 mt-2">Commented on: @comment.FormattedCreatedOn</p>
+                    </div>
+                </div>
+            }
 
-            </div> *@
         </div>
-    }
+        <div class="bg-white rounded-b-lg w-full px-4 py-2 shadow-[0_0_15px_rgba(15,118,110,0.3)]">
+            <h2 class="text-lg font-semibold mb-1">Add a comment</h2>
+            <form action="@Url.Action("Create", "Comments")" method="post">
+                <input type="hidden" name="returnURL" value="@Url.Action("Post", "Comments", new { id = Model.Id })" />
+                <input type="hidden" name="postId" value="@Model.Id" />
+                <textarea
+                    class="w-full resize-none border p-1 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
+                    name="Content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)"></textarea>
+                <div class="flex justify-between items-center mt-0">
+                    <label class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
+                    <button type="submit"
+                        class="bg-teal-600 text-white text-sm font-medium px-3 py-1 rounded-md hover:bg-teal-400">
+                        Submit
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-    <!-- Add a Comment -->
-    <div class="bg-white rounded-b-lg w-full px-4 py-2 shadow-[0_0_15px_rgba(15,118,110,0.3)]">
-        <h2 class="text-lg font-semibold mb-1">Add a comment</h2>
-        <form action="@Url.Action("Create", "Comments")" method="post">
-            <input type="hidden" name="returnURL" value="@Url.Action("Post", "Comments", new { id = Model.Id })" />
-            <input type="hidden" name="postId" value="@Model.Id" />
-            <textarea
-                class="w-full resize-none border p-1 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
-                name="Content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)"></textarea>
-            <div class="flex justify-between items-center mt-0">
-                <label class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
-                <button type="submit"
-                    class="bg-teal-600 text-white text-sm font-medium px-3 py-1 rounded-md hover:bg-teal-400">
-                    Submit
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
