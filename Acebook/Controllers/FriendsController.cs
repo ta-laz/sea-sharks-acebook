@@ -19,7 +19,7 @@ public class FriendsController : Controller
 
     [Route("/friends")]
     [HttpGet]
-    public IActionResult Index()
+    public IActionResult Index(string? SearchQuery)
     {
         AcebookDbContext dbContext = new AcebookDbContext();
 
@@ -29,6 +29,22 @@ public class FriendsController : Controller
         .Include(f => f.Requester)
         .Include(f => f.Accepter)
         .Where(f => (f.RequesterId == currentUserId || f.AccepterId == currentUserId) && f.Status == FriendStatus.Accepted);
+
+        // The logic bit for the search query
+        if (!string.IsNullOrEmpty(SearchQuery))
+        {
+            string loweredSearch = SearchQuery.ToLower();
+
+            friends = friends.Where(f =>
+                (f.RequesterId == currentUserId &&
+                    (f.Accepter.FirstName.ToLower().Contains(loweredSearch) ||
+                     f.Accepter.LastName.ToLower().Contains(loweredSearch)))
+                ||
+                (f.AccepterId == currentUserId &&
+                    (f.Requester.FirstName.ToLower().Contains(loweredSearch) ||
+                     f.Requester.LastName.ToLower().Contains(loweredSearch)))
+            );
+        }
 
         var receivedRequests = dbContext.Friends
         .Include(f => f.Requester)
@@ -44,16 +60,14 @@ public class FriendsController : Controller
         ViewBag.currentUserId = currentUserId;
         ViewBag.ReceivedRequests = receivedRequests.ToList();
         ViewBag.SentRequests = sentRequests.ToList();
+        ViewBag.SearchQuery = SearchQuery;
 
         return View();
     }
 
-
-    // this Unfriend method and the Reject method are identical, you ok with me just calling it Remove and using the same thing? 
-    
-    [Route("/friends/unfriend")]
+    [Route("/friends/remove")]
     [HttpPost]
-    public IActionResult Unfriend(int friendId)
+    public IActionResult Remove(int friendId)
     {
         AcebookDbContext dbContext = new AcebookDbContext();
 
@@ -75,19 +89,4 @@ public class FriendsController : Controller
 
         return RedirectToAction("Index");
     }
-
-    [Route("/friends/reject")]
-    [HttpPost]
-    public IActionResult Reject(int friendId)
-    {
-        AcebookDbContext dbContext = new AcebookDbContext();
-
-        var friend = dbContext.Friends.Find(friendId);
-        dbContext.Friends.Remove(friend);
-        dbContext.SaveChanges();
-
-        return RedirectToAction("Index");
-    }
-
-
 }
