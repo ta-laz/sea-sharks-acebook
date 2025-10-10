@@ -125,6 +125,7 @@ public class UsersController : Controller
     {
         AcebookDbContext dbContext = new AcebookDbContext();
         var profileBio = dbContext.ProfileBios.Find(id);
+        
         profileBio.Tagline = tagline;
         profileBio.RelationshipStatus = relationshipStatus;
         profileBio.Pets = pets;
