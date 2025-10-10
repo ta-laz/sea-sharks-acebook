@@ -84,9 +84,12 @@
               <input type="hidden" asp-for="ProfileBio.Pets" name="pets" id="pets" />
               <input type="hidden" asp-for="ProfileBio.Job" name="job" id="job" />
               <input type="hidden" value= "@userId" name="id" id="userid" />
-                    <button id="submit" type="submit"
-                        class="bg-teal-600 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-teal-400">Save
-              Changes</button>
+              <button type="button" id="cancel-edit"
+                class="bg-gray-300 text-gray-800 text-sm w-36 px-4 py-2 rounded-md hover:bg-gray-400 mt-2"> Cancel
+              </button>
+              <button id="submit" type="submit"
+                class="bg-teal-600 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-teal-400 mt-2">Save Changes
+              </button>
       </form>
 
       <button id="update-tagline"
@@ -158,10 +161,18 @@
   const button = document.getElementById('update-tagline');
   const text = document.getElementById('tagline-text');
   const form = document.getElementById('tagline-form');
+  const cancel = document.getElementById("cancel-edit");
 
   button.addEventListener('click', () => {
     text.classList.add('hidden');
     form.classList.remove('hidden');
     button.classList.add('hidden');
   });
+
+  cancel.addEventListener('click', () => {
+    text.classList.remove('hidden');
+    form.classList.add('hidden');
+    button.classList.remove('hidden');
+  });
+
 </script>
