@@ -34,16 +34,22 @@ namespace Acebook.Tests
         [Test]
         public async Task SignOut_WhenUserSignedIn_SignsOut()
         {
-            await Page.GotoAsync("/");
+            SetDefaultExpectTimeout(1000);
+            await Page.GotoAsync("/signin");
 
             await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
             await Page.Locator("#password").FillAsync("password123");
+<<<<<<< HEAD
             await Page.Locator("#signin-submit").ClickAsync();
+=======
+            await Page.Locator("#submit").ClickAsync();
+>>>>>>> main
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts");
             await Page.ClickAsync("#dropdownDefaultButton");
-            await Page.Locator("#signout").WaitForAsync(new() { State = WaitForSelectorState.Visible });
+            await Page.GetByTestId("signout").WaitForAsync(new() { State = WaitForSelectorState.Visible });
             await Page.ClickAsync("#signout");
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/signin");
+<<<<<<< HEAD
         }
 
         [Test]
@@ -56,6 +62,8 @@ namespace Acebook.Tests
             await Page.ClickAsync("#dropdownDefaultButton");
             await Page.ClickAsync("#MyProfile");
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
+=======
+>>>>>>> main
         }
     }
 }
