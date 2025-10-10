@@ -1,0 +1,212 @@
+using Microsoft.Playwright;
+using Microsoft.Playwright.NUnit;
+using NUnit.Framework;
+using acebook.Models;
+using Acebook.Test;
+using System.Text.RegularExpressions;
+
+
+namespace Acebook.Tests
+{
+    public class PostPagePlaywright : PageTest
+    {
+        private const string BaseUrl = "http://127.0.0.1:5287";
+
+        [OneTimeSetUp]
+        public async Task OneTime()
+        {
+            await using var context = new AcebookDbContext();
+            await TestDataSeeder.EnsureDbReadyAsync(context);
+        }
+
+        [SetUp]
+        public async Task SetupDb()
+        {
+            await using var context = new AcebookDbContext();
+            await TestDataSeeder.ResetAndSeedAsync(context);
+        }
+
+        public override BrowserNewContextOptions ContextOptions()
+            => new BrowserNewContextOptions
+            {
+                BaseURL = BaseUrl
+            };
+
+
+        [Test]
+        public async Task CommentButton_ClickedOnPost_NavigatesToPostPage()
+        {
+            // Go to sign-in page
+            SetDefaultExpectTimeout(1000);
+            await Page.GotoAsync("/signin");
+            // Wait for form to load
+            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+            // Fill and submit
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.Locator("#signin-submit").ClickAsync()
+            );
+            // Click on a post:
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts/175"),
+                Page.GetByTestId("comment-button").First.ClickAsync()
+            );
+            await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
+        }
+
+
+        [Test]
+        public async Task SeeMore_ClickedOnPost_NavigatesToPostPage()
+        {
+            // Go to sign-in page
+            SetDefaultExpectTimeout(1000);
+            await Page.GotoAsync("/signin");
+            // Wait for form to load
+            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+            // Fill and submit
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.Locator("#signin-submit").ClickAsync()
+            );
+            // Click on a post:
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts/175"),
+                Page.GetByTestId("see-more-button").First.ClickAsync()
+            );
+            await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
+        }
+
+
+        [Test]
+        public async Task SubmitButton_ClickedOnPost_AddsCommentToPost()
+        {
+            // Go to sign-in page
+            SetDefaultExpectTimeout(1000);
+            await Page.GotoAsync("/signin");
+            // Wait for form to load
+            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+            // Fill and submit
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.Locator("#signin-submit").ClickAsync()
+            );
+            // Click on a post:
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts/175"),
+                Page.GetByTestId("see-more-button").First.ClickAsync()
+            );
+
+            // Checks you are on that post page:
+            await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
+
+            // Click into the comment box
+            await Page.Locator("#comment-box").ClickAsync();
+
+            // Input comment
+            await Page.Locator("#comment-box").FillAsync("Test Comment");
+
+            // Click submit
+            await Page.Locator("#comment-submit").ClickAsync();
+
+            // Comment appears on page
+            await Expect(Page.GetByText("Test Comment")).ToBeVisibleAsync();
+        }
+
+
+        // NOTE: This test is a bit flimsy (if we add a comment to post 175 it will no longer test for the No Comments message (because it won't be displayed) but I liked the if statement??)
+        [Test]
+        public async Task PostPage_NoComments_DisplaysNoCommentsMessage()
+        {
+            // Go to sign-in page
+            SetDefaultExpectTimeout(1000);
+            await Page.GotoAsync("/signin");
+            // Wait for form to load
+            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+            // Fill and submit
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.Locator("#signin-submit").ClickAsync()
+            );
+            // Click on a post:
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts/175"),
+                Page.GetByTestId("see-more-button").First.ClickAsync()
+            );
+
+            // Checks you are on that post page:
+            await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
+
+            // Check for comments section
+            var comments = Page.Locator(".comment-item"); // use a selector for your comment divs
+            var commentCount = await comments.CountAsync();
+
+            if (commentCount == 0)
+            {
+                // Expect "No comments yet!" message if there are no comments
+                await Expect(Page.GetByText("No comments yet!")).ToBeVisibleAsync();
+            }
+            else
+            {
+                // Otherwise expect at least one comment visible
+                await Expect(comments.First).ToBeVisibleAsync();
+            }
+        }
+        
+        
+        [Test]
+        public async Task NewPostWithNoComments_DisplaysNoCommentsMessage()
+        {
+            // Go to sign-in page
+            SetDefaultExpectTimeout(1000);
+            await Page.GotoAsync("/signin");
+
+            // Wait for form to load
+            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+
+            // Fill and submit signin form 
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.Locator("#signin-submit").ClickAsync()
+            );
+
+            // Create post
+            await Page.Locator("#post-content").FillAsync("Test content");
+            // Wait for post submission + redirect
+            await Task.WhenAll(
+                Page.Locator("#post-submit").ClickAsync(),
+                Page.WaitForURLAsync($"{BaseUrl}/posts")
+            );
+
+            // Wait for the new post to appear on the posts page
+            await Expect(Page.GetByText("Test content")).ToBeVisibleAsync();
+
+            // Click “See more” on the new post
+            await Task.WhenAll(
+                Page.WaitForURLAsync(new Regex($"{BaseUrl}/posts/\\d+")), // Uses regex \\d+ to expect one or more digits, scalable when more posts are added 
+                Page.GetByTestId("see-more-button").First.ClickAsync() // Because we have just made the post, we can still click just on the first one 
+            );
+
+            // Confirm we are on an individual post page
+            await Expect(Page.Locator("#splash-heading")).ToBeVisibleAsync();
+
+            // Confirm we are on the NEW individual post page
+            await Expect(Page.GetByText("Test content")).ToBeVisibleAsync();
+
+            // Check for “No comments yet!” message
+            await Expect(Page.GetByText("No comments yet!")).ToBeVisibleAsync();
+        }
+
+
+    }
+}

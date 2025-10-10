@@ -244,7 +244,7 @@
 
           <div class="flex justify-end mt-2">
             <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" method="get">
-              <button class="text-teal-600 text-sm hover:underline">see more</button>
+              <button data-testid="see-more-button" class="text-teal-600 text-sm hover:underline">see more</button>
             </a>
           </div>
 
@@ -261,7 +261,7 @@
             </button>
 
             <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" method="get">
-              <button
+              <button data-testid="comment-button"
                 class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
                 <span
                   class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
