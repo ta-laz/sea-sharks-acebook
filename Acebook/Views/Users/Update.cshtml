@@ -1,0 +1,82 @@
+@model User
+
+<div class="min-h-screen flex flex-col items-center justify-start p-4">
+
+    <!-- Logo -->
+    <img src="@Url.Content("~/images/light_grey.png")" alt="SeaShark Logo" class="h-24 w-24" />
+
+    <!-- Title -->
+    <h1 class="text-3xl font-bold text-teal-600 text-center">Update Your Profile</h1>
+
+    <!-- sign-up form container -->
+    <div class="bg-white rounded-lg p-6 shadow-md w-full max-w-md">
+        <form asp-action="Update" asp-controller="Users" method="post" class="flex flex-col space-y-4" novalidate>
+
+            @* <div asp-validation-summary="ModelOnly" class="text-teal-600 mb-2"></div> *@
+
+            <!-- Tagline block with validation -->
+            <div>
+                <label for="tagline" class="mb-1 block text-sm text-gray-700">Tagline</label>
+                <input asp-for="ProfileBio.Tagline" id="tagline" class="w-full border border-gray-400 rounded-lg p-2"
+                    placeholder="Tagline" />
+                @* <span asp-validation-for="Tagline" class="text-teal-600 text-sm font-bold" id="tagline-error"></span> *@
+            </div>
+
+            <!-- DOB with validation (more may need adding for auto filling?) -->
+            <div>
+                <label for="dob" class="mb-1 block text-sm text-gray-700">Date of Birth</label>
+                <input asp-for="ProfileBio.DOB" id="dob" type="date"
+                    class="w-full border border-gray-400 rounded-lg p-2" />
+                @* <span asp-validation-for="DOB" class="text-teal-600 text-sm font-bold" id="dob-error"></span> *@
+            </div>
+
+            <!-- relationship status block with validation -->
+            <div>
+                <label for="relationshipstatus" class="mb-1 block text-sm text-gray-700">Relationship Status</label>
+                <input asp-for="ProfileBio.RelationshipStatus" id="relationshipstatus"
+                    class="w-full border border-gray-400 rounded-lg p-2" placeholder="Relationship Status" />
+                @* <span asp-validation-for="RelationshipStatus" class="text-teal-600 text-sm font-bold" *@
+                @* id="relationshipstatus-error"></span> *@
+            </div>
+
+            <!-- pets block with validation -->
+            <div>
+                <label for="pets" class="mb-1 block text-sm text-gray-700">Pets</label>
+                <input asp-for="ProfileBio.Pets" id="pets" class="w-full border border-gray-400 rounded-lg p-2"
+                    placeholder="pets" />
+                @* <span asp-validation-for="Pets" class="text-teal-600 text-sm font-bold" id="pets-error"></span> *@
+            </div>
+
+            <!-- Job block with validation -->
+            <div>
+                <label for="job" class="mb-1 block text-sm text-gray-700">Job</label>
+                <input asp-for="ProfileBio.Job" id="Job" class="w-full border border-gray-400 rounded-lg p-2"
+                    placeholder="Job" />
+                @* <span asp-validation-for="Job" class="text-teal-600 text-sm font-bold" id="job-error"></span> *@
+            </div>
+
+            <!-- Container for buttons -->
+            <div class="flex justify-end mt-4" role="group" aria-label="post filters">
+                <!-- Update profile submit form -->
+                <div class="flex justify-center">
+                    <a href="javascript:history.back()" id="cancel"
+                        class="bg-gray-100 text-sm font-medium w-24 px-4 py-2 mr-4 rounded-md hover:bg-gray-300">Cancel</a>
+                </div>
+
+                <!-- Cancel button -->
+                <div class="flex justify-center">
+                    <button id="submit" type="submit"
+                        class="bg-teal-600 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-teal-400">Save
+                        Changes</button>
+                </div>
+            </div>
+
+            <!-- Errors  -->
+            @* @if (ViewBag.Error != null)
+            {
+                <div id="error-message" class="text-teal-600 mt-2">@ViewBag.Error</div>
+            } *@
+
+        </form>
+    </div>
+</div>

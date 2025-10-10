@@ -24,6 +24,7 @@ public class UsersController : Controller
         return View();
     }
 
+    [ServiceFilter(typeof(AuthenticationFilter))]
     [Route("/users/{id}")]
     [HttpGet]
     public IActionResult Index(int id)
@@ -45,6 +46,7 @@ public class UsersController : Controller
         return View(user);
     }
 
+    [ServiceFilter(typeof(AuthenticationFilter))]
     [Route("/users")]
     [HttpPost]
     public IActionResult Create(SignUpViewModel suvm)
@@ -98,5 +100,24 @@ public class UsersController : Controller
         var bytes = System.Text.Encoding.UTF8.GetBytes(password);
         var hash = sha256.ComputeHash(bytes);
         return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+    }
+
+    [ServiceFilter(typeof(AuthenticationFilter))]
+    [Route("/users/{id}/update")]
+    [HttpGet]
+    public IActionResult Update(int id)
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+        var user = dbContext.Users
+                  .Include(u => u.ProfileBio)
+                  .Include(u => u.Posts)
+                  .FirstOrDefault(u => u.Id == id);
+
+        if (user == null)
+            return NotFound();
+
+        var posts = dbContext.Posts.Where(u => u.UserId == id);
+
+        return View(user);
     }
 }

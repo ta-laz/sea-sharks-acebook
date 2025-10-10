@@ -1,5 +1,9 @@
 @model User
 
+@{
+  int? userId = Context.Session.GetInt32("user_id");
+}
+
 <div class="flex justify-center w-full mt-8">
   <!-- Outer container -->
   <div class="flex flex-col lg:flex-row w-full max-w-7xl gap-8">
@@ -46,22 +50,22 @@
 
       <!-- Profile Info -->
       <div class="bg-white rounded-lg p-6 shadow-md">
-        <h1 class="text-2xl font-bold text-teal-700">@Model.FirstName @Model.LastName</h1>
+        <h1 class="text-2xl font-bold text-teal-700 mb-2">@Model.FirstName @Model.LastName</h1>
         @if (Model.ProfileBio != null)
         {
           <p class="italic text-gray-400 mt-1">@Model.ProfileBio.Tagline</p>
           <p class="text-gray-400 mt-1">Age: @Model.ProfileBio.Age</p>
           <p class="text-gray-400 mt-1">Relationship Status: @Model.ProfileBio.RelationshipStatus</p>
           <p class="text-gray-400 mt-1">Pets: @Model.ProfileBio.Pets</p>
-          <p class="text-gray-400 mt-1">Job: @Model.ProfileBio.Job</p>
+          <p class="text-gray-400 mt-1 mb-2">Job: @Model.ProfileBio.Job</p>
         }
         else
         {
           <p class="text-gray-400 mt-1 italic text-gray-400">(No profile info added)</p>
         }
-        <p class="mt-2 text-teal-500 hover:underline text-sm cursor-pointer">
-          Edit Bio
-        </p>
+        <a asp-controller="Users" asp-action="Update" asp-route-id="@userId" method="get" id="update-profile"
+          class="text-teal-600 text-sm font-medium py-4 rounded-md hover:text-teal-400 transition">
+          Edit profile</a>
       </div>
 
       <!-- Create Post Form -->
