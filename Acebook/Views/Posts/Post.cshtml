@@ -23,7 +23,7 @@
             <button
                 class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
                 <span
-                    class="absolute inset-0 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                    class="absolute inset-0 bg-teal-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
                 <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
                     Like (@Model.Likes?.Count)
                 </span>
@@ -31,7 +31,7 @@
             <button
                 class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
                 <span
-                    class="absolute inset-0 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                    class="absolute inset-0 bg-teal-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
                 <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
                     View Profile
                 </span>
@@ -39,7 +39,7 @@
             <button
                 class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
                 <span
-                    class="absolute inset-0 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                    class="absolute inset-0 bg-teal-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
                 <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
                     Share
                 </span>
@@ -47,7 +47,8 @@
         </div>
     </div>
 
-    <div class="flex flex-col w-2/3 bg-teal-700/10 rounded-b-lg shadow-[0_0_15px_rgba(15,118,110,0.3)] max-h-[70vh] overflow-hidden">
+    <div
+        class="flex flex-col w-2/3 bg-teal-700/10 rounded-b-lg shadow-[0_0_15px_rgba(15,118,110,0.3)] max-h-[70vh] overflow-hidden">
 
         <div class="flex-1 overflow-y-auto px-4 py-4">
 
@@ -57,9 +58,11 @@
 
             @if (comments == null || !comments.Any())
             {
-                <h3 class ="text-center text-teal-600 font-semibold mt-4">No comments yet!</h3>
+                <div class="flex items-center justify-center h-full px-4 py-4">
+                    <h3 class="text-teal-600 font-semibold">No comments yet!</h3>
+                </div>
             }
-        
+
             @foreach (Comment comment in ViewBag.comments)
             {
                 <div class="bg-white rounded w-full p-2 mt-2 shadow-md hidden md:flex items-start relative">
@@ -91,7 +94,7 @@
                     </div>
                 </div>
             }
-        
+
 
         </div>
         <div class="bg-white rounded-b-lg w-full px-4 py-2 shadow-[0_0_15px_rgba(15,118,110,0.3)]">
