@@ -1,88 +1,94 @@
 @model Acebook.ViewModels.SignUpViewModel
 <div class="min-h-screen flex flex-col items-center justify-start p-4">
-<!-- Logo -->
+  <!-- Logo -->
 
   <img src="images/light_grey.png" alt="SeaShark Logo" class="h-24 w-24" />
-<!-- Welcome -->
+  <!-- Welcome -->
 
   <h1 class="text-3xl font-bold text-teal-600 text-center">Welcome To Sea Shark!</h1>
-<!-- Sign-up -->
+  <!-- Sign-up -->
 
   <h2 class="text-xl font-semibold text-teal-600 text-center mb-6">Sign Up</h2>
-<!-- sign-up form container -->
+  <!-- sign-up form container -->
 
   <div class="bg-white rounded-lg p-6 shadow-md w-full max-w-md">
     <form asp-action="Create" asp-controller="Users" method="post" class="flex flex-col space-y-4" novalidate>
 
-      <div asp-validation-summary="All"
-        class="bg-red-50 border border-red-400 text-red-700 rounded p-3 mb-4 text-sm">
+      <div asp-validation-summary="All" class="bg-red-50 border border-red-400 text-red-700 rounded p-3 mb-4 text-sm">
       </div>
 
 
       <style>
         /* Hides the errors until there are errors */
         .validation-summary-valid {
-          display: none;       
+          display: none;
         }
 
         .validation-summary-errors {
-          display: block;      /* adds the errors */
+          display: block;
+          /* adds the errors */
         }
       </style>
       <!-- First name block with validation -->
 
       <div>
         <label for="firstname" class="mb-1 block text-sm text-gray-700">First Name</label>
-        <input asp-for="FirstName" id="firstname" class="w-full border border-gray-400 rounded-lg p-2" placeholder="First Name" />
+        <input asp-for="FirstName" id="firstname" class="w-full border border-gray-400 rounded-lg p-2"
+          placeholder="First Name" />
         <span asp-validation-for="FirstName" class="text-teal-600 text-sm font-bold" id="firstname-error"></span>
       </div>
-<!-- Last name block with validation -->
+      <!-- Last name block with validation -->
 
       <div>
         <label for="lastname" class="mb-1 block text-sm text-gray-700">Last Name</label>
-        <input asp-for="LastName" id="lastname" class="w-full border border-gray-400 rounded-lg p-2" placeholder="Last Name" />
+        <input asp-for="LastName" id="lastname" class="w-full border border-gray-400 rounded-lg p-2"
+          placeholder="Last Name" />
         <span asp-validation-for="LastName" class="text-teal-600 text-sm font-bold" id="lastname-error"></span>
       </div>
-<!-- DOB with validation (more may need adding for auto filling?) -->
+      <!-- DOB with validation (more may need adding for auto filling?) -->
 
       <div>
         <label for="dob" class="mb-1 block text-sm text-gray-700">Date of Birth</label>
         <input asp-for="DOB" id="dob" type="date" class="w-full border border-gray-400 rounded-lg p-2" />
         <span asp-validation-for="DOB" class="text-teal-600 text-sm font-bold" id="dob-error"></span>
       </div>
-<!-- email block with validation -->
+      <!-- email block with validation -->
 
       <div>
         <label for="email" class="mb-1 block text-sm text-gray-700">Email</label>
         <input asp-for="Email" id="email" class="w-full border border-gray-400 rounded-lg p-2" placeholder="Email" />
         <span asp-validation-for="Email" class="text-teal-600 text-sm font-bold" id="email-error"></span>
       </div>
-<!-- password block with validation -->
+      <!-- password block with validation -->
 
       <div>
         <label for="password" class="mb-1 block text-sm text-gray-700">Password</label>
-        <input asp-for="Password" id="password" type="password" class="w-full border border-gray-400 rounded-lg p-2" placeholder="Password" />
-        <span asp-validation-for="Password" class="text-teal-600 text-sm font-bold" id="password-error"></span>  
+        <input asp-for="Password" id="password" type="password" class="w-full border border-gray-400 rounded-lg p-2"
+          placeholder="Password" />
+        <span asp-validation-for="Password" class="text-teal-600 text-sm font-bold" id="password-error"></span>
       </div>
 
       <div>
         <label for="confirmpassword" class="mb-1 block text-sm text-gray-700">Confirm Password</label>
-        <input asp-for="ConfirmPassword" id="confirmpassword" type="password" class="w-full border border-gray-400 rounded-lg p-2" placeholder="Confirm Password" />
-        <span asp-validation-for="ConfirmPassword" class="text-teal-600 text-sm font-bold" id="confirmpassword-error"></span>
+        <input asp-for="ConfirmPassword" id="confirmpassword" type="password"
+          class="w-full border border-gray-400 rounded-lg p-2" placeholder="Confirm Password" />
+        <span asp-validation-for="ConfirmPassword" class="text-teal-600 text-sm font-bold"
+          id="confirmpassword-error"></span>
       </div>
-<!-- Show password toggle -->
+      <!-- Show password toggle -->
 
       <div class="flex items-center mt-2">
         <input id="Show-Password" class="h-4 w-4" type="checkbox" onclick="togglePasswordVisibility()">
         <label for="Show-Password" class="ml-2 text-md text-gray-700">Show Passwords</label>
       </div>
-<!-- Sign-up submit form -->
+      <!-- Sign-up submit form -->
 
       <div class="flex justify-center">
-        <button id ="submit" type="submit"
-          class="bg-teal-600 text-white text-sm font-medium w-48 px-4 py-2 rounded-md hover:bg-teal-400">Sign Up</button>
+        <button id="submit" type="submit"
+          class="bg-teal-600 text-white text-sm font-medium w-48 px-4 py-2 rounded-md hover:bg-teal-400">Sign
+          Up</button>
       </div>
-<!-- Errors  -->
+      <!-- Errors  -->
 
       @if (ViewBag.Error != null)
       {
@@ -119,21 +125,19 @@
 <style>
   /* highlight invalid fields */
   input.input-validation-error {
-      border-color: #e11d48; 
+    border-color: #e11d48;
   }
 
   /* add red asterisk to the label right before the invalid input */
-  label + input.input-validation-error,
-  label + select.input-validation-error,
-  label + textarea.input-validation-error {
-  }
+  label+input.input-validation-error,
+  label+select.input-validation-error,
+  label+textarea.input-validation-error {}
 
   label:has(+ input.input-validation-error)::after,
   label:has(+ select.input-validation-error)::after,
   label:has(+ textarea.input-validation-error)::after {
-      content: " *";
-      color: #e11d48;
-      font-weight: bold;
+    content: " *";
+    color: #e11d48;
+    font-weight: bold;
   }
-
 </style>

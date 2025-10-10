@@ -1,0 +1,178 @@
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+
+<!-- Main Body -->
+<div class="min-h-screen flex flex-col items-center justify-start px-4 sm:px-6 py-6">
+    <div class="flex flex-col items-center space-y-4 w-full max-w-screen-lg">
+        <h1 class="text-3xl font-bold mb-3">My Friends</h1>
+        <!-- Filter buttons -->
+        <!-- Filter buttons -->
+        <div class="flex justify-center mt-4" role="group" aria-label="requests filters">
+            <label id="received-label" for="received"
+                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md cursor-pointer hover:bg-gray-200 text-center transition-colors">
+                Friend Requests
+            </label>
+            <label id="sent-label" for="sent"
+                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md cursor-pointer hover:bg-gray-200 text-center transition-colors">
+                Sent Requests
+            </label>
+        </div>
+
+
+        <!-- Requests Section -->
+        <div class="flex bg-gray-50 border rounded-lg w-full p-4 shadow-md hidden md:block">
+            <input type="radio" id="received" name="request-toggle" class="hidden peer/received" checked>
+            <input type="radio" id="sent" name="request-toggle" class="hidden peer/sent">
+
+            <h2 id="requests-header" class="text-lg font-bold mb-3">Your Requests</h2>
+
+            <!-- Received Requests -->
+            <div id="received-requests" class="space-y-2">
+
+                @foreach (var request in ViewBag.ReceivedRequests)
+                {
+                    var sender = request.Requester;
+
+                    <div class="flex items-center gap-3">
+                        <img src="/images/Placeholder.png"
+                            class="w-12 h-12 rounded-full object-cover border border-gray-400" />
+                        <span class="font-medium text-gray-800">@sender.FirstName @sender.LastName</span>
+
+                        <form asp-action="Accept" asp-controller="Friends" method="post"
+                            onsubmit="return confirm('Are you sure you want to be friends?');" class="ml-auto">
+                            <input type="hidden" name="friendId" value="@request.Id" />
+                            <button type="submit"
+                                class="bg-teal-600 hover:bg-teal-700 text-white text-xs font-medium py-1 px-2 rounded">
+                                Accept
+                            </button>
+                        </form>
+
+                        <form asp-action="Remove" asp-controller="Friends" method="post"
+                            onsubmit="return confirm('Are you sure you do not want to be friends?');">
+                            <input type="hidden" name="friendId" value="@request.Id" />
+                            <button type="submit"
+                                class="bg-gray-400 hover:bg-gray-500 text-white text-xs font-medium py-1 px-2 rounded">
+                                Decline
+                            </button>
+                        </form>
+                    </div>
+                }
+            </div>
+
+
+            <!-- Sent Requests -->
+            <div class="space-y-2" id="sent-requests">
+
+                @foreach (var request in ViewBag.SentRequests)
+                {
+                    var receiver = request.Accepter;
+
+                    <div class="flex items-center gap-3">
+                        <img src="/images/Placeholder.png"
+                            class="w-12 h-12 rounded-full object-cover border border-gray-400" />
+                        <span class="font-medium text-gray-800">@receiver.FirstName @receiver.LastName</span>
+
+                        <form asp-action="Remove" asp-controller="Friends" method="post"
+                            onsubmit="return confirm('Are you sure you want to cancel your request?');" class="ml-auto">
+                            <input type="hidden" name="friendId" value="@request.Id" />
+                            <button type="submit"
+                                class="bg-red-500 hover:bg-red-600 text-white text-xs font-medium py-1 px-2 rounded">
+                                Cancel
+                            </button>
+                        </form>
+                    </div>
+                }
+            </div>
+
+            <!-- Getting the buttons to hide stuff -->
+            <style>
+                /* Hide both by default */
+                #received-requests,
+                #sent-requests {
+                    display: none;
+                }
+
+                /* Show received when its radio is checked */
+                #received:checked~#received-requests {
+                    display: block;
+                }
+
+                /* Show sent when its radio is checked */
+                #sent:checked~#sent-requests {
+                    display: block;
+                }
+            </style>
+
+        </div>
+
+        <!-- Friend List Section -->
+        <div class="bg-white rounded-lg w-full p-4 shadow-md hidden md:block border">
+            <div class="flex justify-between mb-3">
+                <h2 class="text-xl font-bold mb-3">Friend List</h2>
+                <form asp-action="Index" asp-controller="Friends" method="get" class="pr-2"> 
+                    <input type="text" name="SearchQuery" placeholder="Search friends..." class="border rounded px-3 py-1" value="@ViewBag.SearchQuery"/>
+                    <button type="submit" class="bg-teal-600 text-white px-3 py-1 rounded hover:bg-teal-700">Search</button>
+                </form>
+            </div>
+            @foreach (var friend in ViewBag.Friends)
+            {
+                User other;
+                if (friend.RequesterId == ViewBag.CurrentUserId)
+                {
+                    other = friend.Accepter;
+                }
+                else
+                {
+                    other = friend.Requester;
+                }
+
+                <div class="flex items-center justify-between gap-3 mb-2 p-2 rounded-lg hover:bg-gray-100 transition">
+                    <div class="flex items-center gap-3 mb-2">
+                        <img src="/images/Placeholder.png"
+                            class="w-12 h-12 rounded-full object-cover border border-gray-400">
+                        <h3 class="text-md font-semibold text-gray-800">@other.FirstName @other.LastName</h3>
+                    </div>
+
+                    <form asp-action="Remove" asp-controller="Friends" method="post"
+                        onsubmit="return confirm('Are you sure you want to unfriend this person?');">
+                        <input type="hidden" name='friendId' value="@friend.Id" />
+                        <button type="submit"
+                            class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-1 px-3 rounded">Unfriend</button>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- JS to try and make the buttons work more easily-->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const receivedRadio = document.getElementById("received");
+    const sentRadio = document.getElementById("sent");
+    const header = document.getElementById("requests-header");
+    const receivedLabel = document.getElementById("received-label");
+    const sentLabel = document.getElementById("sent-label");
+
+    function updateUI() {
+      // Change header text
+      if (receivedRadio.checked) {
+        header.textContent = "My Received Requests";
+      } else if (sentRadio.checked) {
+        header.textContent = "My Sent Requests";
+      } else {
+        header.textContent = "My Requests";
+      }
+
+      // Handle label colors
+      receivedLabel.classList.toggle("bg-teal-500", receivedRadio.checked);
+      receivedLabel.classList.toggle("text-white", receivedRadio.checked);
+      sentLabel.classList.toggle("bg-teal-500", sentRadio.checked);
+      sentLabel.classList.toggle("text-white", sentRadio.checked);
+    }
+
+    // Run on load and whenever radios change
+    updateUI();
+    receivedRadio.addEventListener("change", updateUI);
+    sentRadio.addEventListener("change", updateUI);
+  });
+</script>
