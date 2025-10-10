@@ -37,8 +37,8 @@ namespace Acebook.Tests
       SetDefaultExpectTimeout(1000);
       await Page.GotoAsync("/signup");
       await Expect(Page).ToHaveURLAsync($"{BaseUrl}/signup");
-      await Page.GetByTestId("firstname").FillAsync("Francine");
-      await Page.GetByTestId("lastname").FillAsync("Gills");
+      await Page.Locator("#firstname").FillAsync("Francine");
+      await Page.Locator("#lastname").FillAsync("Gills");
       await Page.Locator("#dob").FillAsync("1995-08-10");
       await Page.Locator("#email").FillAsync("francine@sharkmail.ocean");
       await Page.Locator("#password").FillAsync("Password123!");
@@ -127,7 +127,7 @@ namespace Acebook.Tests
 
       await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
       await Page.Locator("#password").FillAsync("password123");
-      await Page.Locator("#submit").ClickAsync();
+      await Page.Locator("#signin-submit").ClickAsync();
 
       await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts");
     }
@@ -139,7 +139,7 @@ namespace Acebook.Tests
 
       await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
       await Page.Locator("#password").FillAsync("password12");
-      await Page.Locator("#submit").ClickAsync();
+      await Page.Locator("#signin-submit").ClickAsync();
       //await Expect(Page.GetByTestId("error")).ToHaveTextAsync("Incorrect email or password.");
       var confirmError = Page.Locator(".validation-summary-errors");
       await Expect(confirmError).ToHaveTextAsync("Incorrect email or password.");
@@ -152,7 +152,7 @@ namespace Acebook.Tests
       await Page.GotoAsync("/signin");
       await Page.Locator("#email").FillAsync("finn.white@sharkmail.com");
       await Page.Locator("#password").FillAsync("password123");
-      await Page.Locator("#submit").ClickAsync();
+      await Page.Locator("#signin-submit").ClickAsync();
       //await Expect(Page.GetByTestId("error")).ToHaveTextAsync("Incorrect email or password.");
       var confirmError = Page.Locator(".validation-summary-errors");
       await Expect(confirmError).ToHaveTextAsync("Incorrect email or password.");
@@ -164,7 +164,7 @@ namespace Acebook.Tests
 
       await Page.Locator("#email").FillAsync("finn.whitesharkmail.com");
       await Page.Locator("#password").FillAsync("password123");
-      await Page.Locator("#submit").ClickAsync();
+      await Page.Locator("#signin-submit").ClickAsync();
       //var error = Page.Locator("Enter a valid email address");
       //await Expect(error).ToHaveTextAsync("Enter a valid email address");
       // await Expect(error).ToHaveTextAsync("Enter a valid email address");
@@ -176,7 +176,7 @@ namespace Acebook.Tests
     {
       await Page.GotoAsync("/signin");
       await Page.Locator("#password").FillAsync("password123");
-      await Page.Locator("#submit").ClickAsync();
+      await Page.Locator("#signin-submit").ClickAsync();
 
       //var error = Page.Locator("#Email-error");
       //await Expect(error).ToBeVisibleAsync();
@@ -189,7 +189,7 @@ namespace Acebook.Tests
     {
       await Page.GotoAsync("/signin");
       await Page.Locator("#email").FillAsync("finn.white@sharkmail.com");
-      await Page.Locator("#submit").ClickAsync();
+      await Page.Locator("#signin-submit").ClickAsync();
 
       //var error = Page.Locator("#Password-error");
       //await Expect(error).ToBeVisibleAsync();
