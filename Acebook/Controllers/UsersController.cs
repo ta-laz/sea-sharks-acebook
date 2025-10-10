@@ -46,7 +46,6 @@ public class UsersController : Controller
         return View(user);
     }
 
-    [ServiceFilter(typeof(AuthenticationFilter))]
     [Route("/users")]
     [HttpPost]
     public IActionResult Create(SignUpViewModel suvm)
@@ -83,6 +82,7 @@ public class UsersController : Controller
         };
         dbContext.ProfileBios.Add(bio);
         dbContext.SaveChanges();
+        Console.WriteLine($"Session set: {HttpContext.Session.GetInt32("user_id")}");
 
         HttpContext.Session.SetInt32("user_id", user.Id);
         return new RedirectResult("/posts");
