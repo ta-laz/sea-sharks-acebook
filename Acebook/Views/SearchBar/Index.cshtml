@@ -1,0 +1,43 @@
+@model IEnumerable<User>
+
+@{
+    ViewData["Title"] = "Search Results";
+    var searchString = ViewData["SearchString"] as string;
+}
+
+<h1 class="text-2xl font-bold mb-4 text-teal-600">Search Results</h1>
+
+@if (!string.IsNullOrWhiteSpace(searchString))
+{
+    <p class="mb-4 text-gray-700">Showing results for: <strong>@searchString</strong></p>
+}
+
+@if (!Model.Any())
+{
+    <p class="text-gray-500">No results found.</p>
+}
+else
+{
+    @foreach (var user in Model)
+    {
+        <div class="bg-white p-4 rounded-lg shadow mb-4">
+            <h2 class="font-semibold text-teal-600">@user.FirstName @user.LastName</h2>
+
+            @if (user.Posts != null && user.Posts.Any())
+            {
+                <ul class="mt-2 text-gray-700 list-disc ml-5">
+                    @foreach (var post in user.Posts.Where(p => 
+                        string.IsNullOrWhiteSpace(searchString) || 
+                        p.Content.Contains(searchString)))
+                    {
+                        <li>@post.Content</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="text-gray-500 text-sm">No posts found for this user.</p>
+            }
+        </div>
+    }
+}
