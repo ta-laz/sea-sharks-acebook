@@ -1,189 +1,330 @@
 namespace Acebook.Test;
+
 using Microsoft.EntityFrameworkCore;
 using acebook.Models;
 
 internal static class TestDataSeeder
 {
 
-    public static async Task EnsureDbReadyAsync(AcebookDbContext db)
-    {
-        // If you use migrations in the app, prefer Migrate() over EnsureCreated()
-        await db.Database.EnsureCreatedAsync();
-    }
+	public static async Task EnsureDbReadyAsync(AcebookDbContext db)
+	{
+		// If you use migrations in the app, prefer Migrate() over EnsureCreated()
+		await db.Database.EnsureCreatedAsync();
+	}
 
-    public static async Task ResetAndSeedAsync(AcebookDbContext db)
-    {
-        await db.Database.OpenConnectionAsync();
-        await db.Database.ExecuteSqlRawAsync("""
-            TRUNCATE TABLE "Likes","Comments","Posts",
-                             "Friends","ProfileBios","Users"
-            RESTART IDENTITY CASCADE;
-        """);
+	public static async Task ResetAndSeedAsync(AcebookDbContext db)
+	{
+		await db.Database.OpenConnectionAsync();
+		await db.Database.ExecuteSqlRawAsync("""
+        TRUNCATE TABLE "Likes","Comments","Posts",
+                         "Friends","ProfileBios","Users"
+        RESTART IDENTITY CASCADE;
+    """);
 
-        var createdAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        var pwHash = "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f"; //password123
+		var createdAt = new DateTime(2025, 1, 1, 8, 0, 0, DateTimeKind.Utc);
+		var pwHash = "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f"; // password123
 
-        // ───────────── USERS ─────────────
-        var users = new List<User>
-        {
-            new() { FirstName="Finn", LastName="White", Email="finn.white@sharkmail.ocean", Password=pwHash },
-            new() { FirstName="Shelly", LastName="Tiger", Email="shelly.tiger@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Bruce", LastName="Hammerhead", Email="bruce.hammerhead@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Coral", LastName="Reef", Email="coral.reef@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Reef", LastName="Blue", Email="reef.blue@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Tigra", LastName="Mako", Email="tigra.mako@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Basky", LastName="Bull", Email="basky.bull@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Makko", LastName="Sandbar", Email="makko.sandbar@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Nibbles", LastName="Nurse", Email="nibbles.nurse@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Jet", LastName="Blue", Email="jet.blue@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Tide", LastName="Reef", Email="tide.reef@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Wave", LastName="Lemon", Email="wave.lemon@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Snappy", LastName="Bull", Email="snappy.bull@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Chomp", LastName="White", Email="chomp.white@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Dorsal", LastName="Blue", Email="dorsal.blue@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Shadow", LastName="Tiger", Email="shadow.tiger@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Gilly", LastName="Hammer", Email="gilly.hammer@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Razor", LastName="Mako", Email="razor.mako@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Shelldon", LastName="Reef", Email="shelldon.reef@sharkmail.ocean", Password=pwHash},
-            new() { FirstName="Jaws", LastName="Bull", Email="jaws.bull@sharkmail.ocean", Password=pwHash}
-        };
-        db.AddRange(users);
-        await db.SaveChangesAsync();
+		// ---------- USERS (50) ----------
+		// deterministic pools we cycle through
+		string[] firsts = {
+		"Finn","Shelly","Bruce","Coral","Reef","Tigra","Basky","Makko","Nibbles","Jet",
+		"Tide","Wave","Snappy","Chomp","Dorsal","Shadow","Gilly","Razor","Shelldon","Jaws",
+		"Marina","Ripple","Echo","Krill","Torrent","Foam","Gust","Brine","Flint","Delta",
+		"Current","Breaker","Ridge","Slate","Fathom","Drift","Gale","Squall","Coraline","Pearl",
+		"Nerite","Onyx","Azure","Cobalt","Indigo","Teal","Cerulean","Harbor","Reefy","Bluey"
+	};
+		string[] lasts = { "White", "Tiger", "Hammerhead", "Reef", "Blue", "Mako", "Bull", "Sandbar", "Nurse", "Lemon" };
 
-        // ───────────── BIOS ─────────────
-        var bios = new List<ProfileBio>
-        {
-            new() { UserId = 1,  Tagline = "Explorer of coral reefs and deep thinker.",
-                    DOB = new DateOnly(1998, 5, 12), RelationshipStatus = "Single", Job = "Reef Guide", Pets = "Remora" },
+		var users = new List<User>(50);
+		for (int i = 0; i < 50; i++)
+		{
+			var f = firsts[i % firsts.Length];
+			var l = lasts[i % lasts.Length];
+			users.Add(new User
+			{
+				FirstName = f,
+				LastName = l,
+				Email = $"{f.ToLower()}.{l.ToLower()}@sharkmail.ocean",
+				Password = pwHash,
+				// If your model has CreatedAt, uncomment:
+				// CreatedAt = createdAt.AddMinutes(i * 7)
+			});
+		}
+		db.AddRange(users);
+		await db.SaveChangesAsync();
 
-            new() { UserId = 2,  Tagline = "Predator of productivity, lover of plankton memes.",
-                    DOB = new DateOnly(2001, 2, 28), RelationshipStatus = "In a current", Job = "Content Creator", Pets = "Clownfish" },
+		// ---------- BIOS (Tagline, DOB, RelationshipStatus, Job, Pets) ----------
+		string[] taglines = {
+		"Explorer of coral reefs and deep thinker.",
+		"Predator of productivity, lover of plankton memes.",
+		"Ocean’s apex comedian.",
+		"Protecting the reef since hatching.",
+		"Enjoys long swims and short naps.",
+		"Never trust a dolphin who promises free mackerel.",
+		"Sharkfluencer and fin-tech investor.",
+		"Believes in sustainable snacking.",
+		"Marine biologist in disguise.",
+		"Swift swimmer, slow texter.",
+		"Chasing waves, dodging nets.",
+		"Born to bite, raised to blog.",
+		"Ocean’s top motivational biter.",
+		"Runs a kelp smoothie bar.",
+		"Collects rare shells and followers.",
+		"Co-founder of SharkDAO.",
+		"Social swimmer, occasional philosopher.",
+		"Surfs currents of innovation.",
+		"Part-time model, full-time menace.",
+		"Always hungry for knowledge (and fish)."
+	};
+		string[] rels = { "Single", "In a current", "Married", "It's complicated" };
+		string[] jobs = {
+		"Reef Guide","Content Creator","Stand-up Shark","Reef Ranger","Marine Blogger",
+		"Ocean Philosopher","FinTech CEO","Environmental Activist","Research Diver","Courier Shark"
+	};
+		string[] pets = {
+		"Remora","Clownfish","Crab","Coral crab","Starfish","Jellyfish","Cleaner wrasse","Hermit crab","Baby squid","Seahorse",
+		"Sea cucumber","Pufferfish","Turtle","Kelp crab","Barnacle","Algae snail","Remora","Goby fish","Shrimp","Octopus"
+	};
 
-            new() { UserId = 3,  Tagline = "Ocean’s apex comedian.",
-                    DOB = new DateOnly(1995, 11, 3), RelationshipStatus = "Single", Job = "Stand-up Shark", Pets = "Crab" },
+		var bios = new List<ProfileBio>(50);
+		for (int i = 0; i < 50; i++)
+		{
+			// Deterministic DOBs spread across years/months/days
+			var dob = new DateOnly(
+				1993 + ((i * 7) % 10),
+				1 + ((i * 3) % 12),
+				1 + ((i * 5) % 28)
+			);
+			bios.Add(new ProfileBio
+			{
+				UserId = i + 1,
+				Tagline = taglines[i % taglines.Length],
+				DOB = dob,
+				RelationshipStatus = rels[i % rels.Length],
+				Job = jobs[i % jobs.Length],
+				Pets = pets[i % pets.Length]
+			});
+		}
+		db.AddRange(bios);
+		await db.SaveChangesAsync();
 
-            new() { UserId = 4,  Tagline = "Protecting the reef since hatching.",
-                    DOB = new DateOnly(1997, 4, 17), RelationshipStatus = "Married", Job = "Reef Ranger", Pets = "Coral crab" },
+		// ---------- FRIENDSHIPS ----------
+		// For each user i (1..50):
+		// - Accepted with i+1 and i+2 (wrap)
+		// - Pending SENT to i+3 and i+4
+		// - Pending RECEIVED ensured by adding (i-3)->i and (i-4)->i
+		var friends = new List<Friend>();
+		int N = 50;
 
-            new() { UserId = 5,  Tagline = "Enjoys long swims and short naps.",
-                    DOB = new DateOnly(1999, 8, 9), RelationshipStatus = "Single", Job = "Marine Blogger", Pets = "Starfish" },
+		int Next(int i, int k) => ((i - 1 + k) % N) + 1;
+		int Prev(int i, int k) => ((i - 1 - k + N * 10) % N) + 1;
 
-            new() { UserId = 6,  Tagline = "Never trust a dolphin who promises free mackerel.",
-                    DOB = new DateOnly(2000, 3, 25), RelationshipStatus = "It's complicated", Job = "Ocean Philosopher", Pets = "Jellyfish" },
+		// Accepted
+		for (int i = 1; i <= N; i++)
+		{
+			var a = Next(i, 1);
+			var b = Next(i, 2);
+			// normalise direction for Accepted to avoid duplicates
+			int r1 = Math.Min(i, a), c1 = Math.Max(i, a);
+			int r2 = Math.Min(i, b), c2 = Math.Max(i, b);
 
-            new() { UserId = 7,  Tagline = "Sharkfluencer and fin-tech investor.",
-                    DOB = new DateOnly(1994, 12, 2), RelationshipStatus = "In a current", Job = "FinTech CEO", Pets = "Cleaner wrasse" },
+			friends.Add(new Friend { RequesterId = r1, AccepterId = c1, Status = FriendStatus.Accepted });
+			friends.Add(new Friend { RequesterId = r2, AccepterId = c2, Status = FriendStatus.Accepted });
+		}
 
-            new() { UserId = 8,  Tagline = "Believes in sustainable snacking.",
-                    DOB = new DateOnly(1996, 7, 14), RelationshipStatus = "Married", Job = "Environmental Activist", Pets = "Hermit crab" },
+		// Pending sent
+		for (int i = 1; i <= N; i++)
+		{
+			var c = Next(i, 3);
+			var d = Next(i, 4);
+			friends.Add(new Friend { RequesterId = i, AccepterId = c, Status = FriendStatus.Pending });
+			friends.Add(new Friend { RequesterId = i, AccepterId = d, Status = FriendStatus.Pending });
+		}
 
-            new() { UserId = 9,  Tagline = "Marine biologist in disguise.",
-                    DOB = new DateOnly(1997, 10, 30), RelationshipStatus = "Single", Job = "Research Diver", Pets = "Baby squid" },
+		// Pending received (ensure everyone has inbound too)
+		for (int i = 1; i <= N; i++)
+		{
+			var e = Prev(i, 3);
+			var f = Prev(i, 4);
+			friends.Add(new Friend { RequesterId = e, AccepterId = i, Status = FriendStatus.Pending });
+			friends.Add(new Friend { RequesterId = f, AccepterId = i, Status = FriendStatus.Pending });
+		}
 
-            new() { UserId = 10, Tagline = "Swift swimmer, slow texter.",
-                    DOB = new DateOnly(1993, 1, 5), RelationshipStatus = "Single", Job = "Courier Shark", Pets = "Seahorse" },
+		// Deduplicate any accidental duplicates (especially Accepted pairs)
+		var dedup = new HashSet<(int, int, FriendStatus)>();
+		var finalFriends = new List<Friend>(friends.Count);
+		foreach (var fr in friends)
+		{
+			var key = fr.Status == FriendStatus.Accepted
+				? (Math.Min(fr.RequesterId, fr.AccepterId), Math.Max(fr.RequesterId, fr.AccepterId), fr.Status)
+				: (fr.RequesterId, fr.AccepterId, fr.Status);
 
-            new() { UserId = 11, Tagline = "Chasing waves, dodging nets.",
-                    DOB = new DateOnly(1998, 6, 20), RelationshipStatus = "Single", Job = "Safety Officer", Pets = "Sea cucumber" },
+			if (dedup.Add(key)) finalFriends.Add(fr);
+		}
 
-            new() { UserId = 12, Tagline = "Born to bite, raised to blog.",
-                    DOB = new DateOnly(2001, 9, 9), RelationshipStatus = "In a current", Job = "Ocean Influencer", Pets = "Pufferfish" },
+		db.AddRange(finalFriends);
+		await db.SaveChangesAsync();
 
-            new() { UserId = 13, Tagline = "Ocean’s top motivational biter.",
-                    DOB = new DateOnly(1995, 11, 12), RelationshipStatus = "Married", Job = "Public Speaker", Pets = "Turtle" },
+		// ---------- POSTS ----------
+		// Each user: 3–4 posts (deterministic), half self-wall, half on friend (i+1)'s wall.
+		string[] postStems = {
+		"Circling the reef at dawn; currents strong and spirits high.",
+		"Training for the trench sprint; fins burning, heart soaring.",
+		"Kelp bar opens tonight; try the brine latte, extra foam.",
+		"Dolphins told jokes again; I laughed, then ate lunch.",
+		"Sardine school shimmering like stars beneath the waves.",
+		"Cleaning the reef with friends; teamwork makes the fin work.",
+		"Deep thoughts near the canyon; silence louder than surf.",
+		"Bubble party at Coral Bay; bring your best ripple dance.",
+		"Tide pulled me west; found calm behind the ridge.",
+		"Shoutout to crew keeping the nurseries safe and bright."
+	};
 
-            new() { UserId = 14, Tagline = "Runs a kelp smoothie bar.",
-                    DOB = new DateOnly(1994, 8, 28), RelationshipStatus = "Single", Job = "Bar Owner", Pets = "Kelp crab" },
+		var posts = new List<Post>(N * 4);
+		int postIdCounter = 0;
 
-            new() { UserId = 15, Tagline = "Collects rare shells and followers.",
-                    DOB = new DateOnly(1996, 10, 16), RelationshipStatus = "In a current", Job = "Shell Collector", Pets = "Barnacle" },
+		for (int i = 1; i <= N; i++)
+		{
+			var friend = Next(i, 1); // deterministic friend target
+			int postCount = 3 + (i % 2); // 3 or 4
 
-            new() { UserId = 16, Tagline = "Co-founder of SharkDAO.",
-                    DOB = new DateOnly(1997, 12, 21), RelationshipStatus = "Married", Job = "Blockchain Developer", Pets = "Algae snail" },
+			for (int ord = 0; ord < postCount; ord++)
+			{
+				bool self = (ord % 2 == 0);
+				int author = i;
+				int wall = self ? i : friend;
 
-            new() { UserId = 17, Tagline = "Social swimmer, occasional philosopher.",
-                    DOB = new DateOnly(1999, 2, 1), RelationshipStatus = "Single", Job = "Community Manager", Pets = "Remora" },
+				// mention the wall owner when posting on their wall
+				var mention = self ? "" : $" Shoutout to @{firsts[(friend - 1) % firsts.Length]} {lasts[(friend - 1) % lasts.Length]}!";
+				var stem = postStems[(i + ord) % postStems.Length];
 
-            new() { UserId = 18, Tagline = "Surfs currents of innovation.",
-                    DOB = new DateOnly(2000, 4, 4), RelationshipStatus = "Single", Job = "Product Designer", Pets = "Goby fish" },
+				// expand to ~10–40 words by appending fixed filler deterministically
+				string[] filler = { "swim", "fin", "deep", "blue", "reef", "hunt", "glide", "kelp", "wave", "tide", "current", "school" };
+				int extra = 10 + ((i + ord) % 31); // 10..40 words
+				var extraText = string.Join(' ', filler.Take(extra % filler.Length).Concat(filler).Take(extra));
 
-            new() { UserId = 19, Tagline = "Part-time model, full-time menace.",
-                    DOB = new DateOnly(1998, 11, 27), RelationshipStatus = "In a current", Job = "Model", Pets = "Shrimp" },
+				posts.Add(new Post
+				{
+					UserId = author,
+					WallId = wall,
+					Content = $"{stem}{mention} {extraText}",
+					CreatedOn = createdAt.AddMinutes(2000 + i * 5 + ord) // varied & deterministic
+				});
+				postIdCounter++;
+			}
+		}
 
-            new() { UserId = 20, Tagline = "Always hungry for knowledge (and fish).",
-                    DOB = new DateOnly(1993, 3, 15), RelationshipStatus = "Single", Job = "Ocean Researcher", Pets = "Octopus" }
-        };
+		db.AddRange(posts);
+		await db.SaveChangesAsync();
 
-        db.AddRange(bios);
-        await db.SaveChangesAsync();
+		// ---------- COMMENTS ----------
+		// Most posts (4/5) get 2–3 comments from friends of the author (deterministic pick).
+		var comments = new List<Comment>(postIdCounter * 2);
+		int globalPostIndex = 0;
 
-        // ───────────── FRIENDSHIPS ─────────────
-        var friends = new (int requester, int accepter, FriendStatus status)[]
-        {
-            (1, 2, FriendStatus.Accepted),
-            (1, 3, FriendStatus.Accepted),
-            (2, 4, FriendStatus.Pending),
-            (3, 5, FriendStatus.Accepted),
-            (4, 5, FriendStatus.Pending),
-            (6, 7, FriendStatus.Accepted),
-            (6, 8, FriendStatus.Pending),
-            (7, 9, FriendStatus.Accepted),
-            (10, 11, FriendStatus.Accepted),
-            (10, 12, FriendStatus.Pending),
-            (11, 13, FriendStatus.Accepted),
-            (12, 14, FriendStatus.Accepted),
-            (15, 16, FriendStatus.Accepted),
-            (15, 17, FriendStatus.Pending),
-            (16, 18, FriendStatus.Accepted),
-            (17, 19, FriendStatus.Accepted),
-            (18, 20, FriendStatus.Pending),
-            (1, 10, FriendStatus.Accepted),
-            (5, 15, FriendStatus.Accepted)
-        };
+		for (int i = 1; i <= N; i++)
+		{
+			int postCount = 3 + (i % 2);
+			var friendA = Next(i, 1);
+			var friendB = Next(i, 2);
 
-        foreach (var (r, a, status) in friends)
-        {
-            db.Add(new Friend
-            {
-                RequesterId = r,
-                AccepterId = a,
-                Status = status,
-            });
-        }
-        await db.SaveChangesAsync();
+			for (int ord = 0; ord < postCount; ord++, globalPostIndex++)
+			{
+				int thisPostId = globalPostIndex + 1; // relies on insertion order
+													  // 1 in 5 posts gets no comments
+				if (thisPostId % 5 == 0) continue;
 
-        // ───────────── POSTS ─────────────
-        var posts = new List<Post>
-        {
-            // self-posts
-            new() { UserId = 1, WallId = 1, Content = "Just circled the reef with @Shelly Tiger — great current today!", CreatedOn = createdAt },
-            new() { UserId = 2, WallId = 2, Content = "Early morning hunt with Bruce Hammerhead. The ocean was ours.", CreatedOn = createdAt },
-            new() { UserId = 3, WallId = 3, Content = "Every wave is an opportunity to reflect… or to eat.", CreatedOn = createdAt },
-            new() { UserId = 4, WallId = 4, Content = "Grateful for my coral friends. @Reef Blue keeps me inspired.", CreatedOn = createdAt },
+				int baseMinute = 3000 + i * 5 + ord * 3;
 
-            // cross-wall posts (only if they’re friends)
-            new() { UserId = 1, WallId = 2, Content = "Dropped by @Shelly Tiger’s reef to say hi!", CreatedOn = createdAt },
-            new() { UserId = 2, WallId = 1, Content = "Appreciate @Finn White for helping find tuna today!", CreatedOn = createdAt },
-            new() { UserId = 3, WallId = 5, Content = "@Reef Blue — let’s patrol the western trench soon!", CreatedOn = createdAt },
-            new() { UserId = 6, WallId = 7, Content = "Always a pleasure working with @Basky Bull on reef patrol!", CreatedOn = createdAt },
-            new() { UserId = 7, WallId = 8, Content = "Teamwork makes the fin work @Makko Sandbar!", CreatedOn = createdAt },
-            new() { UserId = 10, WallId = 1, Content = "Visiting @Finn White’s kelp bar — great service!", CreatedOn = createdAt },
-        };
+				// always at least 2 comments
+				comments.Add(new Comment
+				{
+					UserId = friendA,
+					PostId = thisPostId,
+					Content = "Fin-tastic update — see you by the ridge!",
+					CreatedOn = createdAt.AddMinutes(baseMinute)
+				});
+				comments.Add(new Comment
+				{
+					UserId = friendB,
+					PostId = thisPostId,
+					Content = "Currents were wild! Great patrol today.",
+					CreatedOn = createdAt.AddMinutes(baseMinute + 1)
+				});
 
-        db.AddRange(posts);
-        await db.SaveChangesAsync();
+				// sometimes add a 3rd comment (deterministic)
+				if ((thisPostId % 2) == 0)
+				{
+					int friendC = Next(i, 3);
+					comments.Add(new Comment
+					{
+						UserId = friendC,
+						PostId = thisPostId,
+						Content = "Save me a kelp latte next time.",
+						CreatedOn = createdAt.AddMinutes(baseMinute + 2)
+					});
+				}
+			}
+		}
 
-        // ───────────── COMMENTS + LIKES ─────────────
-        db.AddRange(
-            new Comment { UserId = 2, PostId = 1, Content = "Fin-tastic swim!", CreatedOn = createdAt },
-            new Comment { UserId = 3, PostId = 2, Content = "Legendary hunt!", CreatedOn = createdAt },
-            new Comment { UserId = 5, PostId = 4, Content = "Beautifully said.", CreatedOn = createdAt },
-            new Comment { UserId = 10, PostId = 1, Content = "Love this energy!", CreatedOn = createdAt },
-            new Like { UserId = 3, PostId = 1},
-            new Like { UserId = 4, PostId = 2},
-            new Like { UserId = 1, PostId = 5},
-            new Like { UserId = 8, PostId = 7}
-        );
-        await db.SaveChangesAsync();
-    }
+		db.AddRange(comments);
+		await db.SaveChangesAsync();
+
+		// ---------- LIKES ----------
+		// Every post gets at least one like, deterministically.
+		// UserId chosen as (PostId % totalUsers) + 1 to stay in range.
+
+		var likes = new List<Like>();
+
+		int totalUsers = 50;            // since you seed 50 users
+		int totalPosts = posts.Count;   // your earlier posts list
+
+		for (int i = 0; i < totalPosts; i++)
+		{
+			var post = posts[i];
+			int postId = i + 1; // matches DB identity order
+			int baseLiker = (postId % totalUsers) + 1; // deterministic liker id
+
+			// --- at least one like ---
+			likes.Add(new Like
+			{
+				UserId = baseLiker,
+				PostId = postId
+
+			});
+
+			// --- give every 3rd post a 2nd like (also deterministic) ---
+			if (postId % 3 == 0)
+			{
+				int secondLiker = ((baseLiker + 7) % totalUsers) + 1; // fixed offset
+				if (secondLiker != baseLiker)
+				{
+					likes.Add(new Like
+					{
+						UserId = secondLiker,
+						PostId = postId
+		
+					});
+				}
+			}
+
+			// --- give every 5th post a 3rd like (predictable pattern) ---
+			if (postId % 5 == 0)
+			{
+				int thirdLiker = ((baseLiker + 14) % totalUsers) + 1;
+				if (thirdLiker != baseLiker)
+				{
+					likes.Add(new Like
+					{
+						UserId = thirdLiker,
+						PostId = postId
+		
+					});
+				}
+			}
+		}
+
+		db.AddRange(likes);
+		await db.SaveChangesAsync();
+	}
 }
