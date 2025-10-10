@@ -37,8 +37,8 @@ namespace Acebook.Tests
       SetDefaultExpectTimeout(1000);
       await Page.GotoAsync("/signup");
       await Expect(Page).ToHaveURLAsync($"{BaseUrl}/signup");
-      await Page.GetByTestId("firstname").FillAsync("Francine");
-      await Page.GetByTestId("lastname").FillAsync("Gills");
+      await Page.Locator("#firstname").FillAsync("Francine");
+      await Page.Locator("#lastname").FillAsync("Gills");
       await Page.Locator("#dob").FillAsync("1995-08-10");
       await Page.Locator("#email").FillAsync("francine@sharkmail.ocean");
       await Page.Locator("#password").FillAsync("Password123!");
