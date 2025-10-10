@@ -1,3 +1,6 @@
+@using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Expressions.Internal
+@using System.Linq
+
 @model acebook.Models.Post
 
 <!-- Individual Post -->
@@ -47,6 +50,14 @@
         class="flex flex-col w-2/3 bg-teal-700/10 rounded-b-lg shadow-[0_0_15px_rgba(15,118,110,0.3)] max-h-[70vh] overflow-hidden">
 
         <div class="flex-1 overflow-y-auto px-4 py-4">
+        @if (ViewBag.comments == null || !ViewBag.comments.Any())
+        {
+
+                    <h3 class="text-center text-teal-600 font-semibold mt-4">No comments yet!</h3>
+
+        } else{
+
+        
             @foreach (Comment comment in ViewBag.comments)
             {
                 <div class="bg-white rounded w-full p-2 mt-2 shadow-md hidden md:flex items-start relative">
@@ -78,6 +89,7 @@
                     </div>
                 </div>
             }
+        }
 
         </div>
         <div class="bg-white rounded-b-lg w-full px-4 py-2 shadow-[0_0_15px_rgba(15,118,110,0.3)]">
