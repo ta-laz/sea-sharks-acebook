@@ -23,7 +23,8 @@ public class PostsController : Controller
     AcebookDbContext dbContext = new AcebookDbContext();
     var posts = dbContext.Posts
                                .Include(p => p.User)
-                               .Include(p => p.Comments);
+                               .Include(p => p.Comments)
+                               .Include(p => p.Likes);
     ViewBag.Posts = posts.ToList();
     ViewBag.Posts.Reverse();
     Console.WriteLine($"Session check: {HttpContext.Session.GetInt32("user_id")}");
