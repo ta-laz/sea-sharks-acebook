@@ -256,19 +256,18 @@
               <span
                 class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
               <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                Like (12)
+                Like (@post.Likes.Count())
               </span>
             </button>
 
-            <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" method="get">
+            <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" method="get" class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
               <button data-testid="comment-button"
                 class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
                 <span
                   class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
                 <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                  Comment (0)
+                  Comment (@post.Comments.Count())
                 </span>
-              </button>
             </a>
             
             <button
