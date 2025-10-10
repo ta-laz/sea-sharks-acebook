@@ -82,7 +82,6 @@ public class UsersController : Controller
         };
         dbContext.ProfileBios.Add(bio);
         dbContext.SaveChanges();
-        Console.WriteLine($"Session set: {HttpContext.Session.GetInt32("user_id")}");
 
         HttpContext.Session.SetInt32("user_id", user.Id);
         return new RedirectResult("/posts");
@@ -116,8 +115,25 @@ public class UsersController : Controller
         if (user == null)
             return NotFound();
 
-        var posts = dbContext.Posts.Where(u => u.UserId == id);
-
         return View(user);
+    }
+
+    [ServiceFilter(typeof(AuthenticationFilter))]
+    [Route("/users/{id}/update")]
+    [HttpPost]
+    public IActionResult Update(int id, string tagline, string relationshipStatus, string pets, string job)
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+        var profileBio = dbContext.ProfileBios.Find(id);
+        profileBio.Tagline = tagline;
+        profileBio.RelationshipStatus = relationshipStatus;
+        profileBio.Pets = pets;
+        profileBio.Job = job;
+        dbContext.SaveChanges();
+
+        if (profileBio == null)
+            return NotFound();
+
+        return new RedirectResult($"/users/{id}");
     }
 }
