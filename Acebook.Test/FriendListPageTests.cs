@@ -31,10 +31,10 @@ namespace Acebook.Tests
               BaseURL = BaseUrl
           };
 
-        // 1. Check if the page loads - go to the URL /friends and check if My Friends can be found and see if friend list is visibile 
-        // 2. If friend requests clicked, are my friend requests visibile 
-        // 3. If sent friend requests clicked, are they visible 
-        // 4. if search bar Shelley, check to see if shelley pops up
+        // 1. Check if the page loads - go to the URL /friends and check if My Friends can be found and see if friend list is visibile  - DONE
+        // 2. If friend requests clicked, are my friend requests visibile - DONE
+        // 3. If sent friend requests clicked, are they visible - DONE
+        // 4. if search bar Shelley, check to see if shelley pops up - DONE 
 
         [Test]
         public async Task FriendListPage_GoToURL_DisplaysFriendList()
@@ -59,6 +59,105 @@ namespace Acebook.Tests
 
         }
 
+        [Test]
+        public async Task FriendListPage_ClickMyFriendRequests_DisplaysFriendRequests()
+        {
+            // Go to sign-in page
+            SetDefaultExpectTimeout(1000);
+            await Page.GotoAsync("/signin");
+            // Wait for form to load
+            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+            // Fill and submit
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.Locator("#signin-submit").ClickAsync()
+            );
 
+            // Go to Friends URL
+            await Page.GotoAsync("/friends");
+            await Page.ClickAsync("#received-label");
+            await Expect(Page.GetByText("My Received Requests")).ToBeVisibleAsync();
+        }
+        
+        [Test]
+        public async Task FriendListPage_ClickSentRequests_DisplaysSentFriendRequests()
+        {
+            // Go to sign-in page
+            SetDefaultExpectTimeout(1000);
+            await Page.GotoAsync("/signin");
+            // Wait for form to load
+            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+            // Fill and submit
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.Locator("#signin-submit").ClickAsync()
+            );
+
+            // Go to Friends URL
+            await Page.GotoAsync("/friends");
+            await Page.ClickAsync("#sent-label");
+            await Expect(Page.GetByText("My Sent Requests")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task FriendListPage_SearchForShelly_DisplaysShelly()
+        {
+            // Go to sign-in page
+            SetDefaultExpectTimeout(1000);
+            await Page.GotoAsync("/signin");
+            // Wait for form to load
+            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+            // Fill and submit
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.Locator("#signin-submit").ClickAsync()
+            );
+
+            // Go to Friends URL
+            await Page.GotoAsync("/friends");
+            await Page.Locator("input[name='SearchQuery']").FillAsync("Shelly");
+            await Page.GetByRole(AriaRole.Main)
+                .GetByRole(AriaRole.Button, new() { Name = "Search" })
+                .ClickAsync();
+
+            // await Page.Keyboard.PressAsync("Enter");
+
+            await Expect(Page.GetByText("Shelly")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task FriendListPage_ClickAcceptHarbor_DisplaysHarborInFriendList()
+        {
+            // Go to sign-in page
+            SetDefaultExpectTimeout(1000);
+            await Page.GotoAsync("/signin");
+            // Wait for form to load
+            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+            // Fill and submit
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.Locator("#signin-submit").ClickAsync()
+            );
+
+            // Go to Friends URL
+            await Page.GotoAsync("/friends");
+            await Page.GetByText("Harbor")
+                .Locator("..")
+                .GetByRole(AriaRole.Button, new() { Name = "Accept" })
+                .ClickAsync();
+            
+            await Page.WaitForURLAsync($"{BaseUrl}/friends");
+
+            var friendListSection = Page.Locator("div:has(h2:text('Friend List'))");
+            await Expect(friendListSection.GetByText("Harbor")).ToBeVisibleAsync();
+        }
     }
 }
