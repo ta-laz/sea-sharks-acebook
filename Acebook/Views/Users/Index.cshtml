@@ -22,8 +22,28 @@
 
       <!-- Friends block -->
       <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs">
-        <h2 class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Friends</h2>
+        <h2 class="text-md mb-3 text-gray-500 font-semibold border-b pb-2"> @Model.FirstName's Bio</h2>
 
+        <!-- Example friend preview -->
+        <div class="group flex items-center justify-between mb-4 rounded-lg mb-1 transition">
+        <ul>
+          <li class="italic text-gray-400 mt-1">@Model.ProfileBio.Tagline</li>
+          <li class="text-gray-400 mt-1">Age: @Model.ProfileBio.Age</li>
+          <li class="text-gray-400 mt-1">Relationship Status: @Model.ProfileBio.RelationshipStatus</li>
+          <li class="text-gray-400 mt-1">Pets: @Model.ProfileBio.Pets</li>
+          <li class="text-gray-400 mt-1 mb-2">Job: @Model.ProfileBio.Job</li>
+          </ul>
+        </div>
+
+        <a asp-controller="Users" asp-action="Update" asp-route-id="@userId" method="get" class="text-teal-500 hover:underline text-sm cursor-pointer"> 
+          Edit bio
+        </a>
+      </div>
+
+
+      <!-- Friends block -->
+      <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs">
+        <h2 class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Friends</h2>
         <!-- Example friend preview -->
         <div class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-lg mb-1 transition">
           <div class="flex items-center space-x-3">
@@ -51,21 +71,17 @@
       <!-- Profile Info -->
       <div class="bg-white rounded-lg p-6 shadow-md">
         <h1 class="text-2xl font-bold text-teal-700 mb-2">@Model.FirstName @Model.LastName</h1>
-        @if (Model.ProfileBio != null)
+        @if (Model.ProfileBio.Tagline != null)
         {
-          <p class="italic text-gray-400 mt-1">@Model.ProfileBio.Tagline</p>
-          <p class="text-gray-400 mt-1">Age: @Model.ProfileBio.Age</p>
-          <p class="text-gray-400 mt-1">Relationship Status: @Model.ProfileBio.RelationshipStatus</p>
-          <p class="text-gray-400 mt-1">Pets: @Model.ProfileBio.Pets</p>
-          <p class="text-gray-400 mt-1 mb-2">Job: @Model.ProfileBio.Job</p>
+          <p class="italic text-gray-400 mt-1 mb-4">@Model.ProfileBio.Tagline</p>
         }
         else
         {
-          <p class="text-gray-400 mt-1 italic text-gray-400">(No profile info added)</p>
+          <p class="text-gray-400 mt-1 italic text-gray-400 mb-4">Just keep swimming!</p>
         }
-        <a asp-controller="Users" asp-action="Update" asp-route-id="@userId" method="get" id="update-profile"
+        <p id="update-tagline"
           class="text-teal-600 text-sm font-medium py-4 rounded-md hover:text-teal-400 transition">
-          Edit profile</a>
+          Edit tagline</p>
       </div>
 
       <!-- Create Post Form -->
