@@ -53,8 +53,9 @@ public class PostsController : Controller
   public IActionResult Post(int id)
   {
     AcebookDbContext dbContext = new AcebookDbContext();
-    var post = dbContext.Posts.Include(p => p.Comments).FirstOrDefault(p => p.Id == id);
-    var comments = dbContext.Comments.Include(c => c.User).Where(c => c.PostId == id);
+    var post = dbContext.Posts.Include(p => p.Comments).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
+    var comments = dbContext.Comments.Include(c => c.User).Where(c => c.PostId == id).ToList();
+
     // var comments = comments.Reverse();
     ViewBag.post = post;
     ViewBag.comments = comments.ToList();
