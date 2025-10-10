@@ -1,0 +1,127 @@
+@model User
+
+@{
+  int? userId = Context.Session.GetInt32("user_id");
+}
+
+<div class="flex justify-center w-full mt-8">
+  <!-- Outer container -->
+  <div class="flex flex-col lg:flex-row w-full max-w-7xl gap-8">
+
+    <!-- 🧍 Left column: profile picture + friends -->
+    <div class="flex flex-col top-20 self-start top-32 sticky items-center lg:items-start w-full lg:w-1/3 space-y-6">
+      <!-- Profile Picture (hover reveal) -->
+      <div class="relative group flex justify-center">
+        <img src="/images/Placeholder.png" alt="Profile Picture"
+          class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm transition-opacity duration-300 group-hover:opacity-50" />
+        <div
+          class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <p class="text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md">Change Picture</p>
+        </div>
+      </div>
+
+      <!-- Friends block -->
+      <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs">
+        <h2 class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Friends</h2>
+
+        <!-- Example friend preview -->
+        <div class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-lg mb-1 transition">
+          <div class="flex items-center space-x-3">
+            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+            <button class="text-xs font-medium text-gray-700 hover:text-teal-600">John Doe</button>
+          </div>
+          <!-- Dots only appear on hover -->
+          <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
+            </svg>
+          </button>
+        </div>
+
+        <p class="text-teal-500 hover:underline text-sm cursor-pointer">
+          See All Friends
+        </p>
+      </div>
+    </div>
+
+    <!-- 📜 Right column: profile info + posts -->
+    <div class="flex flex-col w-full lg:w-2/3 space-y-6">
+
+      <!-- Profile Info -->
+      <div class="bg-white rounded-lg p-6 shadow-md">
+        <h1 class="text-2xl font-bold text-teal-700 mb-2">@Model.FirstName @Model.LastName</h1>
+        @if (Model.ProfileBio != null)
+        {
+          <p class="italic text-gray-400 mt-1">@Model.ProfileBio.Tagline</p>
+          <p class="text-gray-400 mt-1">Age: @Model.ProfileBio.Age</p>
+          <p class="text-gray-400 mt-1">Relationship Status: @Model.ProfileBio.RelationshipStatus</p>
+          <p class="text-gray-400 mt-1">Pets: @Model.ProfileBio.Pets</p>
+          <p class="text-gray-400 mt-1 mb-2">Job: @Model.ProfileBio.Job</p>
+        }
+        else
+        {
+          <p class="text-gray-400 mt-1 italic text-gray-400">(No profile info added)</p>
+        }
+        <a asp-controller="Users" asp-action="Update" asp-route-id="@userId" method="get" id="update-profile"
+          class="text-teal-600 text-sm font-medium py-4 rounded-md hover:text-teal-400 transition">
+          Edit profile</a>
+      </div>
+
+      <!-- Create Post Form -->
+      <div class="bg-white rounded-lg w-full p-4 shadow-md">
+        <h2 class="text-lg font-bold mb-3">Create a Post</h2>
+        <form action="@Url.Action("Create", "Posts")" method="post">
+          <textarea id="post-content"
+            class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
+            name="content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)"></textarea>
+
+          <div class="flex justify-between items-center mt-3">
+            <label class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
+            <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Users", new { id = Model.Id })" />
+            <button id="post-submit" type="submit"
+              class="bg-teal-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-teal-400 transition">
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Posts Section -->
+      @foreach (Post post in ViewBag.Posts)
+      {
+        <div class="bg-white rounded-lg w-full p-4 shadow-md">
+          <div class="flex justify-between items-center">
+            <h3 class="text-md font-semibold text-gray-800">@post.User.FirstName @post.User.LastName</h3>
+            <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400" />
+          </div>
+
+          <p class="text-gray-700 mt-2 leading-relaxed">
+            @if (post.CheckLength())
+            {
+              @post.Content
+            }
+            else
+            {
+
+              @post.FormatPostContent()
+            }
+          </p>
+
+          <div class="flex justify-end mt-2">
+            <button class="text-teal-600 text-sm hover:underline">see more</button>
+          </div>
+
+          <p class="text-xs text-gray-400 mt-4">Created on: @post.FormattedCreatedOn</p>
+
+          <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
+            <button class="text-gray-600 text-sm hover:text-teal-600">Like (12)</button>
+            <button class="text-gray-600 text-sm hover:text-teal-600">Comment (0)</button>
+            <button class="text-gray-600 text-sm hover:text-teal-600">View Profile</button>
+          </div>
+        </div>
+      }
+    </div>
+
+  </div>
+</div>
