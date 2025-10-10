@@ -42,7 +42,7 @@ namespace Acebook.Tests
             await Page.Locator("#signin-submit").ClickAsync();
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts");
             await Page.ClickAsync("#dropdownDefaultButton");
-            await Page.GetByTestId("signout").WaitForAsync(new() { State = WaitForSelectorState.Visible });
+            await Page.Locator("#signout").WaitForAsync(new() { State = WaitForSelectorState.Visible });
             await Page.ClickAsync("#signout");
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/signin");
         }
