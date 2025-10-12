@@ -22,6 +22,23 @@ namespace Acebook.Tests
         {
             await using var context = new AcebookDbContext();
             await TestDataSeeder.ResetAndSeedAsync(context);
+            // Go to sign-in page
+            await Page.GotoAsync("/signin");
+            // Wait for form to load
+            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+            // Fill and submit
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.GetByTestId("signin-submit").ClickAsync()
+            );
+            // Open profile dropdown
+            await Page.WaitForSelectorAsync("#dropdownDefaultButton");
+            await Page.ClickAsync("#dropdownDefaultButton");
+            await Page.ClickAsync("#MyProfile");
+            // Wait for profile page to load
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
         }
 
         public override BrowserNewContextOptions ContextOptions()
@@ -33,24 +50,7 @@ namespace Acebook.Tests
         [Test]
         public async Task CreatePost_MyUserProfilePage_DisplaysPostOnSamePage()
         {
-            // Go to sign-in page
-            SetDefaultExpectTimeout(1000);
-            await Page.GotoAsync("/signin");
-            // Wait for form to load
-            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
-            // Fill and submit
-            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
-            await Page.Locator("#password").FillAsync("password123");
-            await Task.WhenAll(
-                Page.WaitForURLAsync($"{BaseUrl}/posts"),
-                Page.GetByTestId("signin-submit").ClickAsync()
-            );
-            // Open profile dropdown
-            await Page.WaitForSelectorAsync("#dropdownDefaultButton");
-            await Page.ClickAsync("#dropdownDefaultButton");
-            await Page.ClickAsync("#MyProfile");
-            // Wait for profile page to load
-            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
+            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
             // Create post
             await Page.Locator("#post-content").FillAsync("Test content");
             // Wait for post submission + redirect
@@ -62,26 +62,17 @@ namespace Acebook.Tests
         }
 
         [Test]
+        public async Task TaglineAppearsUnderName_MyUserProfilePage()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
+            // Expect the tagline to be the string from test data seeder
+            await Expect(Page.GetByTestId("under-name-tagline-text")).ToHaveTextAsync("Explorer of coral reefs and deep thinker.");
+        }
+
+        [Test]
         public async Task EditTagline_MyUserProfilePage_UpdatesTagline()
         {
-            // Go to sign-in page
-            SetDefaultExpectTimeout(1000);
-            await Page.GotoAsync("/signin");
-            // Wait for form to load
-            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
-            // Fill and submit
-            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
-            await Page.Locator("#password").FillAsync("password123");
-            await Task.WhenAll(
-                Page.WaitForURLAsync($"{BaseUrl}/posts"),
-                Page.GetByTestId("signin-submit").ClickAsync()
-            );
-            // Open profile dropdown
-            await Page.WaitForSelectorAsync("#dropdownDefaultButton");
-            await Page.ClickAsync("#dropdownDefaultButton");
-            await Page.ClickAsync("#MyProfile");
-            // Wait for profile page to load
-            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
+            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
             // Click edit tagline to make form appear + fill out form
             await Task.WhenAll(
                 Page.ClickAsync("#update-tagline"),
@@ -97,26 +88,21 @@ namespace Acebook.Tests
         }
 
         [Test]
+        public async Task CancelEditTagline_MyUserProfilePage_HidesForm()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
+            // Click edit tagline to make form appear 
+            await Page.ClickAsync("#update-tagline");
+            await Page.ClickAsync("#cancel-edit");
+            // Expect the tagline to be unchanged
+            await Expect(Page.GetByTestId("under-name-tagline-text")).ToHaveTextAsync("Explorer of coral reefs and deep thinker.");
+            await Expect(Page.GetByTestId("tagline-form")).ToBeHiddenAsync();
+        }
+
+        [Test]
         public async Task EditBio_MyUserProfilePage_UpdatesProfileBioRedirectsToUserProfile()
         {
-            // Go to sign-in page
-            SetDefaultExpectTimeout(1000);
-            await Page.GotoAsync("/signin");
-            // Wait for form to load
-            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
-            // Fill and submit
-            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
-            await Page.Locator("#password").FillAsync("password123");
-            await Task.WhenAll(
-                Page.WaitForURLAsync($"{BaseUrl}/posts"),
-                Page.GetByTestId("signin-submit").ClickAsync()
-            );
-            // Open profile dropdown
-            await Page.WaitForSelectorAsync("#dropdownDefaultButton");
-            await Page.ClickAsync("#dropdownDefaultButton");
-            await Page.ClickAsync("#MyProfile");
-            // Wait for profile page to load
-            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
+            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
             // Click edit bio to redirect to update page
             await Page.ClickAsync("#edit-bio");
             // Wait for update page to load
@@ -138,31 +124,13 @@ namespace Acebook.Tests
         [Test]
         public async Task EditBioCancelButton_MyUserProfilePage_GoesBackToUserProfile()
         {
-            // Go to sign-in page
-            SetDefaultExpectTimeout(1000);
-            await Page.GotoAsync("/signin");
-            // Wait for form to load
-            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
-            // Fill and submit
-            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
-            await Page.Locator("#password").FillAsync("password123");
-            await Task.WhenAll(
-                Page.WaitForURLAsync($"{BaseUrl}/posts"),
-                Page.GetByTestId("signin-submit").ClickAsync()
-            );
-            // Open profile dropdown
-            await Page.WaitForSelectorAsync("#dropdownDefaultButton");
-            await Page.ClickAsync("#dropdownDefaultButton");
-            await Page.ClickAsync("#MyProfile");
-            // Wait for profile page to load
-            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
+            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
             // Click edit bio to redirect to update page
             await Page.ClickAsync("#edit-bio");
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1/update");
             await Page.ClickAsync("#cancel");
             // Wait for profile page to load
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
-            
         }
 
     }

@@ -78,7 +78,7 @@
         </p>
 
         <!-- Tagline and edit tagline -->
-        <form asp-action="Update" asp-controller="Users" asp-route-id="@userId" method="post" id="tagline-form"
+        <form asp-action="Update" asp-controller="Users" asp-route-id="@userId" method="post" id="tagline-form" data-testid="tagline-form"
           label="update tagline form" class="hidden">
           <input type="text" name="tagline" label="update tagline box" id="tagline-input" data-testid="tagline-input"
             class="border border-gray-300 rounded-md p-2 w-full" asp-for="ProfileBio.Tagline" />
@@ -97,7 +97,7 @@
         </form>
 
         <button id="update-tagline"
-          class="text-teal-600 text-sm font-medium py-4 rounded-md hover:text-teal-400 transition">
+          class="text-teal-500 text-sm py-4 rounded-md hover:underline transition">
           Edit tagline
         </button>
       </div>
