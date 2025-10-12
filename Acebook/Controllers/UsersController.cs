@@ -54,6 +54,7 @@ public class UsersController : Controller
 
         ViewBag.Friends = friends;
         ViewBag.CurrentUserId = currentUserId;
+        ViewBag.ProfileUserId = id;
 
         return View(user);
     }

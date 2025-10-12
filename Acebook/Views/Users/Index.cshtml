@@ -49,7 +49,7 @@
         @foreach (var friend in ViewBag.Friends)
         {
           User other;
-          if (friend.RequesterId == ViewBag.CurrentUserId)
+          if (friend.RequesterId == ViewBag.ProfileUserId)
           {
             other = friend.Accepter;
           }
@@ -58,10 +58,10 @@
             other = friend.Requester;
           }
           <div class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-lg mb-1 transition">
-            <div data-testid="@other.FirstName" class="flex items-center space-x-3">
+            <div  class="flex items-center space-x-3">
               <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
-              <button class="text-xs font-medium text-gray-700 hover:text-teal-600">@other.FirstName
-                @other.LastName</button>
+              <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name" data-testid="@other.FirstName" method="get" class="text-xs font-medium text-gray-700 hover:text-teal-600">@other.FirstName
+                @other.LastName</a>
             </div>
               
             <!-- Dots only appear on hover -->

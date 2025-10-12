@@ -169,5 +169,16 @@ namespace Acebook.Tests
             await Expect(Page.GetByTestId("Reefy")).ToBeVisibleAsync();
         }
 
+        [Test]
+        public async Task FriendName_MyUserProfilePage_RedirectsToTheirProfile()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
+            // Click friend's name
+            await Page.GetByTestId("Shelly").ClickAsync();
+            // redirects to Shelly's profile page
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
+            
+        }
+
     }
 }
