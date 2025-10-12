@@ -76,8 +76,8 @@
         @(Model.ProfileBio.Tagline ?? "Just keep swimming!")
       </p>
 
-      <form asp-action="Update" asp-controller="Users" asp-route-id="@userId" method="post" id="tagline-form" class="hidden">
-        <input type="text" name="tagline" id="tagline-input"
+      <form asp-action="Update" asp-controller="Users" asp-route-id="@userId" method="post" id="tagline-form" label="update tagline form" class="hidden">
+        <input type="text" name="tagline" label="update tagline box" id="tagline-input"
               class="border border-gray-300 rounded-md p-2 w-full"
               asp-for="ProfileBio.Tagline" />
               <input type="hidden" asp-for="ProfileBio.RelationshipStatus" name="relationshipStatus" id="relationshipstatus" />
@@ -87,7 +87,7 @@
               <button type="button" id="cancel-edit"
                 class="bg-gray-300 text-gray-800 text-sm w-36 px-4 py-2 rounded-md hover:bg-gray-400 mt-2"> Cancel
               </button>
-              <button id="submit" type="submit"
+              <button id="tagline-submit" type="submit"
                 class="bg-teal-600 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-teal-400 mt-2">Save Changes
               </button>
       </form>
