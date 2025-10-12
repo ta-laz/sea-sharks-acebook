@@ -177,7 +177,21 @@ namespace Acebook.Tests
             await Page.GetByTestId("Shelly").ClickAsync();
             // redirects to Shelly's profile page
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
-            
+        }
+
+        [Test]
+        public async Task ViewingFriends_FriendProfilePage_ShowsListOfTheirFriends()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
+            // Click friend's name
+            await Page.GetByTestId("Shelly").ClickAsync();
+            // redirects to Shelly's profile page
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
+            // Expect Shelly's friends' names to be visible
+            await Expect(Page.GetByTestId("Finn")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("Bruce")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("Coral")).ToBeVisibleAsync();
+
         }
 
     }
