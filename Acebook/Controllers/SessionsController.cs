@@ -37,7 +37,6 @@ public class SessionsController : Controller
     if (user != null && user.Password == hashed)
     {
       HttpContext.Session.SetInt32("user_id", user.Id);
-      Console.WriteLine($"Set session user_id = {HttpContext.Session.GetInt32("user_id")}");
       return new RedirectResult("/posts");
     }
     else

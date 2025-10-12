@@ -42,7 +42,7 @@
             <!-- Job block with validation -->
             <div>
                 <label for="job" class="mb-1 block text-sm text-gray-700">Job</label>
-                <input asp-for="ProfileBio.Job" id="Job" name="job" class="w-full border border-gray-400 rounded-lg p-2"
+                <input asp-for="ProfileBio.Job" id="job" name="job" class="w-full border border-gray-400 rounded-lg p-2"
                     placeholder="Job" />
                 @* <span asp-validation-for="Job" class="text-teal-600 text-sm font-bold" id="job-error"></span> *@
             </div>
@@ -52,13 +52,13 @@
                 <!-- Cancel button -->
                 <div class="flex justify-center">
                     <a href="javascript:history.back()" id="cancel"
-                        class="bg-gray-100 text-sm font-medium w-24 px-4 py-2 mr-4 rounded-md hover:bg-gray-300">Cancel!</a>
+                        class="bg-gray-100 flex items-center justify-center text-sm font-medium w-24 px-4 py-2 mr-4 rounded-md hover:bg-gray-300">Cancel</a>
                 </div>
 
                 
                 <!-- Update profile submit form -->
                 <div class="flex justify-center">
-                    <button id="submit" type="submit"
+                    <button id="update-submit" type="submit"
                         class="bg-teal-600 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-teal-400">Save
                         Changes</button>
                 </div>

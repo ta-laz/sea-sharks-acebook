@@ -25,7 +25,6 @@ public class PostsController : Controller
                                .Include(p => p.User);
     ViewBag.Posts = posts.ToList();
     ViewBag.Posts.Reverse();
-    Console.WriteLine($"Session check: {HttpContext.Session.GetInt32("user_id")}");
 
     return View();
   }

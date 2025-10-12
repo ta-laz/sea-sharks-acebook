@@ -82,21 +82,22 @@ namespace Acebook.Tests
             await Page.ClickAsync("#MyProfile");
             // Wait for profile page to load
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
-            // Click edit tagline to make form appear
-            await Page.ClickAsync("#update-tagline");
-            // Fill out form
-            await Page.Locator("#tagline-input").FillAsync("Test content");
+            // Click edit tagline to make form appear + fill out form
+            await Task.WhenAll(
+                Page.ClickAsync("#update-tagline"),
+                Page.Locator("#tagline-input").FillAsync("Test content")
+            );
             // Wait for tagline submission + redirect
             await Task.WhenAll(
                 Page.GetByTestId("tagline-submit").ClickAsync(),
                 Page.WaitForURLAsync($"{BaseUrl}/users/1")
             );
             // Expect the tagline to be the new string
-            await Expect(Page.GetByTestId("tagline-text")).ToHaveTextAsync("Test content");
+            await Expect(Page.GetByTestId("under-name-tagline-text")).ToHaveTextAsync("Test content");
         }
 
         [Test]
-        public async Task EditBio_MyUserProfilePage_UpdatesProfileBio()
+        public async Task EditBio_MyUserProfilePage_UpdatesProfileBioRedirectsToUserProfile()
         {
             // Go to sign-in page
             SetDefaultExpectTimeout(1000);
@@ -108,7 +109,7 @@ namespace Acebook.Tests
             await Page.Locator("#password").FillAsync("password123");
             await Task.WhenAll(
                 Page.WaitForURLAsync($"{BaseUrl}/posts"),
-                Page.Locator("#signin-submit").ClickAsync()
+                Page.GetByTestId("signin-submit").ClickAsync()
             );
             // Open profile dropdown
             await Page.WaitForSelectorAsync("#dropdownDefaultButton");
@@ -116,17 +117,22 @@ namespace Acebook.Tests
             await Page.ClickAsync("#MyProfile");
             // Wait for profile page to load
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
-            // Click edit tagline to make form appear
-            await Page.ClickAsync("#update-tagline");
+            // Click edit bio to redirect to update page
+            await Page.ClickAsync("#edit-bio");
+            // Wait for update page to load
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1/update");
             // Fill out form
-            await Page.Locator("#tagline-input").FillAsync("Test content");
-            // Wait for tagline submission + redirect
+            await Page.Locator("#tagline").FillAsync("Test tagline");
+            await Page.Locator("#relationshipstatus").FillAsync("Test status");
+            await Page.Locator("#pets").FillAsync("Test pets");
+            await Page.Locator("#job").FillAsync("Test job");
+            // // Wait for tagline submission + redirect
             await Task.WhenAll(
-                Page.Locator("#tagline-submit").ClickAsync(),
+                Page.Locator("#update-submit").ClickAsync(),
                 Page.WaitForURLAsync($"{BaseUrl}/users/1")
             );
             // Expect the tagline to be the new string
-            await Expect(Page.Locator("#tagline-text")).ToHaveTextAsync("Test content");
+            await Expect(Page.GetByTestId("bio-tagline")).ToHaveTextAsync("Test tagline");
         }
 
     }
