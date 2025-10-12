@@ -22,7 +22,8 @@
 
       <!-- Profile bio block -->
       <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs">
-        <h2 data-testid="bio-name" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2"> @Model.FirstName's Bio</h2>
+        <h2 data-testid="bio-name" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2"> @Model.FirstName's
+          Bio</h2>
 
         <div class="group flex items-center justify-between mb-4 rounded-lg mb-1 transition">
           <ul>
@@ -45,24 +46,38 @@
       <!-- Friends block -->
       <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs">
         <h2 class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Friends</h2>
-        <!-- Example friend preview -->
-        <div class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-lg mb-1 transition">
-          <div class="flex items-center space-x-3">
-            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
-            <button class="text-xs font-medium text-gray-700 hover:text-teal-600">John Doe</button>
-          </div>
-          <!-- Dots only appear on hover -->
-          <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
-            </svg>
-          </button>
-        </div>
+        @foreach (var friend in ViewBag.Friends)
+        {
+          User other;
+          if (friend.RequesterId == ViewBag.CurrentUserId)
+          {
+            other = friend.Accepter;
+          }
+          else
+          {
+            other = friend.Requester;
+          }
 
-        <p class="text-teal-500 hover:underline text-sm cursor-pointer">
+          <div class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-lg mb-1 transition">
+            <div class="flex items-center space-x-3">
+              <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+              <button class="text-xs font-medium text-gray-700 hover:text-teal-600">@other.FirstName
+                @other.LastName</button>
+            </div>
+            <!-- Dots only appear on hover -->
+            <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
+              </svg>
+            </button>
+          </div>
+        }
+        
+        <a asp-controller="Friends" asp-action="Index" id="see-all-friends" data-testid="see-all-friends" method="get"
+          class="text-teal-500 hover:underline text-sm cursor-pointer">
           See All Friends
-        </p>
+        </a>
       </div>
     </div>
 
@@ -78,8 +93,8 @@
         </p>
 
         <!-- Tagline and edit tagline -->
-        <form asp-action="Update" asp-controller="Users" asp-route-id="@userId" method="post" id="tagline-form" data-testid="tagline-form"
-          label="update tagline form" class="hidden">
+        <form asp-action="Update" asp-controller="Users" asp-route-id="@userId" method="post" id="tagline-form"
+          data-testid="tagline-form" label="update tagline form" class="hidden">
           <input type="text" name="tagline" label="update tagline box" id="tagline-input" data-testid="tagline-input"
             class="border border-gray-300 rounded-md p-2 w-full" asp-for="ProfileBio.Tagline" />
           <input type="hidden" asp-for="ProfileBio.RelationshipStatus" name="relationshipStatus"
@@ -96,8 +111,7 @@
           </button>
         </form>
 
-        <button id="update-tagline"
-          class="text-teal-500 text-sm py-4 rounded-md hover:underline transition">
+        <button id="update-tagline" class="text-teal-500 text-sm py-4 rounded-md hover:underline transition">
           Edit tagline
         </button>
       </div>

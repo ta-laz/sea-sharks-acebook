@@ -146,5 +146,16 @@ namespace Acebook.Tests
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
         }
 
+        [Test]
+        public async Task SeeAllFriendsButton_MyUserProfilePage_RedirectsToFriends()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
+            // Click see all friends to redirect to friends page
+            await Task.WhenAll(
+                Page.Locator("#see-all-friends").ClickAsync(),
+                Page.WaitForURLAsync($"{BaseUrl}/friends")
+            );
+        }
+
     }
 }
