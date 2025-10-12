@@ -157,5 +157,17 @@ namespace Acebook.Tests
             );
         }
 
+        [Test]
+        public async Task FriendsBlockDisplaysFirstThreeFriends_MyUserProfilePage()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
+            // Click see all friends to redirect to friends page
+            await Expect(Page.GetByTestId("friends-header")).ToHaveTextAsync("Friends");
+            // each friend get its own test id assigned dynamically by its first name
+            await Expect(Page.GetByTestId("Shelly")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("Bruce")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("Reefy")).ToBeVisibleAsync();
+        }
+
     }
 }

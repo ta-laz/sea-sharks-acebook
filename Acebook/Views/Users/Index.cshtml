@@ -45,7 +45,7 @@
 
       <!-- Friends block -->
       <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs">
-        <h2 class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Friends</h2>
+        <h2 data-testid="friends-header" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Friends</h2>
         @foreach (var friend in ViewBag.Friends)
         {
           User other;
@@ -57,13 +57,13 @@
           {
             other = friend.Requester;
           }
-
           <div class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-lg mb-1 transition">
-            <div class="flex items-center space-x-3">
+            <div data-testid="@other.FirstName" class="flex items-center space-x-3">
               <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
               <button class="text-xs font-medium text-gray-700 hover:text-teal-600">@other.FirstName
                 @other.LastName</button>
             </div>
+              
             <!-- Dots only appear on hover -->
             <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
@@ -73,7 +73,7 @@
             </button>
           </div>
         }
-        
+
         <a asp-controller="Friends" asp-action="Index" id="see-all-friends" data-testid="see-all-friends" method="get"
           class="text-teal-500 hover:underline text-sm cursor-pointer">
           See All Friends

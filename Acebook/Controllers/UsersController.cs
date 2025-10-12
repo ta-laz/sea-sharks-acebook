@@ -35,13 +35,6 @@ public class UsersController : Controller
                   .Include(u => u.Posts)
                   .FirstOrDefault(u => u.Id == id);
 
-        int? currentUserId = HttpContext.Session.GetInt32("user_id");
-        var friends = dbContext.Friends
-        .Include(f => f.Requester)
-        .Include(f => f.Accepter)
-        .Where(f => (f.RequesterId == currentUserId || f.AccepterId == currentUserId) && f.Status == FriendStatus.Accepted);
-        ViewBag.Friends = friends.ToList();
-
         if (user == null)
             return NotFound();
 
@@ -49,6 +42,18 @@ public class UsersController : Controller
                                    .Include(p => p.User);
         ViewBag.Posts = posts.ToList();
         ViewBag.Posts.Reverse();
+
+        int? currentUserId = HttpContext.Session.GetInt32("user_id");
+
+        var friends = dbContext.Friends
+        .Include(f => f.Requester)
+        .Include(f => f.Accepter)
+        .Where(f => (f.RequesterId == id || f.AccepterId == id) && f.Status == FriendStatus.Accepted)
+        .Take(3)
+        .ToList();
+
+        ViewBag.Friends = friends;
+        ViewBag.CurrentUserId = currentUserId;
 
         return View(user);
     }
