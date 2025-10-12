@@ -8,7 +8,7 @@
   <!-- Outer container -->
   <div class="flex flex-col lg:flex-row w-full max-w-7xl gap-8">
 
-    <!-- 🧍 Left column: profile picture + friends -->
+    <!-- 🧍 Left column: profile picture + bio + friends -->
     <div class="flex flex-col top-20 self-start top-32 sticky items-center lg:items-start w-full lg:w-1/3 space-y-6">
       <!-- Profile Picture (hover reveal) -->
       <div class="relative group flex justify-center">
@@ -20,11 +20,10 @@
         </div>
       </div>
 
-      <!-- Friends block -->
+      <!-- Profile bio block -->
       <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs">
         <h2 class="text-md mb-3 text-gray-500 font-semibold border-b pb-2"> @Model.FirstName's Bio</h2>
 
-        <!-- Example friend preview -->
         <div class="group flex items-center justify-between mb-4 rounded-lg mb-1 transition">
           <ul>
             <li data-testid="bio-tagline" class="italic text-gray-400 mt-1">@Model.ProfileBio.Tagline</li>

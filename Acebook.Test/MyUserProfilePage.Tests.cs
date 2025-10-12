@@ -135,5 +135,35 @@ namespace Acebook.Tests
             await Expect(Page.GetByTestId("bio-tagline")).ToHaveTextAsync("Test tagline");
         }
 
+        [Test]
+        public async Task EditBioCancelButton_MyUserProfilePage_GoesBackToUserProfile()
+        {
+            // Go to sign-in page
+            SetDefaultExpectTimeout(1000);
+            await Page.GotoAsync("/signin");
+            // Wait for form to load
+            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+            // Fill and submit
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.GetByTestId("signin-submit").ClickAsync()
+            );
+            // Open profile dropdown
+            await Page.WaitForSelectorAsync("#dropdownDefaultButton");
+            await Page.ClickAsync("#dropdownDefaultButton");
+            await Page.ClickAsync("#MyProfile");
+            // Wait for profile page to load
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
+            // Click edit bio to redirect to update page
+            await Page.ClickAsync("#edit-bio");
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1/update");
+            await Page.ClickAsync("#cancel");
+            // Wait for profile page to load
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
+            
+        }
+
     }
 }
