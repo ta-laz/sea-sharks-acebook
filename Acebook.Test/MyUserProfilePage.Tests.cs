@@ -43,7 +43,7 @@ namespace Acebook.Tests
             await Page.Locator("#password").FillAsync("password123");
             await Task.WhenAll(
                 Page.WaitForURLAsync($"{BaseUrl}/posts"),
-                Page.Locator("#signin-submit").ClickAsync()
+                Page.GetByTestId("signin-submit").ClickAsync()
             );
             // Open profile dropdown
             await Page.WaitForSelectorAsync("#dropdownDefaultButton");
@@ -55,7 +55,7 @@ namespace Acebook.Tests
             await Page.Locator("#post-content").FillAsync("Test content");
             // Wait for post submission + redirect
             await Task.WhenAll(
-                Page.Locator("#post-submit").ClickAsync(),
+                Page.GetByTestId("post-submit").ClickAsync(),
                 Page.WaitForURLAsync($"{BaseUrl}/users/1")
             );
             await Expect(Page.GetByText("Test content")).ToBeVisibleAsync();
@@ -63,6 +63,40 @@ namespace Acebook.Tests
 
         [Test]
         public async Task EditTagline_MyUserProfilePage_UpdatesTagline()
+        {
+            // Go to sign-in page
+            SetDefaultExpectTimeout(1000);
+            await Page.GotoAsync("/signin");
+            // Wait for form to load
+            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+            // Fill and submit
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.GetByTestId("signin-submit").ClickAsync()
+            );
+            // Open profile dropdown
+            await Page.WaitForSelectorAsync("#dropdownDefaultButton");
+            await Page.ClickAsync("#dropdownDefaultButton");
+            await Page.ClickAsync("#MyProfile");
+            // Wait for profile page to load
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
+            // Click edit tagline to make form appear
+            await Page.ClickAsync("#update-tagline");
+            // Fill out form
+            await Page.Locator("#tagline-input").FillAsync("Test content");
+            // Wait for tagline submission + redirect
+            await Task.WhenAll(
+                Page.GetByTestId("tagline-submit").ClickAsync(),
+                Page.WaitForURLAsync($"{BaseUrl}/users/1")
+            );
+            // Expect the tagline to be the new string
+            await Expect(Page.GetByTestId("tagline-text")).ToHaveTextAsync("Test content");
+        }
+
+        [Test]
+        public async Task EditBio_MyUserProfilePage_UpdatesProfileBio()
         {
             // Go to sign-in page
             SetDefaultExpectTimeout(1000);
