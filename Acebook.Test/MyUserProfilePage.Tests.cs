@@ -99,6 +99,19 @@ namespace Acebook.Tests
             await Expect(Page.GetByTestId("tagline-form")).ToBeHiddenAsync();
         }
 
+
+        [Test]
+        public async Task ProfileBioShowsDetails_MyUserProfilePage()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
+            // Expect the profile bio to display all the data from the test data seeder
+            await Expect(Page.GetByTestId("bio-name")).ToHaveTextAsync("Finn's Bio");
+            await Expect(Page.GetByTestId("bio-age")).ToHaveTextAsync("Age: 32");
+            await Expect(Page.GetByTestId("bio-tagline")).ToHaveTextAsync("Explorer of coral reefs and deep thinker.");
+            await Expect(Page.GetByTestId("bio-relationshipstatus")).ToHaveTextAsync("Relationship Status: Single");
+            await Expect(Page.GetByTestId("bio-pets")).ToHaveTextAsync("Pets: Remora");
+            await Expect(Page.GetByTestId("bio-job")).ToHaveTextAsync("Job: Reef Guide");
+        }
         [Test]
         public async Task EditBio_MyUserProfilePage_UpdatesProfileBioRedirectsToUserProfile()
         {
