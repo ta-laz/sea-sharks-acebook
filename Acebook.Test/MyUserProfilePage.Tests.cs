@@ -191,8 +191,6 @@ namespace Acebook.Tests
             await Expect(Page.GetByTestId("Finn")).ToBeVisibleAsync();
             await Expect(Page.GetByTestId("Bruce")).ToBeVisibleAsync();
             await Expect(Page.GetByTestId("Coral")).ToBeVisibleAsync();
-
         }
-
     }
 }
