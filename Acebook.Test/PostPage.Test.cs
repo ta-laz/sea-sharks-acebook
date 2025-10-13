@@ -24,6 +24,19 @@ namespace Acebook.Tests
         {
             await using var context = new AcebookDbContext();
             await TestDataSeeder.ResetAndSeedAsync(context);
+
+            // Go to sign-in page
+            SetDefaultExpectTimeout(1000);
+            await Page.GotoAsync("/signin");
+            // Wait for form to load
+            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+            // Fill and submit
+            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.Locator("#signin-submit").ClickAsync()
+            );
         }
 
         public override BrowserNewContextOptions ContextOptions()
@@ -36,18 +49,7 @@ namespace Acebook.Tests
         [Test]
         public async Task CommentButton_ClickedOnPost_NavigatesToPostPage()
         {
-            // Go to sign-in page
-            SetDefaultExpectTimeout(1000);
-            await Page.GotoAsync("/signin");
-            // Wait for form to load
-            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
-            // Fill and submit
-            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
-            await Page.Locator("#password").FillAsync("password123");
-            await Task.WhenAll(
-                Page.WaitForURLAsync($"{BaseUrl}/posts"),
-                Page.Locator("#signin-submit").ClickAsync()
-            );
+            
             // Click on a post:
             await Task.WhenAll(
                 Page.WaitForURLAsync($"{BaseUrl}/posts/175"),
@@ -60,18 +62,6 @@ namespace Acebook.Tests
         [Test]
         public async Task SeeMore_ClickedOnPost_NavigatesToPostPage()
         {
-            // Go to sign-in page
-            SetDefaultExpectTimeout(1000);
-            await Page.GotoAsync("/signin");
-            // Wait for form to load
-            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
-            // Fill and submit
-            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
-            await Page.Locator("#password").FillAsync("password123");
-            await Task.WhenAll(
-                Page.WaitForURLAsync($"{BaseUrl}/posts"),
-                Page.Locator("#signin-submit").ClickAsync()
-            );
             // Click on a post:
             await Task.WhenAll(
                 Page.WaitForURLAsync($"{BaseUrl}/posts/175"),
@@ -84,18 +74,6 @@ namespace Acebook.Tests
         [Test]
         public async Task SubmitButton_ClickedOnPost_AddsCommentToPost()
         {
-            // Go to sign-in page
-            SetDefaultExpectTimeout(1000);
-            await Page.GotoAsync("/signin");
-            // Wait for form to load
-            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
-            // Fill and submit
-            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
-            await Page.Locator("#password").FillAsync("password123");
-            await Task.WhenAll(
-                Page.WaitForURLAsync($"{BaseUrl}/posts"),
-                Page.Locator("#signin-submit").ClickAsync()
-            );
             // Click on a post:
             await Task.WhenAll(
                 Page.WaitForURLAsync($"{BaseUrl}/posts/175"),
@@ -123,18 +101,6 @@ namespace Acebook.Tests
         [Test]
         public async Task PostPage_NoComments_DisplaysNoCommentsMessage()
         {
-            // Go to sign-in page
-            SetDefaultExpectTimeout(1000);
-            await Page.GotoAsync("/signin");
-            // Wait for form to load
-            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
-            // Fill and submit
-            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
-            await Page.Locator("#password").FillAsync("password123");
-            await Task.WhenAll(
-                Page.WaitForURLAsync($"{BaseUrl}/posts"),
-                Page.Locator("#signin-submit").ClickAsync()
-            );
             // Click on a post:
             await Task.WhenAll(
                 Page.WaitForURLAsync($"{BaseUrl}/posts/175"),
@@ -164,22 +130,6 @@ namespace Acebook.Tests
         [Test]
         public async Task NewPostWithNoComments_DisplaysNoCommentsMessage()
         {
-            // Go to sign-in page
-            SetDefaultExpectTimeout(1000);
-            await Page.GotoAsync("/signin");
-
-            // Wait for form to load
-            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
-
-            // Fill and submit signin form 
-            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
-            await Page.Locator("#password").FillAsync("password123");
-
-            await Task.WhenAll(
-                Page.WaitForURLAsync($"{BaseUrl}/posts"),
-                Page.Locator("#signin-submit").ClickAsync()
-            );
-
             // Create post
             await Page.Locator("#post-content").FillAsync("Test content");
             // Wait for post submission + redirect
