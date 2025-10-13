@@ -24,6 +24,8 @@ namespace Acebook.Tests
         {
             await using var context = new AcebookDbContext();
             await TestDataSeeder.ResetAndSeedAsync(context);
+            // Accept all confirmation popups
+            Page.Dialog += async (_, dialog) => await dialog.AcceptAsync();
 
             // Go to sign-in page
             await Page.GotoAsync("/signin");
@@ -156,6 +158,43 @@ namespace Acebook.Tests
             await Expect(Page.GetByText("No comments yet!")).ToBeVisibleAsync();
         }
 
+        [Test]
+        public async Task DeletePost_AuthorisedUser_DeletesPost()
+        {
+            // Create post
+            await Page.Locator("#post-content").FillAsync("Test delete post button works properly");
+            // Wait for post submission + redirect
+            await Task.WhenAll(
+                Page.Locator("#post-submit").ClickAsync(),
+                Page.WaitForURLAsync($"{BaseUrl}/posts")
+            );
 
+            // Wait for the new post to appear on the posts page
+            await Expect(Page.GetByText("Test delete post button works properly")).ToBeVisibleAsync();
+
+            // Click “See more” on the new post
+            await Task.WhenAll(
+                Page.WaitForURLAsync(new Regex($"{BaseUrl}/posts/\\d+")), // Uses regex \\d+ to expect one or more digits, scalable when more posts are added 
+                Page.GetByTestId("see-more-button").First.ClickAsync() // Because we have just made the post, we can still click just on the first one 
+            );
+
+            await Page.ScreenshotAsync(new() { Path = "debug_before_delete.png" });
+
+            // Confirm we are on an individual post page
+            await Expect(Page.Locator("#splash-heading")).ToBeVisibleAsync();
+
+            // Confirm we are on the NEW individual post page
+            await Expect(Page.GetByText("Test delete post button works properly")).ToBeVisibleAsync();
+            
+            // Click 'Delete Post' button:
+            await Task.WhenAll(
+                Page.GetByTestId("delete-post-button").ClickAsync(),
+                Page.WaitForURLAsync($"{BaseUrl}/posts")
+            );
+            await Page.ScreenshotAsync(new() { Path = "delete_button_clicked.png" });
+
+            // Confirm the post is no longer visible on Aquarium:
+            await Expect(Page.GetByText("Test delete post button works properly")).Not.ToBeVisibleAsync();
+        }
     }
 }

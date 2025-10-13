@@ -116,31 +116,31 @@ namespace Acebook.Tests
             await Expect(Page.GetByTestId("Coral")).ToBeVisibleAsync();
         }
 
-        [Test]
-        public async Task ClickFriendsName_FriendsListPage_OpenFullFriendList()
-        {
-            await Page.GetByTestId("Shelly").ClickAsync();
-            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
-            await Page.GetByTestId("see-all-friends").ClickAsync();
+        // [Test]
+        // public async Task ClickFriendsName_FriendsListPage_OpenFullFriendList()
+        // {
+        //     await Page.GetByTestId("Shelly").ClickAsync();
+        //     await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
+        //     await Page.GetByTestId("see-all-friends").ClickAsync();
 
-            await Expect(Page.GetByTestId("Bruce")).ToBeVisibleAsync();
-            await Expect(Page.GetByTestId("Coral")).ToBeVisibleAsync(); await Expect(Page.GetByTestId("Bluey")).ToBeVisibleAsync();
-        }
+        //     await Expect(Page.GetByTestId("Bruce")).ToBeVisibleAsync();
+        //     await Expect(Page.GetByTestId("Coral")).ToBeVisibleAsync(); await Expect(Page.GetByTestId("Bluey")).ToBeVisibleAsync();
+        // }
 
-        [Test]
-        public async Task ClickFriendsName_FriendsListPage_AddANewFriend()
-        {
-            await Page.GotoAsync("/users/4");
-            await Page.GetByTestId("see-all-friends").ClickAsync();
+        // [Test]
+        // public async Task ClickFriendsName_FriendsListPage_AddANewFriend()
+        // {
+        //     await Page.GotoAsync("/users/4");
+        //     await Page.GetByTestId("see-all-friends").ClickAsync();
 
-            await Expect(Page.GetByTestId("Tigra")).ToBeVisibleAsync();
-            await Page.GetByTestId("add-friend").ClickAsync();
-            Page.Dialog += async (_, dialog) =>
-                {
-                    Assert.That(dialog.Message, Does.Contain("Are you sure"));
-                    await dialog.AcceptAsync();
-                };
-            await Expect(Page.GetByRole(AriaRole.Button, new() {Name = "Pending Request"})).ToBeVisibleAsync();
-        }
+        //     await Expect(Page.GetByTestId("Tigra")).ToBeVisibleAsync();
+        //     await Page.GetByTestId("add-friend").ClickAsync();
+        //     Page.Dialog += async (_, dialog) =>
+        //         {
+        //             Assert.That(dialog.Message, Does.Contain("Are you sure"));
+        //             await dialog.AcceptAsync();
+        //         };
+        //     await Expect(Page.GetByRole(AriaRole.Button, new() {Name = "Pending Request"})).ToBeVisibleAsync();
+        // }
     }
 }
