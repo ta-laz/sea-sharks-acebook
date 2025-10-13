@@ -8,7 +8,7 @@
   <!-- Outer container -->
   <div class="flex flex-col lg:flex-row w-full max-w-7xl gap-8">
 
-    <!-- 🧍 Left column: profile picture + friends -->
+    <!-- 🧍 Left column: profile picture + bio + friends -->
     <div class="flex flex-col top-20 self-start top-32 sticky items-center lg:items-start w-full lg:w-1/3 space-y-6">
       <!-- Profile Picture (hover reveal) -->
       <div class="relative group flex justify-center">
@@ -20,53 +20,102 @@
         </div>
       </div>
 
-      <!-- Friends block -->
+      <!-- Profile bio block -->
       <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs">
-        <h2 class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Friends</h2>
+        <h2 data-testid="bio-name" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2"> @Model.FirstName's
+          Bio</h2>
 
-        <!-- Example friend preview -->
-        <div class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-lg mb-1 transition">
-          <div class="flex items-center space-x-3">
-            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
-            <button class="text-xs font-medium text-gray-700 hover:text-teal-600">John Doe</button>
-          </div>
-          <!-- Dots only appear on hover -->
-          <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
-            </svg>
-          </button>
+        <div class="group flex items-center justify-between mb-4 rounded-lg mb-1 transition">
+          <ul>
+            <li data-testid="bio-tagline" class="italic text-gray-400 mt-1">@Model.ProfileBio.Tagline</li>
+            <li data-testid="bio-age" class="text-gray-400 mt-1">Age: @Model.ProfileBio.Age</li>
+            <li data-testid="bio-relationshipstatus" class="text-gray-400 mt-1">Relationship Status:
+              @Model.ProfileBio.RelationshipStatus</li>
+            <li data-testid="bio-pets" class="text-gray-400 mt-1">Pets: @Model.ProfileBio.Pets</li>
+            <li data-testid="bio-job" class="text-gray-400 mt-1 mb-2">Job: @Model.ProfileBio.Job</li>
+          </ul>
         </div>
 
-        <p class="text-teal-500 hover:underline text-sm cursor-pointer">
+        <a asp-controller="Users" asp-action="Update" asp-route-id="@userId" id="edit-bio" method="get"
+          class="text-teal-500 hover:underline text-sm cursor-pointer">
+          Edit bio
+        </a>
+      </div>
+
+
+      <!-- Friends block -->
+      <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs">
+        <h2 data-testid="friends-header" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Friends</h2>
+        @foreach (var friend in ViewBag.Friends)
+        {
+          User other;
+          if (friend.RequesterId == ViewBag.ProfileUserId)
+          {
+            other = friend.Accepter;
+          }
+          else
+          {
+            other = friend.Requester;
+          }
+          <div class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-lg mb-1 transition">
+            <div  class="flex items-center space-x-3">
+              <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+              <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name" data-testid="@other.FirstName" method="get" class="text-xs font-medium text-gray-700 hover:text-teal-600">@other.FirstName
+                @other.LastName</a>
+            </div>
+              
+            <!-- Dots only appear on hover -->
+            <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01" />
+              </svg>
+            </button>
+          </div>
+        }
+
+        <a asp-controller="Friends" asp-action="Index" id="see-all-friends" data-testid="see-all-friends" method="get"
+          class="text-teal-500 hover:underline text-sm cursor-pointer">
           See All Friends
-        </p>
+        </a>
       </div>
     </div>
 
-    <!-- 📜 Right column: profile info + posts -->
+    <!-- 📜 Right column: profile info + posts + edit tagline -->
     <div class="flex flex-col w-full lg:w-2/3 space-y-6">
 
       <!-- Profile Info -->
       <div class="bg-white rounded-lg p-6 shadow-md">
         <h1 class="text-2xl font-bold text-teal-700 mb-2">@Model.FirstName @Model.LastName</h1>
-        @if (Model.ProfileBio != null)
-        {
-          <p class="italic text-gray-400 mt-1">@Model.ProfileBio.Tagline</p>
-          <p class="text-gray-400 mt-1">Age: @Model.ProfileBio.Age</p>
-          <p class="text-gray-400 mt-1">Relationship Status: @Model.ProfileBio.RelationshipStatus</p>
-          <p class="text-gray-400 mt-1">Pets: @Model.ProfileBio.Pets</p>
-          <p class="text-gray-400 mt-1 mb-2">Job: @Model.ProfileBio.Job</p>
-        }
-        else
-        {
-          <p class="text-gray-400 mt-1 italic text-gray-400">(No profile info added)</p>
-        }
-        <a asp-controller="Users" asp-action="Update" asp-route-id="@userId" method="get" id="update-profile"
-          class="text-teal-600 text-sm font-medium py-4 rounded-md hover:text-teal-400 transition">
-          Edit profile</a>
+
+        <p id="under-name-tagline-text" data-testid="under-name-tagline-text" class="italic text-gray-400 mt-1 mb-4">
+          @(Model.ProfileBio.Tagline ?? "Just keep swimming!")
+        </p>
+
+        <!-- Tagline and edit tagline -->
+        <form asp-action="Update" asp-controller="Users" asp-route-id="@userId" method="post" id="tagline-form"
+          data-testid="tagline-form" label="update tagline form" class="hidden">
+          <input type="text" name="tagline" label="update tagline box" id="tagline-input" data-testid="tagline-input"
+            class="border border-gray-300 rounded-md p-2 w-full" asp-for="ProfileBio.Tagline" />
+          <input type="hidden" asp-for="ProfileBio.RelationshipStatus" name="relationshipStatus"
+            id="relationshipstatus" />
+          <input type="hidden" asp-for="ProfileBio.Pets" name="pets" id="pets" />
+          <input type="hidden" asp-for="ProfileBio.Job" name="job" id="job" />
+          <input type="hidden" value="@userId" name="id" id="userid" />
+          <button type="button" id="cancel-edit"
+            class="bg-gray-300 text-gray-800 text-sm w-36 px-4 py-2 rounded-md hover:bg-gray-400 mt-2"> Cancel
+          </button>
+          <button id="tagline-submit" data-testid="tagline-submit" type="submit"
+            class="bg-teal-600 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-teal-400 mt-2">Save
+            Changes
+          </button>
+        </form>
+
+        <button id="update-tagline" class="text-teal-500 text-sm py-4 rounded-md hover:underline transition">
+          Edit tagline
+        </button>
       </div>
+
 
       <!-- Create Post Form -->
       <div class="bg-white rounded-lg w-full p-4 shadow-md">
@@ -79,7 +128,7 @@
           <div class="flex justify-between items-center mt-3">
             <label class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
             <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Users", new { id = Model.Id })" />
-            <button id="post-submit" type="submit"
+            <button id="post-submit" data-testid="post-submit" type="submit"
               class="bg-teal-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-teal-400 transition">
               Submit
             </button>
@@ -125,3 +174,23 @@
 
   </div>
 </div>
+
+<script>
+  const button = document.getElementById('update-tagline');
+  const text = document.getElementById('under-name-tagline-text');
+  const form = document.getElementById('tagline-form');
+  const cancel = document.getElementById("cancel-edit");
+
+  button.addEventListener('click', () => {
+    text.classList.add('hidden');
+    form.classList.remove('hidden');
+    button.classList.add('hidden');
+  });
+
+  cancel.addEventListener('click', () => {
+    text.classList.remove('hidden');
+    form.classList.add('hidden');
+    button.classList.remove('hidden');
+  });
+
+</script>

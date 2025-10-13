@@ -22,11 +22,11 @@ public class PostsController : Controller
   {
     AcebookDbContext dbContext = new AcebookDbContext();
     var posts = dbContext.Posts
-                               .Include(p => p.User);
+                               .Include(p => p.User)
+                               .Include(p => p.Comments)
+                               .Include(p => p.Likes);
     ViewBag.Posts = posts.ToList();
     ViewBag.Posts.Reverse();
-    Console.WriteLine($"Session check: {HttpContext.Session.GetInt32("user_id")}");
-
     return View();
   }
 
@@ -46,6 +46,35 @@ public class PostsController : Controller
       return Redirect(returnUrl);
     return RedirectToAction("Index", "Posts");
   }
+
+  [Route("/posts/{id}")]
+  [HttpGet]
+  public IActionResult Post(int id)
+  {
+    AcebookDbContext dbContext = new AcebookDbContext();
+    var post = dbContext.Posts.Include(p => p.Comments).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
+    var comments = dbContext.Comments.Include(c => c.User).Where(c => c.PostId == id).ToList();
+
+    // var comments = comments.Reverse();
+    ViewBag.post = post;
+    ViewBag.comments = comments.ToList();
+    ViewBag.comments.Reverse();
+
+    return View(post);
+  }
+
+
+  //   [Route("/post")]
+  //   [HttpGet]
+  //   public IActionResult Post(int id) {
+  //         AcebookDbContext dBContext = new AcebookDbContext();
+  //         Post? indiPost = dBContext.Posts.Include(p => p.User).FirstOrDefault(p => p.Id == id);
+  //         if (indiPost == null)
+  //         {
+  //             return new RedirectResult("/posts");
+  //         }
+  //         return View(indiPost);
+  // }
 
   [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
   public IActionResult Error()
