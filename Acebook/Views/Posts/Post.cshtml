@@ -23,11 +23,12 @@
         <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
             <button
                 class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent group py-2 px-4 font-medium transition-all"
+                data-testid = 'post-like-button'
                 data-post-id="@Model.Id"
                 data-liked="@Model.Likes.Any(l => l.UserId == Context.Session.GetInt32("user_id"))">
                 <span
                     class="absolute inset-0 bg-teal-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
-                <span class="relative transition-colors duration-300 ease-in-out group-hover:text-white">
+                <span class="relative transition-colors duration-300 ease-in-out group-hover:text-white" data-testid ='post-like-total'>
                     Like (<span class="like-count">@Model.Likes.Count()</span>)
                 </span>
             </button>
@@ -83,11 +84,12 @@
                                 <button
                                     class="comment-like relative inline-flex items-center justify-center overflow-hidden text-gray-600 text-xs bg-transparent group py-1 px-3 font-medium rounded-md transition-all border border-gray-200 shadow-sm"
                                     data-comment-id="@comment.Id"
+                                    data-testid="comment-like-button"
                                     data-liked="@comment.Likes.Any(l => l.UserId == Context.Session.GetInt32("user_id"))">
                                     <span
                                         class="absolute inset-0 bg-teal-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
                                     <span
-                                        class="relative flex items-center transition-colors duration-300 ease-in-out group-hover:text-white">
+                                        data-testid="comment-like-total" class="relative flex items-center transition-colors duration-300 ease-in-out group-hover:text-white">
                                         Like (<span class="comment-like-count">@comment.Likes.Count()</span>)
                                     </span>
                                 </button>

@@ -125,8 +125,8 @@ namespace Acebook.Tests
                 await Expect(comments.First).ToBeVisibleAsync();
             }
         }
-        
-        
+
+
         [Test]
         public async Task NewPostWithNoComments_DisplaysNoCommentsMessage()
         {
@@ -156,6 +156,35 @@ namespace Acebook.Tests
             // Check for “No comments yet!” message
             await Expect(Page.GetByText("No comments yet!")).ToBeVisibleAsync();
         }
+
+        [Test]
+        
+        public async Task LikeAPostDynamicallyUpdatesLikeTotal()
+        {
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts/175"),
+                Page.GetByTestId("see-more-button").First.ClickAsync()
+            );
+            await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
+            await Page.GetByTestId("post-like-button").ClickAsync();
+            await Expect(Page.GetByTestId("post-like-total")).ToContainTextAsync("Like (3)");
+        }
+        [Test]
+        
+        public async Task LikeButtonDynamicallyUpdatesOnComments()
+        {
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts/175"),
+                Page.GetByTestId("see-more-button").First.ClickAsync()
+            );
+            await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
+            await Page.Locator("#comment-box").ClickAsync();
+            await Page.Locator("#comment-box").FillAsync("Test Comment");
+            await Page.Locator("#comment-submit").ClickAsync();
+            await Page.GetByTestId("comment-like-button").ClickAsync();
+            await Expect(Page.GetByTestId("comment-like-total")).ToContainTextAsync("Like (1)");
+        }
+
 
 
     }

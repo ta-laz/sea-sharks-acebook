@@ -53,20 +53,6 @@ namespace Acebook.Tests
             );
             await Expect(Page.GetByText("Test content")).ToBeVisibleAsync();
         }
-        // [Test]
-        // public async Task NumberOfLikesShowsBeneathEachPost()
-        // {
-        //     SetDefaultExpectTimeout(1000);
-        //     await Page.GotoAsync("/signin");
-        //     await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
-        //     await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
-        //     await Page.Locator("#password").FillAsync("password123");
-        //     await Task.WhenAll(
-        //         Page.WaitForURLAsync($"{BaseUrl}/posts"),
-        //         Page.Locator("#signin-submit").ClickAsync()
-        //     );
-        //     await Expect(Page.GetByText("Test content")).ToBeVisibleAsync();
-        // }
 
         [Test]
         public async Task SeeAllFriendsButton_MyUserProfilePage_RedirectsToFriends()
@@ -74,7 +60,7 @@ namespace Acebook.Tests
             // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
             // Click see all friends to redirect to friends page
             await Task.WhenAll(
-                Page.Locator("#redirect-friends").ClickAsync(),
+                Page.Locator("#redirect-friends").First.ClickAsync(),
                 Page.WaitForURLAsync($"{BaseUrl}/friends")
             );
         }

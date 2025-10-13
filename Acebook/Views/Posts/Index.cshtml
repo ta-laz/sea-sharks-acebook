@@ -257,10 +257,10 @@
             <!-- Like -->
             <button
               class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all"
-              data-post-id="@post.Id" data-liked="@post.Likes.Any(l => l.UserId == Context.Session.GetInt32("user_id"))">
+              data-testid="post-like-button" data-post-id="@post.Id" data-liked="@post.Likes.Any(l => l.UserId == Context.Session.GetInt32("user_id"))">
               <span
                 class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-              <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+              <span data-testid ='home-post-like-total'class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
                 Like (<span class="like-count">@post.Likes.Count()</span>)
               </span>
             </button>
