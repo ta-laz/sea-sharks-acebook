@@ -17,6 +17,7 @@ public class CommentsController : Controller
         _logger = logger;
     }
 
+    // See individual post
     [Route("post/")]
     [HttpGet]
     public IActionResult Index()
@@ -30,9 +31,10 @@ public class CommentsController : Controller
         return View();
     }
 
+    // CREATE a comment
     [Route("post/create")]
     [HttpPost]
-    public IActionResult Create(int postId, Comment comment, string returnURL)
+    public IActionResult Create(int postId, Comment comment)
     {
         int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
         AcebookDbContext dbContext = new AcebookDbContext();
@@ -41,7 +43,35 @@ public class CommentsController : Controller
         comment.PostId = postId;
         dbContext.Comments.Add(comment);
         dbContext.SaveChanges();
-    return new RedirectResult($"/posts/{postId}");
+        return new RedirectResult($"/posts/{postId}");
+    }
+    
+    // DELETE a Comment
+    [Route("/posts/{postId}/{commentId}/delete-comment")]
+    [HttpPost]
+    public IActionResult Delete(int postId, int commentId)
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+        int? sessionUserId = HttpContext.Session.GetInt32("user_id");
+        if (sessionUserId == null) // Checks user is logged in
+        {
+            return Unauthorized(); 
+        }
+        Comment comment = dbContext.Comments.FirstOrDefault(c => c.Id == commentId);
+        
+        if (comment.UserId != sessionUserId) // Server-side security
+        {
+            return Forbid();
+        }
+        if (comment == null)
+            return NotFound(); // If the comment doesn't exist
+        
+        // Deletes the post from the db 
+        dbContext.Comments.Remove(comment);
+        dbContext.SaveChanges();
+
+        // Reload the individual post page
+        return RedirectToAction("Post", "Posts", new { id = comment.PostId });
     }
 
 }

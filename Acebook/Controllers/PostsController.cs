@@ -72,16 +72,18 @@ public class PostsController : Controller
   {
     AcebookDbContext dbContext = new AcebookDbContext();
     int? sessionUserId = HttpContext.Session.GetInt32("user_id");
+    if (sessionUserId == null)
+        return Unauthorized(); // Checks user is logged in
     Post post = dbContext.Posts.Include(p => p.Comments).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
-    if (post.UserId != sessionUserId) // Server-side security
-        {
-            return Forbid(); 
-        }
+    if (post.UserId != sessionUserId) // Server-side security (only authors can delete comments)
+    {
+      return Forbid();
+    }
+    // Deletes the post from the db 
     dbContext.Posts.Remove(post);
     dbContext.SaveChanges();
 
-    // Redirect to where the form came from
-    
+    // Redirect to aquarium
     return RedirectToAction("Index", "Posts");
   }
   

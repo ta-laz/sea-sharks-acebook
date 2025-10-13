@@ -50,6 +50,7 @@
 
     </div>
 
+    <!-- Background of Comments -->
     <div
         class="flex flex-col w-2/3 bg-teal-700/10 rounded-b-lg shadow-[0_0_15px_rgba(15,118,110,0.3)] max-h-[70vh] overflow-hidden">
 
@@ -91,9 +92,26 @@
                             </form>
                         </div>
 
+                        <!-- Comment content  -->
                         <p class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
+                        
+                        <!-- Commented on AND Delete Comment button  -->
+                        <div class="flex justify-between items-start">
+                            <p class="text-xs text-gray-400 mt-2">Commented on: @comment.FormattedCreatedOn</p>
+                            @if (Model.UserId == Context.Session.GetInt32(key: "user_id"))
+                            {
+                                <form action="@Url.Action("Delete", "Comments", new { postId = Model.Id, commentId = comment.Id })" method="post" onsubmit="return confirm('Are you sure you want to delete this comment?');">
+                                    <button type="submit"
+                                        class="relative inline-flex items-center overflow-hidden text-gray-600 text-xs bg-transparent hover:bg-white group py-1 px-3 font-medium rounded-md transition-all border border-gray-200 shadow-sm">
+                                        <span class="absolute inset-0 bg-red-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
+                                        <span class="relative flex items-center text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                                            <span class="ml-1">Delete Comment</span>  
+                                        </span>
+                                    </button>
+                                </form>
+                            }
+                        </div>
 
-                        <p class="text-xs text-gray-400 mt-2">Commented on: @comment.FormattedCreatedOn</p>
                     </div>
                 </div>
             }
