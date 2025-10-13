@@ -1,11 +1,6 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using acebook.Models;
-using System.Security.Cryptography;
-using Acebook.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Data.Common;
-using System.Linq;
 
 namespace acebook.Controllers;
 
@@ -19,43 +14,85 @@ public class SearchBarController : Controller
     }
 
     [HttpGet("/Search")]
-    public async Task<IActionResult> Index(string SearchString)
+    public async Task<IActionResult> Index(string? SearchString, string scope = "all")
     {
-        using var dbContext = new AcebookDbContext();
+        using var db = new AcebookDbContext();
 
-        List<User> userResults = new();
-        List<Post> postResults = new();
-        List<Comment> commentResults = new();
+        // Normalize scope/filter to one of: users | posts | comments | all
+        // string scope = (scope ?? "all").Trim().ToLowerInvariant();
+        if (scope is "people") scope = "users"; // accept "people" alias
 
-        if (!string.IsNullOrWhiteSpace(SearchString))
+        // Prepare containers
+        var userResults = new List<User>();
+        var postResults = new List<Post>();
+        var commentResults = new List<Comment>();
+
+        // Empty or whitespace query? Just return empty results for chosen scope(s)
+        if (string.IsNullOrWhiteSpace(SearchString))
         {
-            // Search users
-            userResults = await dbContext.Users
-                .Where(u => u.FirstName.Contains(SearchString) || u.LastName.Contains(SearchString))
-                .ToListAsync();
+            ViewBag.UsersResults    = (scope is "all" or "users")    ? userResults    : new List<User>();
+            ViewBag.PostsResults    = (scope is "all" or "posts")    ? postResults    : new List<Post>();
+            ViewBag.CommentsResults = (scope is "all" or "comments") ? commentResults : new List<Comment>();
+            ViewData["SearchString"] = SearchString;
+            ViewData["filter"] = scope;
+            return View();
+        }
 
-            // Search posts (and include author)
-            postResults = await dbContext.Posts
+        // Build LIKE pattern once
+        var term = SearchString.Trim();
+        var like = $"%{term}%";
+
+        // Run only the queries needed for requested scope
+        if (scope is "all" or "users")
+        {
+            userResults = await db.Users
+                .AsNoTracking()
+                .Where(u =>
+                    EF.Functions.Like(u.FirstName, like) ||
+                    EF.Functions.Like(u.LastName,  like))
+                .OrderBy(u => u.FirstName).ThenBy(u => u.LastName)
+                .ToListAsync();
+        }
+
+        if (scope is "all" or "posts")
+        {
+            postResults = await db.Posts
+                .AsNoTracking()
                 .Include(p => p.User)
                 .Include(p => p.Likes)
                 .Include(p => p.Comments)
-                .Where(p => p.Content.Contains(SearchString))
-                        //|| p.User.FirstName.Contains(SearchString)
-                        //|| p.User.LastName.Contains(SearchString))
+                .Where(p =>
+                    EF.Functions.Like(p.Content, like) ||
+                    EF.Functions.Like(p.User.FirstName, like) ||
+                    EF.Functions.Like(p.User.LastName,  like))
+                .OrderByDescending(p => p.CreatedOn)
                 .ToListAsync();
-
-            // Search comments (and include author + post)
-            commentResults = await dbContext.Comments
-                .Include(c => c.User)
-                .Include(c => c.Post)
-                .Include(c => c.Post.Likes)
-                .Where(c => c.Content.Contains(SearchString)).ToListAsync();
         }
 
-        ViewBag.UsersResults = userResults;
-        ViewBag.PostsResults = postResults;
-        ViewBag.CommentsResults = commentResults;
+        if (scope is "all" or "comments")
+        {
+            commentResults = await db.Comments
+                .AsNoTracking()
+                .Include(c => c.User)
+                .Include(c => c.Post)
+                    .ThenInclude(p => p.User)
+                .Include(c => c.Post)
+                    .ThenInclude(p => p.Likes)
+                .Where(c =>
+                    EF.Functions.Like(c.Content, like) ||
+                    EF.Functions.Like(c.User.FirstName, like) ||
+                    EF.Functions.Like(c.User.LastName,  like))
+                .OrderByDescending(c => c.CreatedOn)
+                .ToListAsync();
+        }
+
+        // Expose only what the view needs
+        ViewBag.UsersResults    = (scope is "all" or "users")    ? userResults    : new List<User>();
+        ViewBag.PostsResults    = (scope is "all" or "posts")    ? postResults    : new List<Post>();
+        ViewBag.CommentsResults = (scope is "all" or "comments") ? commentResults : new List<Comment>();
+
         ViewData["SearchString"] = SearchString;
+        ViewData["filter"] = scope;
 
         return View();
     }
