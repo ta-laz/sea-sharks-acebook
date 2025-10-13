@@ -74,7 +74,7 @@
           </div>
         }
 
-        <a asp-controller="Friends" asp-action="Index" id="see-all-friends" data-testid="see-all-friends" method="get"
+        <a asp-controller="Friends" asp-action="ViewUserFriends" asp-route-id="@ViewBag.ProfileUserId" id="see-all-friends" data-testid="see-all-friends" method="get"
           class="text-teal-500 hover:underline text-sm cursor-pointer">
           See All Friends
         </a>
