@@ -38,10 +38,9 @@ public class UsersController : Controller
         if (user == null)
             return NotFound();
 
-        var posts = dbContext.Posts.Where(u => u.UserId == id)
+        var posts = dbContext.Posts.Where(p => p.WallId == id)
                                    .Include(p => p.User);
         ViewBag.Posts = posts.ToList();
-        ViewBag.Posts.Reverse();
 
         int? currentUserId = HttpContext.Session.GetInt32("user_id");
 

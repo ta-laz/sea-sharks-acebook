@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 using NUnit.Framework;
-using acebook.Models; 
+using acebook.Models;
 using Acebook.Test;
 
 namespace Acebook.Tests
@@ -40,7 +40,7 @@ namespace Acebook.Tests
             // Wait for profile page to load
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
             // Click Shelly's name in friend's list, redirect to their profile
-            await Page.GetByTestId("Shelly").First.ClickAsync();
+            await Page.GetByTestId("Friend-link Shelly").First.ClickAsync();
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
         }
 
@@ -50,7 +50,7 @@ namespace Acebook.Tests
               BaseURL = BaseUrl
           };
 
-          [Test]
+        [Test]
         public async Task TaglineAppearsUnderName_OtherProfilePage()
         {
             // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
@@ -58,6 +58,27 @@ namespace Acebook.Tests
             await Expect(Page.GetByTestId("under-name-tagline-text")).ToHaveTextAsync("Predator of productivity, lover of plankton memes.");
         }
 
-    
+        [Test]
+        public async Task WriteOnWall_OtherProfilePage_DisplaysPost()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            // Expect the tagline to be the string from test data seeder
+            await Page.GetByTestId("create-post-input").FillAsync("Test content");
+            await Task.WhenAll(
+                Page.GetByTestId("create-post-submit").ClickAsync(),
+                Page.WaitForURLAsync($"{BaseUrl}/users/2")
+            );
+            await Expect(Page.GetByText("Test content")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task FriendNameOnPost_OtherProfilePage_RedirectsToTheirProfile()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            // Click friend's name on post
+            await Page.GetByTestId("Post-link Finn").First.ClickAsync();
+            // redirects to Finn's profile page
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
+        }
     }
 }

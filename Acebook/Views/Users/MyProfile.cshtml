@@ -61,7 +61,7 @@
             <div class="flex items-center space-x-3">
               <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
               <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name"
-                data-testid="@other.FirstName" method="get"
+                data-testid="Friend-link @other.FirstName" method="get"
                 class="text-xs font-medium text-gray-700 hover:text-teal-600">@other.FirstName
                 @other.LastName</a>
             </div>
@@ -123,7 +123,7 @@
       <div class="bg-white rounded-lg w-full p-4 shadow-md">
         <h2 class="text-lg font-bold mb-3">Create a Post</h2>
         <form action="@Url.Action("Create", "Posts")" method="post">
-          <textarea id="post-content"
+          <textarea id="create-post-input"
             class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
             name="content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)"></textarea>
 
@@ -131,7 +131,7 @@
             <label class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
             <input type="hidden" name="WallId" value="@Model.Id" />
             <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Users", new { id = Model.Id })" />
-            <button id="post-submit" data-testid="post-submit" type="submit"
+            <button id="post-submit" data-testid="create-post-submit" type="submit"
               class="bg-teal-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-teal-400 transition">
               Submit
             </button>
@@ -144,7 +144,7 @@
       {
         <div class="bg-white rounded-lg w-full p-4 shadow-md">
           <div class="flex justify-between items-center">
-            <h3 class="text-md font-semibold text-gray-800">@post.User.FirstName @post.User.LastName</h3>
+            <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" id="post-user-name" data-testid="Post-link @post.User.FirstName"  class="text-md font-semibold text-gray-800">@post.User.FirstName @post.User.LastName</a>
             <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400" />
           </div>
 
