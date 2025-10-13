@@ -56,7 +56,6 @@ namespace Acebook.Tests
         // [Test]
         // public async Task NumberOfLikesShowsBeneathEachPost()
         // {
-        //     SetDefaultExpectTimeout(1000);
         //     await Page.GotoAsync("/signin");
         //     await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
         //     await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
