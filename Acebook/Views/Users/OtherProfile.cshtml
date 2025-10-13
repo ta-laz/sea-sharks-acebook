@@ -96,33 +96,7 @@
                     class="italic text-gray-400 mt-1 mb-4">
                     @(Model.ProfileBio.Tagline ?? "Just keep swimming!")
                 </p>
-
-                <!-- Tagline and edit tagline -->
-                <form asp-action="Update" asp-controller="Users" asp-route-id="@userId" method="post" id="tagline-form"
-                    data-testid="tagline-form" label="update tagline form" class="hidden">
-                    <input type="text" name="tagline" label="update tagline box" id="tagline-input"
-                        data-testid="tagline-input" class="border border-gray-300 rounded-md p-2 w-full"
-                        asp-for="ProfileBio.Tagline" />
-                    <input type="hidden" asp-for="ProfileBio.RelationshipStatus" name="relationshipStatus"
-                        id="relationshipstatus" />
-                    <input type="hidden" asp-for="ProfileBio.Pets" name="pets" id="pets" />
-                    <input type="hidden" asp-for="ProfileBio.Job" name="job" id="job" />
-                    <input type="hidden" value="@userId" name="id" id="userid" />
-                    <button type="button" id="cancel-edit"
-                        class="bg-gray-300 text-gray-800 text-sm w-36 px-4 py-2 rounded-md hover:bg-gray-400 mt-2">
-                        Cancel
-                    </button>
-                    <button id="tagline-submit" data-testid="tagline-submit" type="submit"
-                        class="bg-teal-600 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-teal-400 mt-2">Save
-                        Changes
-                    </button>
-                </form>
-
-                <button id="update-tagline" class="text-teal-500 text-sm py-4 rounded-md hover:underline transition">
-                    Edit tagline
-                </button>
             </div>
-
 
             <!-- Create Post Form -->
             <div class="bg-white rounded-lg w-full p-4 shadow-md">
@@ -185,31 +159,25 @@
 </div>
 
 <!-- Fullscreen overlay for enlarged image -->
-<div id="image-overlay" 
-     class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
-  <img id="overlay-image" 
-       src="/images/Placeholder.png" 
-       alt="Enlarged Profile Picture"
-       class="max-w-3xl w-11/12 md:w-auto rounded-lg shadow-lg cursor-pointer transition-transform duration-300 transform scale-100 hover:scale-105" />
+<div id="image-overlay" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
+    <img id="overlay-image" src="/images/Placeholder.png" alt="Enlarged Profile Picture"
+        class="max-w-3xl w-11/12 md:w-auto rounded-lg shadow-lg cursor-pointer transition-transform duration-300 transform scale-100 hover:scale-105" />
 </div>
 
 <script>
-  const profilePic = document.getElementById("profile-pic");
-  const overlay = document.getElementById("image-overlay");
-  const overlayImage = document.getElementById("overlay-image");
+    const profilePic = document.getElementById("profile-pic");
+    const overlay = document.getElementById("image-overlay");
+    const overlayImage = document.getElementById("overlay-image");
 
-  profilePic.addEventListener("click", () => {
-    overlay.classList.remove("hidden");
-    overlayImage.src = profilePic.src; // Use the same image
-  });
+    profilePic.addEventListener("click", () => {
+        overlay.classList.remove("hidden");
+        overlayImage.src = profilePic.src; // Use the same image
+    });
 
-  // Hide overlay when user clicks outside or on the image
-  overlay.addEventListener("click", (e) => {
-    if (e.target === overlay || e.target === overlayImage) {
-      overlay.classList.add("hidden");
-    }
-  });
+    // Hide overlay when user clicks outside or on the image
+    overlay.addEventListener("click", (e) => {
+        if (e.target === overlay || e.target === overlayImage) {
+            overlay.classList.add("hidden");
+        }
+    });
 </script>
-
-
-
