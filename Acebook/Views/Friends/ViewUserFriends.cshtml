@@ -29,10 +29,6 @@
                     other = friend.Requester;
                 }
 
-                var alreadyFriends = ViewBag.AlreadyFriends as List<int>;
-
-                var currentUserId = ViewBag.CurrentUserId;
-
                 //logic to exclude the logged in person from showing up on the friend list themselves as well 
                 if (other.Id == ViewBag.CurrentUserId)
                 {
@@ -48,6 +44,7 @@
 
 
             @{
+                var alreadyFriends = ViewBag.AlreadyFriends as List<int>;
                 var pendingRequests = ViewBag.PendingRequests as List<Friend>;
             }
 
@@ -57,15 +54,15 @@
                     Already Friends
                 </button>
                     }
-                    else if (pendingRequests.Any(f =>
-                        (f.RequesterId == currentUserId && f.AccepterId == other.Id) ||
-                        (f.RequesterId == other.Id && f.AccepterId == currentUserId)))
+            else if (pendingRequests.Any(f =>
+                        (f.RequesterId == ViewBag.currentUserId && f.AccepterId == other.Id) ||
+                        (f.RequesterId == other.Id && f.AccepterId == ViewBag.currentUserId)))
                     {
                 <button disabled class="bg-orange-200 text-gray-700 text-sm font-medium py-1 px-3 rounded">
                     Pending Request
                 </button>
                     }
-                    else
+            else
                     {
                 <form asp-action="AddFriend" asp-controller="Friends" method="post"
                     onsubmit="return confirm('Are you sure you want to add this person?');">

@@ -73,13 +73,16 @@ public class FriendsController : Controller
         AcebookDbContext dbContext = new AcebookDbContext();
         int? currentUserId = HttpContext.Session.GetInt32("user_id");
 
+        // get a user object back - this is the user whose friend list you are viewing
         User user = dbContext.Users.Find(id);
 
+        //check who the user is friends with
         var friends = dbContext.Friends
             .Include(f => f.Requester)
             .Include(f => f.Accepter)
             .Where(f => (f.RequesterId == id || f.AccepterId == id) && f.Status == FriendStatus.Accepted);
 
+        // logic for the search functionality
         if (!string.IsNullOrEmpty(SearchQuery))
         {
             string loweredSearch = SearchQuery.ToLower();
@@ -95,22 +98,17 @@ public class FriendsController : Controller
             );
         }
 
-        ViewBag.user = user;
-        ViewBag.friends = friends.ToList();
-        ViewBag.currentUserId = currentUserId;
-
-        // variable to see if we are already friends. 
-        // if currentUserId and friend.Id have a confirmed relationship
-
+        // this is where the logic for checking if I as the user am friends with people on the friend list
+        // first, we pick out who our accepted friends are, and put them in a list
         var relevantFriendships = dbContext.Friends.Where(f =>
                                 (f.RequesterId == currentUserId || f.AccepterId == currentUserId)
                                 && f.Status == FriendStatus.Accepted)
                                 .ToList();
 
-        
+        // here we create an empty new list, where we will check if people from the friend list displayed, are also already our friends
         var AlreadyFriends = new List<int>(); // list of IDs of people you're friends with
 
-        // check which id needs to be added into the list above
+        // check which id needs to be added into the list above - here the comparison happens. Person in other users friend list, are they already my friend? If yes, then add them to the list above.
         foreach (var friendship in relevantFriendships)
         {
             if (friendship.RequesterId == currentUserId)
@@ -123,15 +121,20 @@ public class FriendsController : Controller
             }
         }
 
+        // this pulls out who we have a pending relationship with
         var PendingRequests = dbContext.Friends
                     .Where(f => (f.RequesterId == currentUserId || f.AccepterId == currentUserId)
                     && f.Status == FriendStatus.Pending);
 
-        ViewBag.PendingRequests = PendingRequests.ToList();        ViewBag.AlreadyFriends = AlreadyFriends;
+        // bits in viewbag to make us of inside html
+        ViewBag.user = user;
+        ViewBag.friends = friends.ToList();
+        ViewBag.currentUserId = currentUserId;
+        ViewBag.PendingRequests = PendingRequests.ToList();        
+        ViewBag.AlreadyFriends = AlreadyFriends;
 
         return View();
     }
-
 
 
     [Route("/friends/remove")]
@@ -160,7 +163,7 @@ public class FriendsController : Controller
         return RedirectToAction("Index");
     }
 
-    [Route("/friends/send")]
+    [Route("/friends/add")]
     [HttpPost]
     public IActionResult AddFriend(int receiverId)
     {
@@ -182,8 +185,8 @@ public class FriendsController : Controller
 
             dbContext.Friends.Add(newRequest);
             dbContext.SaveChanges();
-
         }
+        // this is used to pull information from the headers to redirect you to where you just were
         return Redirect(Request.Headers["Referer"].ToString());
     }
 }
