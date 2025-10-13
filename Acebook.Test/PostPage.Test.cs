@@ -126,8 +126,8 @@ namespace Acebook.Tests
                 await Expect(comments.First).ToBeVisibleAsync();
             }
         }
-        
-        
+
+
         [Test]
         public async Task NewPostWithNoComments_DisplaysNoCommentsMessage()
         {
@@ -158,8 +158,12 @@ namespace Acebook.Tests
             await Expect(Page.GetByText("No comments yet!")).ToBeVisibleAsync();
         }
 
+
+
+        /// TESTS FOR DELETING COMMENTS AND POSTS:
+
         [Test]
-        public async Task DeletePost_AuthorisedUser_DeletesPost()
+        public async Task DeletePost_PostAuthor_DeletesPost()
         {
             // Create post
             await Page.Locator("#post-content").FillAsync("Test delete post button works properly");
@@ -178,23 +182,114 @@ namespace Acebook.Tests
                 Page.GetByTestId("see-more-button").First.ClickAsync() // Because we have just made the post, we can still click just on the first one 
             );
 
-            await Page.ScreenshotAsync(new() { Path = "debug_before_delete.png" });
-
             // Confirm we are on an individual post page
             await Expect(Page.Locator("#splash-heading")).ToBeVisibleAsync();
 
             // Confirm we are on the NEW individual post page
             await Expect(Page.GetByText("Test delete post button works properly")).ToBeVisibleAsync();
-            
+
             // Click 'Delete Post' button:
             await Task.WhenAll(
                 Page.GetByTestId("delete-post-button").ClickAsync(),
                 Page.WaitForURLAsync($"{BaseUrl}/posts")
             );
-            await Page.ScreenshotAsync(new() { Path = "delete_button_clicked.png" });
 
             // Confirm the post is no longer visible on Aquarium:
             await Expect(Page.GetByText("Test delete post button works properly")).Not.ToBeVisibleAsync();
+        }
+
+
+        [Test]
+        public async Task DeletePost_NotPostAuthor_CantDeletePost()
+        {
+            // Click “See more” on the top post (not ours hopefully)
+            await Task.WhenAll(
+                Page.GetByTestId("see-more-button").First.ClickAsync()
+            );
+            // Confirm we are on an individual post page
+            await Expect(Page.Locator("#splash-heading")).ToBeVisibleAsync();
+
+            // Confirm the delete comment button is not visible
+            await Expect(Page.GetByTestId("delete-post-button")).Not.ToBeVisibleAsync();
+        }
+
+
+        [Test]
+        public async Task DeleteComment_CommentAuthor_CanDeleteComment()
+        {
+            // Click “See more” on the top post (not ours hopefully)
+            await Page.GetByTestId("see-more-button").First.ClickAsync();
+
+            // Confirm we are on an individual post page
+            await Expect(Page.Locator("#splash-heading")).ToBeVisibleAsync();
+
+            // Create comment
+            await Page.Locator("#comment-box").FillAsync("Test comment");
+
+            // Wait for post submission + redirect
+            await Task.WhenAll(
+                Page.Locator("#comment-submit").ClickAsync(),
+                Page.WaitForURLAsync(new Regex($"{BaseUrl}/posts/\\d+"))
+            );
+
+            await Expect(Page.GetByText("Test comment")).ToBeVisibleAsync();
+
+            // Click 'Delete Comment' button:
+            await Task.WhenAll(
+                Page.GetByTestId("delete-comment-button").ClickAsync(),
+                Page.WaitForURLAsync(new Regex($"{BaseUrl}/posts/\\d+"))
+            );
+
+            // Confirm the post is no longer visible on Aquarium:
+            await Expect(Page.GetByText("Test comment")).Not.ToBeVisibleAsync();
+        }
+
+        
+
+        [Test]
+        public async Task DeleteComment_NOTCommentAuthor_CannotDeleteComment()
+        {
+            // Click “See more” on the top post (not ours hopefully)
+            await Page.GetByTestId("see-more-button").First.ClickAsync();
+
+            // Create comment
+            await Page.Locator("#comment-box").FillAsync("Test comment");
+
+            // Wait for post submission + redirect
+            await Task.WhenAll(
+                Page.Locator("#comment-submit").ClickAsync(),
+                Page.WaitForURLAsync(new Regex($"{BaseUrl}/posts/\\d+"))
+            );
+
+            await Expect(Page.GetByText("Test comment")).ToBeVisibleAsync();
+
+            // Signout:
+            await Task.WhenAll(
+                Page.Locator("#dropdownDefaultButton").ClickAsync(),
+                Page.GetByTestId("signout").ClickAsync()
+            );
+
+            // Wait for form to load
+            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+            
+            // Sign in with different details 
+            await Page.Locator("#email").FillAsync("shelly.tiger@sharkmail.ocean");
+            await Page.Locator("#password").FillAsync("password123");
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.Locator("#signin-submit").ClickAsync()
+            );
+
+            await Page.ScreenshotAsync(new() { Path = "after_signed_in.png" });
+
+            // Click “See more” on the top post (not ours hopefully)
+            await Page.GetByTestId("see-more-button").First.ClickAsync();
+
+            await Page.ScreenshotAsync(new() { Path = "after_clicked_new_post.png" });
+
+
+            // Confirm the delete comment button is not visible
+            await Expect(Page.GetByTestId("delete-comment-button")).Not.ToBeVisibleAsync();
         }
     }
 }
