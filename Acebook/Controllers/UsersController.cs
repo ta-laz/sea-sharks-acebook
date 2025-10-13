@@ -56,7 +56,15 @@ public class UsersController : Controller
         ViewBag.CurrentUserId = currentUserId;
         ViewBag.ProfileUserId = id;
 
-        return View(user);
+        if (currentUserId == user.Id)
+        {
+            return View("MyProfile", user);
+        }
+
+        else
+        {
+            return View("OtherProfile", user);
+        }
     }
 
     [Route("/users")]
