@@ -1,0 +1,83 @@
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+
+<!-- Main Body -->
+<div class="min-h-screen flex flex-col items-center justify-start px-4 sm:px-6 py-6">
+    <div class="flex flex-col items-center space-y-4 w-full max-w-screen-lg">
+        <h1 id="myFriendsPageTitle" class="text-3xl font-bold mb-3">My Friends</h1>
+
+        <!-- Friend List Section -->
+        <div class="bg-white rounded-lg w-full p-4 shadow-md md:block border">
+            <div id="search-form" class="flex justify-between mb-3">
+                <h2 class="text-xl font-bold mb-3">Friend List</h2>
+                <form asp-action="ViewUserFriends" asp-controller="Friends" method="get" class="pr-2">
+                    <input type="text" name="SearchQuery" placeholder="Search friends..."
+                        class="border rounded px-3 py-1" value="@ViewBag.SearchQuery" />
+                    <button id="search-button" type="submit"
+                        class="bg-teal-600 text-white px-3 py-1 rounded hover:bg-teal-700">Search</button>
+                </form>
+            </div>
+
+            @foreach (var friend in ViewBag.friends)
+            {
+                User other;
+                if (friend.RequesterId == ViewBag.user.Id)
+                {
+                    other = friend.Accepter;
+                }
+                else
+                {
+                    other = friend.Requester;
+                }
+
+                var alreadyFriends = ViewBag.AlreadyFriends as List<int>;
+
+                var currentUserId = ViewBag.CurrentUserId;
+
+                //logic to exclude the logged in person from showing up on the friend list themselves as well 
+                if (other.Id == ViewBag.CurrentUserId)
+                {
+                    continue;
+                }
+
+                <div class="flex items-center justify-between gap-3 mb-2 p-2 rounded-lg hover:bg-gray-100 transition">
+                    <div class="flex items-center gap-3 mb-2">
+                        <img src="/images/Placeholder.png"
+                            class="w-12 h-12 rounded-full object-cover border border-gray-400">
+                        <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name" data-testid="@other.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600">@other.FirstName @other.LastName</a>
+                    </div>
+
+
+            @{
+                var pendingRequests = ViewBag.PendingRequests as List<Friend>;
+            }
+
+            @if (alreadyFriends.Contains(other.Id))
+                    {
+                <button disabled class="bg-gray-300 text-gray-700 text-sm font-medium py-1 px-3 rounded">
+                    Already Friends
+                </button>
+                    }
+                    else if (pendingRequests.Any(f =>
+                        (f.RequesterId == currentUserId && f.AccepterId == other.Id) ||
+                        (f.RequesterId == other.Id && f.AccepterId == currentUserId)))
+                    {
+                <button disabled class="bg-orange-200 text-gray-700 text-sm font-medium py-1 px-3 rounded">
+                    Pending Request
+                </button>
+                    }
+                    else
+                    {
+                <form asp-action="AddFriend" asp-controller="Friends" method="post"
+                    onsubmit="return confirm('Are you sure you want to add this person?');">
+                    <input type="hidden" name="receiverId" value="@other.Id" />
+                    <button type="submit"
+                            class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium py-1 px-3 rounded">
+                        Add Friend
+                    </button>
+                </form>
+                }
+                </div>
+            }
+        </div>
+    </div>
+</div>

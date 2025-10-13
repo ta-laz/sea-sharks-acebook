@@ -65,6 +65,75 @@ public class FriendsController : Controller
         return View();
     }
 
+
+    [Route("/friends/{id}")]
+    [HttpGet]
+    public IActionResult ViewUserFriends(int id, string? SearchQuery)
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+        int? currentUserId = HttpContext.Session.GetInt32("user_id");
+
+        User user = dbContext.Users.Find(id);
+
+        var friends = dbContext.Friends
+            .Include(f => f.Requester)
+            .Include(f => f.Accepter)
+            .Where(f => (f.RequesterId == id || f.AccepterId == id) && f.Status == FriendStatus.Accepted);
+
+        if (!string.IsNullOrEmpty(SearchQuery))
+        {
+            string loweredSearch = SearchQuery.ToLower();
+
+            friends = friends.Where(f =>
+                (f.RequesterId == id &&
+                    (f.Accepter.FirstName.ToLower().Contains(loweredSearch) ||
+                     f.Accepter.LastName.ToLower().Contains(loweredSearch)))
+                ||
+                (f.AccepterId == id &&
+                    (f.Requester.FirstName.ToLower().Contains(loweredSearch) ||
+                     f.Requester.LastName.ToLower().Contains(loweredSearch)))
+            );
+        }
+
+        ViewBag.user = user;
+        ViewBag.friends = friends.ToList();
+        ViewBag.currentUserId = currentUserId;
+
+        // variable to see if we are already friends. 
+        // if currentUserId and friend.Id have a confirmed relationship
+
+        var relevantFriendships = dbContext.Friends.Where(f =>
+                                (f.RequesterId == currentUserId || f.AccepterId == currentUserId)
+                                && f.Status == FriendStatus.Accepted)
+                                .ToList();
+
+        
+        var AlreadyFriends = new List<int>(); // list of IDs of people you're friends with
+
+        // check which id needs to be added into the list above
+        foreach (var friendship in relevantFriendships)
+        {
+            if (friendship.RequesterId == currentUserId)
+            {
+                AlreadyFriends.Add(friendship.AccepterId);
+            }
+            else
+            {
+                AlreadyFriends.Add(friendship.RequesterId);
+            }
+        }
+
+        var PendingRequests = dbContext.Friends
+                    .Where(f => (f.RequesterId == currentUserId || f.AccepterId == currentUserId)
+                    && f.Status == FriendStatus.Pending);
+
+        ViewBag.PendingRequests = PendingRequests.ToList();        ViewBag.AlreadyFriends = AlreadyFriends;
+
+        return View();
+    }
+
+
+
     [Route("/friends/remove")]
     [HttpPost]
     public IActionResult Remove(int friendId)
@@ -77,7 +146,7 @@ public class FriendsController : Controller
 
         return RedirectToAction("Index");
     }
-    
+
     [Route("/friends/accept")]
     [HttpPost]
     public IActionResult Accept(int friendId)
@@ -89,5 +158,32 @@ public class FriendsController : Controller
         dbContext.SaveChanges();
 
         return RedirectToAction("Index");
+    }
+
+    [Route("/friends/send")]
+    [HttpPost]
+    public IActionResult AddFriend(int receiverId)
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+        int? currentUserId = HttpContext.Session.GetInt32("user_id");
+
+        var existingFriendship = dbContext.Friends.FirstOrDefault(f =>
+            (f.RequesterId == currentUserId && f.AccepterId == receiverId) ||
+            (f.RequesterId == receiverId && f.AccepterId == currentUserId));
+
+        if (existingFriendship == null)
+        {
+            var newRequest = new Friend
+            {
+                RequesterId = currentUserId.Value,
+                AccepterId = receiverId,
+                Status = FriendStatus.Pending
+            };
+
+            dbContext.Friends.Add(newRequest);
+            dbContext.SaveChanges();
+
+        }
+        return Redirect(Request.Headers["Referer"].ToString());
     }
 }
