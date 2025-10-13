@@ -11,6 +11,8 @@ public class Post
   public int WallId { get; set; }
   public DateTime CreatedOn { get; set; }
   public User? User { get; set; }
+  public ICollection<Comment>? Comments { get; set; }
+  public ICollection<Like>? Likes { get; set; }
 
   [NotMapped] // prevents EF from treating it as a DB column
   public string FormattedCreatedOn
