@@ -62,22 +62,42 @@ public class UsersController : Controller
         ViewBag.Friends = friends;
         ViewBag.ProfileUserId = id;
 
-        // this checks if any of the friends records have ids that match the logged in user and
-        // the user profile being viewed
-        bool friendship = friends.Any(f =>
-        (f.RequesterId == currentUserId && f.AccepterId == id && f.Status == FriendStatus.Accepted) ||
-        (f.RequesterId == id && f.AccepterId == currentUserId && f.Status == FriendStatus.Accepted)
+        // ✅ Check if logged-in user and viewed user are friends
+        bool friendship = dbContext.Friends.Any(f =>
+            ((f.RequesterId == currentUserId && f.AccepterId == id) ||
+             (f.RequesterId == id && f.AccepterId == currentUserId))
+             && f.Status == FriendStatus.Accepted
         );
-
         ViewBag.Friendship = friendship;
 
-        // if the logged in user's id matches the id of the page we're on
-        // render the my profile HTML
+        // ✅ Build list of accepted friendships for the logged-in user
+        var acceptedFriendships = dbContext.Friends
+            .Where(f => (f.RequesterId == currentUserId || f.AccepterId == currentUserId)
+                     && f.Status == FriendStatus.Accepted)
+            .ToList();
+
+        var alreadyFriends = new List<int>();
+        foreach (var f in acceptedFriendships)
+        {
+            alreadyFriends.Add(f.RequesterId == currentUserId ? f.AccepterId : f.RequesterId);
+        }
+
+        // ✅ Build list of pending requests involving the logged-in user
+        var pendingRequests = dbContext.Friends
+            .Where(f =>
+                (f.RequesterId == currentUserId || f.AccepterId == currentUserId) &&
+                f.Status == FriendStatus.Pending)
+            .ToList();
+
+        // ✅ Pass both lists to the view
+        ViewBag.AlreadyFriends = alreadyFriends;
+        ViewBag.PendingRequests = pendingRequests;
+
+        // if the logged in user's id matches the id of the page we're on render the my profile HTML
         if (currentUserId == id)
         {
             return View("MyProfile", user);
         }
-
         // else render the other profile HTML
         else
         {

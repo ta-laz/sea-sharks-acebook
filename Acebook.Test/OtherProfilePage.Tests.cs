@@ -92,15 +92,15 @@ namespace Acebook.Tests
             await Expect(Page.GetByTestId("create-post-input")).ToBeHiddenAsync();
         }
 
-        // [Test]
-        // public async Task SeeAllFriendsButton_OtherProfilePage_RedirectsToFriendsOfOtherUser()
-        // {
-        //     // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
-        //     // Click see all friends to redirect to Shelly's friends page
-        //     await Task.WhenAll(
-        //         Page.Locator("#see-all-friends").ClickAsync(),
-        //         Page.WaitForURLAsync($"{BaseUrl}/friends/2")
-        //     );
-        // }
+        [Test]
+        public async Task SeeAllFriendsButton_OtherProfilePage_RedirectsToFriendsOfOtherUser()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            // Click see all friends to redirect to Shelly's friends page
+            await Task.WhenAll(
+                Page.Locator("#see-all-friends").ClickAsync(),
+                Page.WaitForURLAsync($"{BaseUrl}/friends/2")
+            );
+        }
     }
 }
