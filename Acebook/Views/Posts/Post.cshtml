@@ -44,6 +44,17 @@
                     Share
                 </span>
             </button>
+                <form action="@Url.Action("Delete", "Posts", new { id = Model.Id })" method="post">
+                                <button type="submit"
+                                    class="relative inline-flex items-center justify-center overflow-hidden text-gray-600 text-xs bg-transparent hover:bg-white group py-1 px-3 font-medium rounded-md transition-all border border-gray-200 shadow-sm">
+                                    <span
+                                        class="absolute inset-0 bg-teal-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
+                                    <span
+                                        class="relative flex items-center text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                                        <span class="ml-1">Delete Post</span>
+                                    </span>
+                                </button>
+                            </form>
         </div>
     </div>
 

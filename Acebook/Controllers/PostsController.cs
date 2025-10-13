@@ -30,6 +30,7 @@ public class PostsController : Controller
     return View();
   }
 
+  // CREATE a Post
   [Route("/posts/create")]
   [HttpPost]
   public IActionResult Create(Post post, string returnUrl)
@@ -47,6 +48,7 @@ public class PostsController : Controller
     return RedirectToAction("Index", "Posts");
   }
 
+  // READ a Post (individual post)
   [Route("/posts/{id}")]
   [HttpGet]
   public IActionResult Post(int id)
@@ -55,26 +57,30 @@ public class PostsController : Controller
     var post = dbContext.Posts.Include(p => p.Comments).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
     var comments = dbContext.Comments.Include(c => c.User).Where(c => c.PostId == id).ToList();
 
-    // var comments = comments.Reverse();
     ViewBag.post = post;
     ViewBag.comments = comments.ToList();
     ViewBag.comments.Reverse();
 
+
     return View(post);
   }
+  
+  // DELETE a Post
+  [Route("/posts/{id}/delete")]
+  [HttpPost]
+  public IActionResult Delete(int id)
+  {
+    AcebookDbContext dbContext = new AcebookDbContext();
+    Post post = dbContext.Posts.Include(p => p.Comments).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
+    dbContext.Posts.Remove(post);
+    dbContext.SaveChanges();
 
+    // Redirect to where the form came from
+    
+    return RedirectToAction("Index", "Posts");
+  }
+  
 
-  //   [Route("/post")]
-  //   [HttpGet]
-  //   public IActionResult Post(int id) {
-  //         AcebookDbContext dBContext = new AcebookDbContext();
-  //         Post? indiPost = dBContext.Posts.Include(p => p.User).FirstOrDefault(p => p.Id == id);
-  //         if (indiPost == null)
-  //         {
-  //             return new RedirectResult("/posts");
-  //         }
-  //         return View(indiPost);
-  // }
 
   [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
   public IActionResult Error()
