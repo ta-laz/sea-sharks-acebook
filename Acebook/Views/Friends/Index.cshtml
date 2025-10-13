@@ -3,7 +3,7 @@
 <!-- Main Body -->
 <div class="min-h-screen flex flex-col items-center justify-start px-4 sm:px-6 py-6">
     <div class="flex flex-col items-center space-y-4 w-full max-w-screen-lg">
-        <h1 class="text-3xl font-bold mb-3">My Friends</h1>
+        <h1 id="myFriendsPageTitle" class="text-3xl font-bold mb-3">My Friends</h1>
         <!-- Filter buttons -->
         <!-- Filter buttons -->
         <div class="flex justify-center mt-4" role="group" aria-label="requests filters">
@@ -19,7 +19,7 @@
 
 
         <!-- Requests Section -->
-        <div class="flex bg-gray-50 border rounded-lg w-full p-4 shadow-md hidden md:block">
+        <div class="flex bg-gray-50 border rounded-lg w-full p-4 shadow-md md:block">
             <input type="radio" id="received" name="request-toggle" class="hidden peer/received" checked>
             <input type="radio" id="sent" name="request-toggle" class="hidden peer/sent">
 
@@ -32,7 +32,7 @@
                 {
                     var sender = request.Requester;
 
-                    <div class="flex items-center gap-3">
+                    <div class="flex flex-wrap items-center gap-3">
                         <img src="/images/Placeholder.png"
                             class="w-12 h-12 rounded-full object-cover border border-gray-400" />
                         <span class="font-medium text-gray-800">@sender.FirstName @sender.LastName</span>
@@ -41,7 +41,7 @@
                             onsubmit="return confirm('Are you sure you want to be friends?');" class="ml-auto">
                             <input type="hidden" name="friendId" value="@request.Id" />
                             <button type="submit"
-                                class="bg-teal-600 hover:bg-teal-700 text-white text-xs font-medium py-1 px-2 rounded">
+                                class="bg-teal-600 hover:bg-teal-700 text-white text-s font-medium py-1 px-2 rounded">
                                 Accept
                             </button>
                         </form>
@@ -50,7 +50,7 @@
                             onsubmit="return confirm('Are you sure you do not want to be friends?');">
                             <input type="hidden" name="friendId" value="@request.Id" />
                             <button type="submit"
-                                class="bg-gray-400 hover:bg-gray-500 text-white text-xs font-medium py-1 px-2 rounded">
+                                class="bg-gray-400 hover:bg-gray-500 text-white text-s font-medium py-1 px-2 rounded">
                                 Decline
                             </button>
                         </form>
@@ -105,12 +105,14 @@
         </div>
 
         <!-- Friend List Section -->
-        <div class="bg-white rounded-lg w-full p-4 shadow-md hidden md:block border">
-            <div class="flex justify-between mb-3">
+        <div class="bg-white rounded-lg w-full p-4 shadow-md md:block border">
+            <div id="search-form" class="flex justify-between mb-3">
                 <h2 class="text-xl font-bold mb-3">Friend List</h2>
-                <form asp-action="Index" asp-controller="Friends" method="get" class="pr-2"> 
-                    <input type="text" name="SearchQuery" placeholder="Search friends..." class="border rounded px-3 py-1" value="@ViewBag.SearchQuery"/>
-                    <button type="submit" class="bg-teal-600 text-white px-3 py-1 rounded hover:bg-teal-700">Search</button>
+                <form asp-action="Index" asp-controller="Friends" method="get" class="pr-2">
+                    <input type="text" name="SearchQuery" placeholder="Search friends..."
+                        class="border rounded px-3 py-1" value="@ViewBag.SearchQuery" />
+                    <button id="search-button" type="submit"
+                        class="bg-teal-600 text-white px-3 py-1 rounded hover:bg-teal-700">Search</button>
                 </form>
             </div>
             @foreach (var friend in ViewBag.Friends)
@@ -129,7 +131,8 @@
                     <div class="flex items-center gap-3 mb-2">
                         <img src="/images/Placeholder.png"
                             class="w-12 h-12 rounded-full object-cover border border-gray-400">
-                        <h3 class="text-md font-semibold text-gray-800">@other.FirstName @other.LastName</h3>
+                        <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name" data-testid="@other.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600">@other.FirstName @other.LastName</a>
+                        
                     </div>
 
                     <form asp-action="Remove" asp-controller="Friends" method="post"
@@ -146,33 +149,33 @@
 
 <!-- JS to try and make the buttons work more easily-->
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const receivedRadio = document.getElementById("received");
-    const sentRadio = document.getElementById("sent");
-    const header = document.getElementById("requests-header");
-    const receivedLabel = document.getElementById("received-label");
-    const sentLabel = document.getElementById("sent-label");
+    document.addEventListener("DOMContentLoaded", () => {
+        const receivedRadio = document.getElementById("received");
+        const sentRadio = document.getElementById("sent");
+        const header = document.getElementById("requests-header");
+        const receivedLabel = document.getElementById("received-label");
+        const sentLabel = document.getElementById("sent-label");
 
-    function updateUI() {
-      // Change header text
-      if (receivedRadio.checked) {
-        header.textContent = "My Received Requests";
-      } else if (sentRadio.checked) {
-        header.textContent = "My Sent Requests";
-      } else {
-        header.textContent = "My Requests";
-      }
+        function updateUI() {
+            // Change header text
+            if (receivedRadio.checked) {
+                header.textContent = "My Received Requests";
+            } else if (sentRadio.checked) {
+                header.textContent = "My Sent Requests";
+            } else {
+                header.textContent = "My Requests";
+            }
 
-      // Handle label colors
-      receivedLabel.classList.toggle("bg-teal-500", receivedRadio.checked);
-      receivedLabel.classList.toggle("text-white", receivedRadio.checked);
-      sentLabel.classList.toggle("bg-teal-500", sentRadio.checked);
-      sentLabel.classList.toggle("text-white", sentRadio.checked);
-    }
+            // Handle label colors
+            receivedLabel.classList.toggle("bg-teal-500", receivedRadio.checked);
+            receivedLabel.classList.toggle("text-white", receivedRadio.checked);
+            sentLabel.classList.toggle("bg-teal-500", sentRadio.checked);
+            sentLabel.classList.toggle("text-white", sentRadio.checked);
+        }
 
-    // Run on load and whenever radios change
-    updateUI();
-    receivedRadio.addEventListener("change", updateUI);
-    sentRadio.addEventListener("change", updateUI);
-  });
+        // Run on load and whenever radios change
+        updateUI();
+        receivedRadio.addEventListener("change", updateUI);
+        sentRadio.addEventListener("change", updateUI);
+    });
 </script>
