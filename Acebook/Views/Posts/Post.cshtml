@@ -8,7 +8,8 @@
 
 <div class="flex flex-col items-center w-full">
     <div class="fixed top-20 z-40 w-full bg-white shadow-[inset_0_-1px_2px_rgba(0,0,0,0.05)]">
-        <h1 id="splash-heading" class="mt-2 pb-2 font-bold text-center text-teal-700 text-xl">@Model.User.FirstName's Splash</h1>
+        <h1 id="splash-heading" class="mt-2 pb-2 font-bold text-center text-teal-700 text-xl">@Model.User.FirstName's
+            Splash</h1>
     </div>
     <div class="bg-white mt-10 rounded-t-lg w-2/3 p-4 shadow-[0_0_15px_rgba(15,118,110,0.3)] z-30">
         <div class="flex justify-between items-center">
@@ -21,13 +22,16 @@
 
         <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
             <button
-                class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+                class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent group py-2 px-4 font-medium transition-all"
+                data-post-id="@Model.Id"
+                data-liked="@Model.Likes.Any(l => l.UserId == Context.Session.GetInt32("user_id"))">
                 <span
                     class="absolute inset-0 bg-teal-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
-                <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                    Like (@Model.Likes?.Count)
+                <span class="relative transition-colors duration-300 ease-in-out group-hover:text-white">
+                    Like (<span class="like-count">@Model.Likes.Count()</span>)
                 </span>
             </button>
+
             <button
                 class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
                 <span
@@ -59,7 +63,7 @@
             @if (comments == null || !comments.Any())
             {
                 <div id="NoCommentsMessage" class="flex items-center justify-center h-full px-4 py-4">
-                    <h3 " class="text-teal-600 font-semibold">No comments yet!</h3>
+                    <h3 " class=" text-teal-600 font-semibold">No comments yet!</h3>
                 </div>
             }
 
@@ -76,15 +80,18 @@
                             </h3>
 
                             <form action="@Url.Action()" method="post">
-                                <button type="submit"
-                                    class="relative inline-flex items-center justify-center overflow-hidden text-gray-600 text-xs bg-transparent hover:bg-white group py-1 px-3 font-medium rounded-md transition-all border border-gray-200 shadow-sm">
+                                <button
+                                    class="comment-like relative inline-flex items-center justify-center overflow-hidden text-gray-600 text-xs bg-transparent group py-1 px-3 font-medium rounded-md transition-all border border-gray-200 shadow-sm"
+                                    data-comment-id="@comment.Id"
+                                    data-liked="@comment.Likes.Any(l => l.UserId == Context.Session.GetInt32("user_id"))">
                                     <span
                                         class="absolute inset-0 bg-teal-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
                                     <span
-                                        class="relative flex items-center text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                                        <span class="ml-1">Like (0)</span>
+                                        class="relative flex items-center transition-colors duration-300 ease-in-out group-hover:text-white">
+                                        Like (<span class="comment-like-count">@comment.Likes.Count()</span>)
                                     </span>
                                 </button>
+
                             </form>
                         </div>
 
@@ -115,3 +122,98 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // -------- Post Likes --------
+            const postButtons = document.querySelectorAll('button[data-post-id]'); //Finding the tag i set earlier in the HTML.
+            postButtons.forEach(button => { //checking if the post has been liked by the user. 
+                const postId = button.dataset.postId;
+                let liked = button.dataset.liked === 'True' || button.dataset.liked === 'true'; //Checking if the post is already liked. 
+                if (liked) { //Making sure if Liked it holds the same format as the previous page. 
+                    const bgSpan = button.querySelector('span.absolute');
+                    if (bgSpan) bgSpan.classList.remove('translate-x-full', 'translate-y-full');
+                    const textSpan = button.querySelector('span.relative');
+                    if (textSpan) textSpan.classList.add('text-white');
+                }
+
+                button.addEventListener('click', async () => { //If clicked it will head to the controller to change the like status. 
+                    try {
+                        const response = await fetch(`/posts/${postId}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+
+                        if (!response.ok) throw new Error('Network response was not ok');
+
+                        const data = await response.json();
+                        const countSpan = button.querySelector('.like-count');
+                        if (countSpan) countSpan.textContent = data.likeCount; //Dynamically updates like number based on like/unlike status 
+
+                        liked = !liked; 
+                        button.dataset.liked = liked;
+
+                        const bgSpan = button.querySelector('span.absolute');
+                        const textSpan = button.querySelector('span.relative');
+                        if (liked) {
+                            if (bgSpan) bgSpan.classList.remove('translate-x-full', 'translate-y-full');
+                            if (textSpan) textSpan.classList.add('text-white');
+                        } else {
+                            if (bgSpan) bgSpan.classList.add('translate-x-full', 'translate-y-full');
+                            if (textSpan) textSpan.classList.remove('text-white');
+                        } //above is the formatting for the onclick when liked or unliked. 
+                    } catch (err) {
+                        console.error('Error toggling post like:', err); //redundancy (issues will be send to the console)
+                    }
+                });
+            });
+
+            // Comment likes basically the same logic as above. 
+            const commentButtons = document.querySelectorAll('button[data-comment-id]');
+            commentButtons.forEach(button => {
+                const commentId = button.dataset.commentId;
+                let liked = button.dataset.liked === 'True' || button.dataset.liked === 'true';
+
+                if (liked) {
+                    const bgSpan = button.querySelector('span.absolute');
+                    if (bgSpan) bgSpan.classList.remove('translate-x-full');
+                    const textSpan = button.querySelector('span.relative');
+                    if (textSpan) textSpan.classList.add('text-white');
+                }
+
+                button.addEventListener('click', async (e) => {
+                    e.preventDefault();
+
+                    try {
+                        const response = await fetch(`/comments/${commentId}/like`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+
+                        if (!response.ok) throw new Error('Network response was not ok');
+
+                        const data = await response.json();
+                        const countSpan = button.querySelector('.comment-like-count');
+                        if (countSpan) countSpan.textContent = data.likeCount;
+
+                        liked = !liked;
+                        button.dataset.liked = liked;
+
+                        const bgSpan = button.querySelector('span.absolute');
+                        const textSpan = button.querySelector('span.relative');
+                        if (liked) {
+                            if (bgSpan) bgSpan.classList.remove('translate-x-full');
+                            if (textSpan) textSpan.classList.add('text-white');
+                        } else {
+                            if (bgSpan) bgSpan.classList.add('translate-x-full');
+                            if (textSpan) textSpan.classList.remove('text-white');
+                        }
+                    } catch (err) {
+                        console.error('Error toggling comment like:', err);
+                    }
+                });
+            });
+
+        });
+    </script>
