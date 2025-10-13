@@ -129,6 +129,7 @@
 
           <div class="flex justify-between items-center mt-3">
             <label class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
+            <input type="hidden" name="WallId" value="@Model.Id" />
             <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Users", new { id = Model.Id })" />
             <button id="post-submit" data-testid="post-submit" type="submit"
               class="bg-teal-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-teal-400 transition">

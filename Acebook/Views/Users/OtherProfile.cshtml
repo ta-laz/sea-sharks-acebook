@@ -93,13 +93,14 @@
                 </p>
             </div>
 
-            <!-- Create Post Form -->
+            <!-- Create Post Form (Write on their Wall) -->
             <div class="bg-white rounded-lg w-full p-4 shadow-md">
-                <h2 class="text-lg font-bold mb-3">Create a Post</h2>
+                <h2 class="text-lg font-bold mb-3">Write on their Wall</h2>
                 <form action="@Url.Action("Create", "Posts")" method="post">
                     <textarea id="post-content"
                         class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
-                        name="content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)"></textarea>
+                        name="content" maxlength="2000" placeholder="Say something nice... (max 2000 characters)"></textarea>
+                        <input type="hidden" name="WallId" value="@Model.Id" />
 
                     <div class="flex justify-between items-center mt-3">
                         <label class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
