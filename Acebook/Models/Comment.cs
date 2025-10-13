@@ -20,6 +20,7 @@ public class Comment
 
 
     [NotMapped] // prevents EF from treating it as a DB column
+    public bool UserHasLiked { get; set; }
     public string FormattedCreatedOn
     {
         get
