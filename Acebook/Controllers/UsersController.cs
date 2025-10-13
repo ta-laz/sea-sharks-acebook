@@ -43,7 +43,8 @@ public class UsersController : Controller
 
         // retrieve all the posts where the wallid matches the id of the page we're on
         var posts = dbContext.Posts.Where(p => p.WallId == id)
-                                   .Include(p => p.User);
+                                   .Include(p => p.User)
+                                   .OrderByDescending(p => p.CreatedOn);
         ViewBag.Posts = posts.ToList();
 
         // search through the friends table, filter for records where the requester and accepter have 

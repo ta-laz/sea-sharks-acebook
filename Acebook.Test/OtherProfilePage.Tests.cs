@@ -62,13 +62,14 @@ namespace Acebook.Tests
         public async Task WriteOnWall_OtherProfilePage_DisplaysPost()
         {
             // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
-            // Expect the tagline to be the string from test data seeder
+            // Post on Shelly's wall
             await Page.GetByTestId("create-post-input").FillAsync("Test content");
             await Task.WhenAll(
                 Page.GetByTestId("create-post-submit").ClickAsync(),
                 Page.WaitForURLAsync($"{BaseUrl}/users/2")
             );
             await Expect(Page.GetByText("Test content")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("post-content").First).ToHaveTextAsync("Test content");
         }
 
         [Test]
@@ -80,5 +81,26 @@ namespace Acebook.Tests
             // redirects to Finn's profile page
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
         }
+
+        [Test]
+        public async Task ViewPage_NotFriendProfilePage_WriteOnWallNotVisible()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            // Go to user that Finn is not friends with
+            await Page.GotoAsync("users/4");
+            // check that the create post form is not visible
+            await Expect(Page.GetByTestId("create-post-input")).ToBeHiddenAsync();
+        }
+
+        // [Test]
+        // public async Task SeeAllFriendsButton_OtherProfilePage_RedirectsToFriendsOfOtherUser()
+        // {
+        //     // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+        //     // Click see all friends to redirect to Shelly's friends page
+        //     await Task.WhenAll(
+        //         Page.Locator("#see-all-friends").ClickAsync(),
+        //         Page.WaitForURLAsync($"{BaseUrl}/friends/2")
+        //     );
+        // }
     }
 }
