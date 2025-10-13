@@ -12,10 +12,10 @@
     <div class="flex flex-col top-20 self-start top-32 sticky items-center lg:items-start w-full lg:w-1/3 space-y-6">
       <!-- Profile Picture (hover reveal) -->
       <div class="relative group flex justify-center">
-        <img src="/images/Placeholder.png" alt="Profile Picture"
-          class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm transition-opacity duration-300 group-hover:opacity-50" />
-        <div
-          class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <img id="profile-pic" src="/images/Placeholder.png" alt="Profile Picture"
+          class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm transition-opacity duration-300 cursor-pointer group-hover:opacity-50" />
+        <div <div
+          class="absolute inset-0 flex items-center justify-center  opacity-0 group-hover:opacity-100 transition-opacity  duration-300 pointer-events-none">
           <p class="text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md">Change Picture</p>
         </div>
       </div>
@@ -58,12 +58,14 @@
             other = friend.Requester;
           }
           <div class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-lg mb-1 transition">
-            <div  class="flex items-center space-x-3">
+            <div class="flex items-center space-x-3">
               <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
-              <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name" data-testid="@other.FirstName" method="get" class="text-xs font-medium text-gray-700 hover:text-teal-600">@other.FirstName
+              <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name"
+                data-testid="@other.FirstName" method="get"
+                class="text-xs font-medium text-gray-700 hover:text-teal-600">@other.FirstName
                 @other.LastName</a>
             </div>
-              
+
             <!-- Dots only appear on hover -->
             <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
@@ -175,22 +177,50 @@
   </div>
 </div>
 
+<!-- Fullscreen overlay for enlarged image -->
+<div id="image-overlay" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
+  <img id="overlay-image" src="/images/Placeholder.png" alt="Enlarged Profile Picture"
+    class="max-w-3xl w-11/12 md:w-auto rounded-lg shadow-lg cursor-pointer transition-transform duration-300 transform scale-100 hover:scale-105" />
+</div>
+
 <script>
-  const button = document.getElementById('update-tagline');
-  const text = document.getElementById('under-name-tagline-text');
-  const form = document.getElementById('tagline-form');
-  const cancel = document.getElementById("cancel-edit");
+  document.addEventListener("DOMContentLoaded", function () {
+    // 🟩 Tagline editing logic
+    const button = document.getElementById('update-tagline');
+    const text = document.getElementById('under-name-tagline-text');
+    const form = document.getElementById('tagline-form');
+    const cancel = document.getElementById("cancel-edit");
 
-  button.addEventListener('click', () => {
-    text.classList.add('hidden');
-    form.classList.remove('hidden');
-    button.classList.add('hidden');
+    if (button && text && form && cancel) {
+      button.addEventListener('click', () => {
+        text.classList.add('hidden');
+        form.classList.remove('hidden');
+        button.classList.add('hidden');
+      });
+
+      cancel.addEventListener('click', () => {
+        text.classList.remove('hidden');
+        form.classList.add('hidden');
+        button.classList.remove('hidden');
+      });
+    }
+
+    // 🟩 Profile picture enlarge logic
+    const profilePic = document.getElementById("profile-pic");
+    const overlay = document.getElementById("image-overlay");
+    const overlayImage = document.getElementById("overlay-image");
+
+    if (profilePic && overlay && overlayImage) {
+      profilePic.addEventListener("click", () => {
+        overlay.classList.remove("hidden");
+        overlayImage.src = profilePic.src;
+      });
+
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay || e.target === overlayImage) {
+          overlay.classList.add("hidden");
+        }
+      });
+    }
   });
-
-  cancel.addEventListener('click', () => {
-    text.classList.remove('hidden');
-    form.classList.add('hidden');
-    button.classList.remove('hidden');
-  });
-
 </script>
