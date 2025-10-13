@@ -30,6 +30,9 @@ public class UsersController : Controller
     public IActionResult Index(int id)
     {
         AcebookDbContext dbContext = new AcebookDbContext();
+
+        // find the user that has the id of the page we're looking at
+        // include that user's posts and profile bio details
         var user = dbContext.Users
                   .Include(u => u.ProfileBio)
                   .Include(u => u.Posts)
@@ -38,12 +41,14 @@ public class UsersController : Controller
         if (user == null)
             return NotFound();
 
+        // retrieve all the posts where the wallid matches the id of the page we're on
         var posts = dbContext.Posts.Where(p => p.WallId == id)
                                    .Include(p => p.User);
         ViewBag.Posts = posts.ToList();
 
-        int? currentUserId = HttpContext.Session.GetInt32("user_id");
-
+        // search through the friends table, filter for records where the requester and accepter have 
+        // the id of the page we're on and the status is accepted
+        // take up to 3 friends and make it a list to display it on the user's profile page
         var friends = dbContext.Friends
         .Include(f => f.Requester)
         .Include(f => f.Accepter)
@@ -51,15 +56,28 @@ public class UsersController : Controller
         .Take(3)
         .ToList();
 
-        ViewBag.Friends = friends;
+        int? currentUserId = HttpContext.Session.GetInt32("user_id");
         ViewBag.CurrentUserId = currentUserId;
+        ViewBag.Friends = friends;
         ViewBag.ProfileUserId = id;
 
-        if (currentUserId == user.Id)
+        // this checks if any of the friends records have ids that match the logged in user and
+        // the user profile being viewed
+        bool friendship = friends.Any(f =>
+        (f.RequesterId == currentUserId && f.AccepterId == id && f.Status == FriendStatus.Accepted) ||
+        (f.RequesterId == id && f.AccepterId == currentUserId && f.Status == FriendStatus.Accepted)
+        );
+
+        ViewBag.Friendship = friendship;
+
+        // if the logged in user's id matches the id of the page we're on
+        // render the my profile HTML
+        if (currentUserId == id)
         {
             return View("MyProfile", user);
         }
 
+        // else render the other profile HTML
         else
         {
             return View("OtherProfile", user);
