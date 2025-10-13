@@ -24,7 +24,7 @@
                     @Model.FirstName's
                     Bio</h2>
 
-                <div class="group flex items-center justify-between mb-4 rounded-lg mb-1 transition">
+                <div class="group flex items-center justify-between rounded-lg mb-1 transition">
                     <ul>
                         <li data-testid="bio-tagline" class="italic text-gray-400 mt-1">@Model.ProfileBio.Tagline</li>
                         <li data-testid="bio-age" class="text-gray-400 mt-1">Age: @Model.ProfileBio.Age</li>
@@ -34,11 +34,6 @@
                         <li data-testid="bio-job" class="text-gray-400 mt-1 mb-2">Job: @Model.ProfileBio.Job</li>
                     </ul>
                 </div>
-
-                <a asp-controller="Users" asp-action="Update" asp-route-id="@userId" id="edit-bio" method="get"
-                    class="text-teal-500 hover:underline text-sm cursor-pointer">
-                    Edit bio
-                </a>
             </div>
 
 
