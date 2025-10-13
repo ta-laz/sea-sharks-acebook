@@ -19,66 +19,34 @@
         <p class="text-gray-700 mt-2 leading-relaxed">@Model.Content</p>
         <p class="text-xs text-gray-400 mt-4">Created on: @Model.FormattedCreatedOn</p>
 
-        <!-- Buttons under post -->
-        @* <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-between mt-4 pt-3">
-            <button
-                class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                <span
-                    class="absolute inset-0 bg-teal-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
-                <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                    Like (@Model.Likes?.Count)
-                </span>
-            </button>
-            <button
-                class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                <span
-                    class="absolute inset-0 bg-teal-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
-                <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                    View Profile
-                </span>
-            </button>
-            <button
-                class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                <span
-                    class="absolute inset-0 bg-teal-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
-                <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                    Share
-                </span>
-            </button>
-            <form action="@Url.Action("Delete", "Posts", new { id = Model.Id })" method="post" onsubmit="return confirm('Are you sure you want to delete this post?') class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                <button class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                    <span
-                        class="absolute inset-0 bg-teal-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
-                    <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                        Delete Post
-                    </span>
+    <!-- Buttons under post -->
+    <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-evenly mt-4 pt-3">
+        <button class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+            <span class="absolute inset-0 bg-teal-600 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
+            <span class="relative text-gray-600 group-hover:text-white">Like (@Model.Likes?.Count)</span>
+        </button>
+
+        <button class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+            <span class="absolute inset-0 bg-teal-600 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
+            <span class="relative text-gray-600 group-hover:text-white">View Profile</span>
+        </button>
+
+        <button class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+            <span class="absolute inset-0 bg-teal-600 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
+            <span class="relative text-gray-600 group-hover:text-white">Share</span>
+        </button>
+
+        @if (Model.UserId == Context.Session.GetInt32("user_id"))
+        {
+            <form action="@Url.Action("Delete", "Posts", new { id = Model.Id })" method="post" class="flex-1" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                <button type="submit"
+                    class="relative w-full inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+                    <span class="absolute inset-0 bg-red-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
+                    <span class="relative text-gray-600 group-hover:text-white">Delete Post</span>
                 </button>
             </form>
-        </div> *@
-        <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-evenly mt-4 pt-3">
-    <button class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-        <span class="absolute inset-0 bg-teal-600 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
-        <span class="relative text-gray-600 group-hover:text-white">Like (@Model.Likes?.Count)</span>
-    </button>
-
-    <button class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-        <span class="absolute inset-0 bg-teal-600 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
-        <span class="relative text-gray-600 group-hover:text-white">View Profile</span>
-    </button>
-
-    <button class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-        <span class="absolute inset-0 bg-teal-600 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
-        <span class="relative text-gray-600 group-hover:text-white">Share</span>
-    </button>
-
-    <form action="@Url.Action("Delete", "Posts", new { id = Model.Id })" method="post" class="flex-1" onsubmit="return confirm('Are you sure you want to delete this post?');">
-        <button type="submit"
-            class="relative w-full inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-            <span class="absolute inset-0 bg-red-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
-            <span class="relative text-gray-600 group-hover:text-white">Delete Post</span>
-        </button>
-    </form>
-</div>
+        }
+    </div>
 
     </div>
 

@@ -71,7 +71,12 @@ public class PostsController : Controller
   public IActionResult Delete(int id)
   {
     AcebookDbContext dbContext = new AcebookDbContext();
+    int? sessionUserId = HttpContext.Session.GetInt32("user_id");
     Post post = dbContext.Posts.Include(p => p.Comments).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
+    if (post.UserId != sessionUserId) // Server-side security
+        {
+            return Forbid(); 
+        }
     dbContext.Posts.Remove(post);
     dbContext.SaveChanges();
 
