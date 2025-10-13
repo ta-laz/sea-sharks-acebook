@@ -4,19 +4,37 @@
   int? userId = Context.Session.GetInt32("user_id");
 }
 
+@{
+  string imagePath; 
+  if (!string.IsNullOrEmpty(Model.ProfilePicturePath)){
+    imagePath = Model.ProfilePicturePath;
+  }
+  else
+  {
+    imagePath = "/images/Placeholder.png";
+  }
+}
+
 <div class="flex justify-center w-full mt-8">
   <!-- Outer container -->
   <div class="flex flex-col lg:flex-row w-full max-w-7xl gap-8">
 
     <!-- 🧍 Left column: profile picture + bio + friends -->
     <div class="flex flex-col top-20 self-start top-32 sticky items-center lg:items-start w-full lg:w-1/3 space-y-6">
+
       <!-- Profile Picture (hover reveal) -->
       <div class="relative group flex justify-center">
-        <img src="/images/Placeholder.png" alt="Profile Picture"
+        <img src="@imagePath" 
+          alt="Profile Picture"
           class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm transition-opacity duration-300 group-hover:opacity-50" />
         <div
           class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <p class="text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md">Change Picture</p>
+          <form asp-action="UploadProfilePicture" asp-controller="Users" method="post" enctype="multipart/form-data">
+            <label class="cursor-pointer text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md">
+              Change Picture
+              <input type="file" name="profilePicture" accept="image/*" class="hidden" onchange="this.form.submit();" />
+            </label>
+          </form>
         </div>
       </div>
 

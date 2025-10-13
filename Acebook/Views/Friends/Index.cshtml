@@ -31,9 +31,13 @@
                 @foreach (var request in ViewBag.ReceivedRequests)
                 {
                     var sender = request.Requester;
+                    var imagePath = sender.ProfilePicturePath;
+                    if (string.IsNullOrEmpty(imagePath)){
+                        imagePath = "/images/Placeholder.png";
+                    }
 
                     <div class="flex flex-wrap items-center gap-3">
-                        <img src="/images/Placeholder.png"
+                        <img src="@sender.ProfilePicturePath"
                             class="w-12 h-12 rounded-full object-cover border border-gray-400" />
                         <span class="font-medium text-gray-800">@sender.FirstName @sender.LastName</span>
 
@@ -65,9 +69,13 @@
                 @foreach (var request in ViewBag.SentRequests)
                 {
                     var receiver = request.Accepter;
+                    var imagePath = receiver.ProfilePicturePath;
+                    if (string.IsNullOrEmpty(imagePath)){
+                        imagePath = "/images/Placeholder.png";
+                    }
 
                     <div class="flex items-center gap-3">
-                        <img src="/images/Placeholder.png"
+                        <img src="@imagePath"
                             class="w-12 h-12 rounded-full object-cover border border-gray-400" />
                         <span class="font-medium text-gray-800">@receiver.FirstName @receiver.LastName</span>
 
