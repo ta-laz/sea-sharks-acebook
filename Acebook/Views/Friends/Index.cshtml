@@ -131,7 +131,8 @@
                     <div class="flex items-center gap-3 mb-2">
                         <img src="/images/Placeholder.png"
                             class="w-12 h-12 rounded-full object-cover border border-gray-400">
-                        <h3 class="text-md font-semibold text-gray-800">@other.FirstName @other.LastName</h3>
+                        <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name" data-testid="@other.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600">@other.FirstName @other.LastName</a>
+                        
                     </div>
 
                     <form asp-action="Remove" asp-controller="Friends" method="post"
