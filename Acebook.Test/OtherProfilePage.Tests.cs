@@ -127,7 +127,7 @@ namespace Acebook.Tests
         }
 
         [Test]
-        public async Task AddFriends_OtherProfilePage_ChangesToShowsFriendRequestSent()
+        public async Task AddFriends_OtherProfilePage_ChangesToShowFriendRequestSent()
         {
             // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
             await Page.GotoAsync("users/6");
@@ -139,6 +139,34 @@ namespace Acebook.Tests
             await Page.GetByTestId("add-friend").ClickAsync();
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/6");
             await Expect(Page.GetByTestId("friend-request-sent")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task Unfriend_OtherProfilePage_ChangesToAddFriend()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            Page.Dialog += async (_, dialog) =>
+                {
+                    Assert.That(dialog.Message, Does.Contain("Are you sure"));
+                    await dialog.AcceptAsync();
+                };
+            await Page.GetByTestId("unfriend").ClickAsync();
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
+            await Expect(Page.GetByTestId("add-friend")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task Unfriend_OtherProfilePage_WriteOnWallNowHidden()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            Page.Dialog += async (_, dialog) =>
+                {
+                    Assert.That(dialog.Message, Does.Contain("Are you sure"));
+                    await dialog.AcceptAsync();
+                };
+            await Page.GetByTestId("unfriend").ClickAsync();
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
+            await Expect(Page.GetByTestId("create-post-input")).ToBeHiddenAsync();
         }
     }
 }

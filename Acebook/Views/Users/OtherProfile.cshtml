@@ -95,7 +95,7 @@
                         <input type="hidden" name="returnUrl"
                                 value="@Url.Action("Index", "Users", new { id = Model.Id })" />
                         <button type="submit"
-                            class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-1 px-3 rounded">Unfriend</button>
+                            class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-1 px-3 rounded" data-testid="unfriend">Unfriend</button>
                     </form> 
                 }
                 else if (pendingRequests.Any(f =>
