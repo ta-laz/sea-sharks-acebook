@@ -22,11 +22,27 @@ public class PostsController : Controller
   public IActionResult Index()
   {
     AcebookDbContext dbContext = new AcebookDbContext();
+    int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
+
     var posts = dbContext.Posts
                                .Include(p => p.User)
                                .Include(p => p.Comments)
-                               .Include(p => p.Likes);
-    ViewBag.Posts = posts.ToList();
+                                  .ThenInclude(c => c.Likes)
+                               .Include(p => p.Likes)
+                               .ToList();
+    foreach (var post in posts)
+        {
+      post.UserHasLiked = post.Likes.Any(l => l.UserId == currentUserId);
+      if (post.Comments != null)
+            {
+                foreach (var comment in post.Comments)
+                {
+          comment.UserHasLiked = comment.Likes.Any(l => l.UserId == currentUserId);
+                }
+            }
+        }
+
+    ViewBag.Posts = posts;
     ViewBag.Posts.Reverse();
     return View();
   }
@@ -59,10 +75,14 @@ public class PostsController : Controller
   public IActionResult Post(int id)
   {
     AcebookDbContext dbContext = new AcebookDbContext();
-    var post = dbContext.Posts.Include(p => p.Comments).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
+    int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
+    var post = dbContext.Posts.Include(p => p.Comments).ThenInclude(c => c.Likes).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
     var comments = dbContext.Comments.Include(c => c.User).Where(c => c.PostId == id).ToList();
-
-    // var comments = comments.Reverse();
+    post.UserHasLiked = post.Likes.Any(l => l.UserId == currentUserId);
+    foreach(var comment in post.Comments)
+        {
+          comment.UserHasLiked = comment.Likes.Any(l => l.UserId == currentUserId);
+        }
     ViewBag.post = post;
     ViewBag.comments = comments.ToList();
     ViewBag.comments.Reverse();
