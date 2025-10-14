@@ -7,11 +7,20 @@
 
 
 
-@if (!string.IsNullOrWhiteSpace(searchString))
+@{
+    bool hasResults =
+        (ViewBag.UsersResults != null && (ViewBag.UsersResults as List<acebook.Models.User>).Count > 0) ||
+        (ViewBag.PostsResults != null && (ViewBag.PostsResults as List<acebook.Models.Post>).Count > 0) ||
+        (ViewBag.CommentsResults != null && (ViewBag.CommentsResults as List<acebook.Models.Comment>).Count > 0);
+}
+
+@if (!string.IsNullOrWhiteSpace(searchString) && hasResults)
 {
-    <h1 class="text-4xl font-bold mb-4 text-teal-600 pb-6 text-center">Search Results for: <strong>@searchString</strong>
+    <h1 class="text-4xl font-bold mb-4 text-teal-600 pb-6 text-center">
+        Search Results for: <strong>@searchString</strong>
     </h1>
 }
+
 <!-- User List Section -->
 @{
     var users = ViewBag.UsersResults as List<acebook.Models.User>;
@@ -68,7 +77,7 @@
             </div>
                 }
             </div>
-            <button class="see-more-btn text-teal-600 mt-2 font-semibold p-2 hover:bg-teal-600/20 rounded-lg transition" data-target="users"> Show All Results</button>
+            <button class="see-more-btn text-teal-600 font-semibold p-2 hover:bg-teal-600/20 rounded-lg transition" data-target="users"> Show All Results</button>
         }
     </div>
 }
@@ -143,7 +152,7 @@
 
     @foreach (Comment comment in comments.Take(3))
     {
-        <div class="bg-white rounded-lg w-full p-4 shadow-[0_0_15px_rgba(15,118,110,0.3)] relative mb-6">
+        <div class="bg-white rounded-lg w-full p-4 shadow-[0_0_15px_rgba(15,118,110,0.3)] relative">
             <div class="flex items-start mb-3">
                 <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400 mr-3">
 
@@ -181,7 +190,7 @@
             <div data-section="comments" class="hidden more-comments">
                 @foreach (var comment in comments.Skip(3))
                 {
-    <div class="bg-white rounded-lg w-full p-4 shadow-[0_0_15px_rgba(15,118,110,0.3)] relative mb-6">
+    <div class="bg-white rounded-lg w-full p-4 shadow-[0_0_15px_rgba(15,118,110,0.3)] relative">
             <div class="flex items-start mb-3">
                 <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400 mr-3">
 
@@ -214,10 +223,24 @@
         </div>
                 }
             </div>
-            <button class="see-more-btn text-teal-600 hover:underline mt-2" data-target="comments"> Show All Results</button>
+            <button class="see-more-btn text-teal-600 mt-2 font-semibold p-2 hover:bg-teal-600/20 rounded-lg transition" data-target="comments"> Show All Results</button>
         }
 </div>
 }
+
+@if (!hasResults)
+{
+    <div class="text-center mt-20">
+        <h2 class="text-3xl font-bold text-gray-700 mb-6">
+            No results found for: <span class="text-teal-600">@searchString</span>
+        </h2>
+        <a asp-action="Index" asp-controller="Home" method ="get"
+           class="inline-block bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
+            Back to Aquarium
+        </a>
+    </div>
+}
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const buttons = document.querySelectorAll(".see-more-btn");
