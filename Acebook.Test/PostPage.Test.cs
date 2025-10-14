@@ -53,7 +53,7 @@ namespace Acebook.Tests
             // Click on a post:
             await Task.WhenAll(
                 Page.WaitForURLAsync($"{BaseUrl}/posts/175"),
-                Page.GetByText("Comment").First.ClickAsync()
+                Page.GetByTestId("comment-button").First.ClickAsync()
             );
             await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
         }
