@@ -202,5 +202,17 @@ namespace Acebook.Tests
             await Expect(Page.GetByTestId("Bruce")).ToBeVisibleAsync();
             await Expect(Page.GetByTestId("Coral")).ToBeVisibleAsync();
         }
+
+        [Test]
+        public async Task CommentButton_ClickedOnPost_NavigatesToPostPage()
+        {
+            
+            // Click on a post:
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts/174"),
+                Page.GetByTestId("comment-button").First.ClickAsync()
+            );
+            await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
+        }
     }
 }

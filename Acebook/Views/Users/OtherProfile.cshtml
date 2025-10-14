@@ -145,7 +145,7 @@
 }
 
             <!-- Posts Section -->
-            <div class="flex flex-col w-full rounded-lg p-4 space-y-4 relative">
+            <div class="flex flex-col w-full rounded-lg space-y-4 relative">
                 <!-- Sticky Header -->
                 <div class="sticky top-32 z-20 py-3 px-2 rounded-md">
                     <h1 class="text-4xl font-bold text-teal-700">@Model.FirstName's Wall</h1>
@@ -189,16 +189,50 @@
                                     </p>
 
                                     <div class="flex justify-end mt-2">
-                                        <button class="text-teal-600 text-sm hover:underline">see more</button>
-                                    </div>
+            <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" method="get">
+              <button data-testid="see-more-button" class="text-teal-600 text-sm hover:underline">see more</button>
+            </a>
+          </div>
 
                                     <p class="text-xs text-gray-400 mt-4">Created on: @post.FormattedCreatedOn</p>
 
                                     <div
                                         class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
-                                        <button class="text-gray-600 text-sm hover:text-teal-600">Like (12)</button>
-                                        <button class="text-gray-600 text-sm hover:text-teal-600">Comment (0)</button>
-                                        <button class="text-gray-600 text-sm hover:text-teal-600">View Profile</button>
+                                        <!-- Like -->
+                    <button
+                      class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all"
+                      data-testid="post-like-button" data-post-id="@post.Id"
+                      data-liked="@post.Likes.Any(l => l.UserId == Context.Session.GetInt32("user_id"))">
+                      <span
+                        class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                      <span data-testid='home-post-like-total'
+                        class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                        Like (<span class="like-count">@post.Likes.Count()</span>)
+                      </span>
+                    </button>
+
+                    <!-- Comment -->
+                    <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" data-testid="comment-button"
+                      class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+                      <span
+                        class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                      <span
+                        class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                        Comment (@post.Comments.Count())
+                      </span>
+                    </a>
+
+                    <!-- View Profile Button -->
+                    <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" id="post-user-name"
+                      data-testid="Post-link @post.User.FirstName"
+                      class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+                      <span
+                        class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                      <span
+                        class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                        View Profile
+                      </span>
+                    </a>
                                     </div>
                                 </div>
                             }
@@ -231,4 +265,58 @@
                         overlay.classList.add("hidden");
                     }
                 });
+
+                // 🟩 like button logic
+        document.addEventListener('DOMContentLoaded', () => {
+          const likeButtons = document.querySelectorAll('button[data-post-id]');
+
+          likeButtons.forEach(button => {
+            const postId = button.dataset.postId;
+            let liked = button.dataset.liked === 'True' || button.dataset.liked === 'true';
+
+            const bgSpan = button.querySelector('span.absolute');
+            const textSpan = button.querySelector('span.relative');
+
+            if (liked) {
+              bgSpan.classList.add('transition-none'); // disable transition
+              bgSpan.classList.remove('translate-x-full', 'translate-y-full');
+              textSpan.classList.remove('text-gray-600');
+              textSpan.classList.add('text-white');
+
+              requestAnimationFrame(() => {
+                bgSpan.classList.remove('transition-none');
+              });
+            }
+
+            button.addEventListener('click', async () => {
+              try {
+                const response = await fetch(`/posts/${postId}`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
+                const countSpan = button.querySelector('.like-count');
+                countSpan.textContent = data.likeCount;
+
+                liked = !liked; // Toggle state
+                button.dataset.liked = liked;
+
+                if (liked) {
+                  bgSpan.classList.remove('translate-x-full', 'translate-y-full');
+                  textSpan.classList.remove('text-gray-600');
+                  textSpan.classList.add('text-white');
+                } else {
+                  bgSpan.classList.add('translate-x-full', 'translate-y-full');
+                  textSpan.classList.remove('text-white');
+                  textSpan.classList.add('text-gray-600');
+                }
+              } catch (err) {
+                console.error('Error toggling like:', err);
+              }
+            });
+          });
+        });
             </script>

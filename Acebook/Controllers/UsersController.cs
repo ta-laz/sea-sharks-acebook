@@ -38,13 +38,29 @@ public class UsersController : Controller
                   .Include(u => u.Posts)
                   .FirstOrDefault(u => u.Id == id);
 
+        int? currentUserId = HttpContext.Session.GetInt32("user_id");
+
         if (user == null)
             return NotFound();
 
         // retrieve all the posts where the wallid matches the id of the page we're on
         var posts = dbContext.Posts.Where(p => p.WallId == id)
                                    .Include(p => p.User)
+                                   .Include(p => p.Comments)
+                                        .ThenInclude(c => c.Likes)
+                                    .Include(p => p.Likes)
                                    .OrderByDescending(p => p.CreatedOn);
+        foreach (var post in posts)
+        {
+            post.UserHasLiked = post.Likes.Any(l => l.UserId == currentUserId);
+            if (post.Comments != null)
+            {
+                foreach (var comment in post.Comments)
+                {
+                    comment.UserHasLiked = comment.Likes.Any(l => l.UserId == currentUserId);
+                }
+            }
+        }
         ViewBag.Posts = posts.ToList();
 
         // search through the friends table, filter for records where the requester and accepter have 
@@ -57,7 +73,7 @@ public class UsersController : Controller
         .Take(3)
         .ToList();
 
-        int? currentUserId = HttpContext.Session.GetInt32("user_id");
+        
         ViewBag.CurrentUserId = currentUserId;
         ViewBag.Friends = friends;
         ViewBag.ProfileUserId = id;
