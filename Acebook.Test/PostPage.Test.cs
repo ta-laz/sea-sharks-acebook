@@ -54,7 +54,7 @@ namespace Acebook.Tests
             // Click on a post:
             await Task.WhenAll(
                 Page.WaitForURLAsync($"{BaseUrl}/posts/175"),
-                Page.GetByText("Comment").First.ClickAsync()
+                Page.GetByTestId("comment-button").First.ClickAsync()
             );
             await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
         }
@@ -91,7 +91,7 @@ namespace Acebook.Tests
             await Page.Locator("#comment-box").FillAsync("Test Comment");
 
             // Click submit
-            await Page.Locator("#comment-submit").ClickAsync();
+            await Page.GetByTestId("comment-submit").ClickAsync();
 
             // Comment appears on page
             await Expect(Page.GetByText("Test Comment")).ToBeVisibleAsync();
@@ -181,7 +181,7 @@ namespace Acebook.Tests
             await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
             await Page.Locator("#comment-box").ClickAsync();
             await Page.Locator("#comment-box").FillAsync("Test Comment");
-            await Page.Locator("#comment-submit").ClickAsync();
+            await Page.GetByTestId("comment-submit").ClickAsync();
             await Page.GetByTestId("comment-like-button").ClickAsync();
             await Expect(Page.GetByTestId("comment-like-total")).ToContainTextAsync("Like (1)");
         }
@@ -255,11 +255,14 @@ namespace Acebook.Tests
             // Create comment
             await Page.Locator("#comment-box").FillAsync("Test comment");
 
+            await Page.ScreenshotAsync(new() { Path = "before_submitted_comment.png" });
             // Wait for post submission + redirect
             await Task.WhenAll(
-                Page.Locator("#comment-submit").ClickAsync(),
+                Page.GetByTestId("comment-submit").ClickAsync(),
                 Page.WaitForURLAsync(new Regex($"{BaseUrl}/posts/\\d+"))
             );
+
+            await Page.ScreenshotAsync(new() { Path = "after_submitted_comment.png" });
 
             await Expect(Page.GetByText("Test comment")).ToBeVisibleAsync();
 
@@ -286,7 +289,7 @@ namespace Acebook.Tests
 
             // Wait for post submission + redirect
             await Task.WhenAll(
-                Page.Locator("#comment-submit").ClickAsync(),
+                Page.GetByTestId("comment-submit").ClickAsync(),
                 Page.WaitForURLAsync(new Regex($"{BaseUrl}/posts/\\d+"))
             );
 
