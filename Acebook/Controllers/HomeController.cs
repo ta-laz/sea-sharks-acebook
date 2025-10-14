@@ -17,6 +17,11 @@ public class HomeController : Controller
     [Route("/")]
     public IActionResult Index()
     {
+        int? id = HttpContext.Session.GetInt32("user_id");
+        if (id != null)
+        {
+            return Redirect("/posts");
+        }
         return Redirect("/signin");
     }
 
