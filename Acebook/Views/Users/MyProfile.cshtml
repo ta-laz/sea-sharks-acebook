@@ -155,13 +155,16 @@
       <!-- Create Post Form -->
       <div class="bg-white rounded-lg w-full p-4 shadow-md">
         <h2 class="text-lg font-bold mb-3">Create a Post</h2>
-        <form action="@Url.Action("Create", "Posts")" method="post">
+        <form action="@Url.Action("Create", "Posts")" method="post" enctype="multipart/form-data" >
           <textarea id="create-post-input"
             class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
             name="content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)"></textarea>
 
+          
           <div class="flex justify-between items-center mt-3">
-            <label class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
+          <label for="file-upload" class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
+            <input id="file-upload" type="file" name="postPicture" accept="image/*"class="hidden"/>
+            <span id="file-name" class="text-gray-500 text-sm italic">No file chosen</span>
             <input type="hidden" name="WallId" value="@Model.Id" />
             <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Users", new { id = Model.Id })" />
             <button id="post-submit" data-testid="create-post-submit" type="submit"
@@ -201,6 +204,10 @@
               @post.FormatPostContent()
             }
           </p>
+          @if (@post.PostPicturePath != null)
+          {
+            <img id="post-picture" src="@post.PostPicturePath" alt="Post Picture" class="w-52 h-52 mx-auto" />
+          }
 
           <div class="flex justify-end mt-2">
             <button class="text-teal-600 text-sm hover:underline">see more</button>
@@ -264,6 +271,24 @@
           overlay.classList.add("hidden");
         }
       });
+    }
+  });
+</script>
+
+
+<script>
+  const fileInput = document.getElementById("file-upload");
+  const fileNameDisplay = document.getElementById("file-name");
+  fileInput.addEventListener("change", function () {
+    // If at least one file is chosen
+    if (fileInput.files.length > 0) {
+      fileNameDisplay.textContent = fileInput.files[0].name;
+      fileNameDisplay.classList.remove("text-gray-500", "italic");
+      fileNameDisplay.classList.add("text-teal-700", "font-medium");
+    } else {
+      // Reset text if no file is chosen
+      fileNameDisplay.textContent = "No file chosen";
+      fileNameDisplay.classList.add("text-gray-500", "italic");
     }
   });
 </script>

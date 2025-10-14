@@ -201,7 +201,7 @@ public class UsersController : Controller
     [HttpPost]
     public async Task<IActionResult> UploadProfilePicture(IFormFile profilePicture)
     {
-        var currentUserId = 38; //HttpContext.Session.GetInt32("user_id");
+        var currentUserId = HttpContext.Session.GetInt32("user_id");
 
         var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/profile_pics");
         var fileName = Guid.NewGuid().ToString() + Path.GetExtension(profilePicture.FileName);

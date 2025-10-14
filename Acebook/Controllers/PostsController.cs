@@ -49,7 +49,7 @@ public class PostsController : Controller
 
   [Route("/posts/create")]
   [HttpPost]
-  public IActionResult Create(Post post, string returnUrl, int? WallId = null)
+  public IActionResult Create(Post post, string returnUrl, IFormFile? postPicture, int? WallId = null)
   {
     using var dbContext = new AcebookDbContext();
     int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
@@ -59,6 +59,19 @@ public class PostsController : Controller
 
     // If WallId is null, default it to the current user’s wall
     post.WallId = WallId ?? currentUserId;
+
+    if (postPicture != null)
+    {
+      var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/post_pics");
+      var fileName = Guid.NewGuid().ToString() + Path.GetExtension(postPicture.FileName);
+      var filePath = Path.Combine(uploadsFolder, fileName);
+
+      using (var stream = new FileStream(filePath, FileMode.Create))
+      {
+        postPicture.CopyTo(stream);
+      }
+      post.PostPicturePath = $"/images/post_pics/{fileName}";
+    }
 
     dbContext.Posts.Add(post);
     dbContext.SaveChanges();
@@ -102,6 +115,7 @@ public class PostsController : Controller
   //         }
   //         return View(indiPost);
   // }
+
 
   [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
   public IActionResult Error()
