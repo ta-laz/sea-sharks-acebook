@@ -98,9 +98,25 @@ namespace Acebook.Tests
             // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
             // Click see all friends to redirect to Shelly's friends page
             await Task.WhenAll(
-                Page.Locator("#see-all-friends").ClickAsync(),
+                Page.GetByTestId("see-all-friends").ClickAsync(),
                 Page.WaitForURLAsync($"{BaseUrl}/friends/2")
             );
+        }
+
+        [Test]
+        public async Task FriendsProfilePage_OtherProfilePage_ShowsAlreadyFriends()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            // Click see all friends to redirect to Shelly's friends page
+            await Expect(Page.GetByTestId("already-friends")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task FriendRequestSent_OtherProfilePage_ShowsPending()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            // Click see all friends to redirect to Shelly's friends page
+            await Expect(Page.GetByTestId("pending")).ToBeVisibleAsync();
         }
     }
 }
