@@ -85,15 +85,15 @@
                 @if (alreadyFriends.Contains(@Model.Id))
                 {
                     <button disabled data-testid="already-friends" class="bg-gray-300 text-gray-700 text-sm font-medium py-1 px-3 rounded">
-                        Already Friends
+                        Friends
                     </button>
                 }
                 else if (pendingRequests.Any(f =>
                 (f.RequesterId == ViewBag.currentUserId && f.AccepterId == @Model.Id) ||
                 (f.RequesterId == @Model.Id && f.AccepterId == ViewBag.currentUserId)))
                 {
-                    <button disabled class="bg-orange-200 text-gray-700 text-sm font-medium py-1 px-3 rounded">
-                        Pending Request
+                    <button data-testid="friend-request-sent" disabled class="bg-orange-200 text-gray-700 text-sm font-medium py-1 px-3 rounded">
+                        Friend request sent
                     </button>
                 }
                 else

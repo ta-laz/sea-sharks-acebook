@@ -107,16 +107,38 @@ namespace Acebook.Tests
         public async Task FriendsProfilePage_OtherProfilePage_ShowsAlreadyFriends()
         {
             // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
-            // Click see all friends to redirect to Shelly's friends page
             await Expect(Page.GetByTestId("already-friends")).ToBeVisibleAsync();
         }
 
-        // [Test]
-        // public async Task FriendRequestSent_OtherProfilePage_ShowsPending()
-        // {
-        //     // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
-        //     // Click see all friends to redirect to Shelly's friends page
-        //     // await Expect(Page.GetByTestId("pending")).ToBeVisibleAsync();
-        // }
+        [Test]
+        public async Task PendingFriendRequest_OtherProfilePage_ShowsFriendRequestSent()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            await Page.GotoAsync("users/4");
+            await Expect(Page.GetByTestId("friend-request-sent")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task NotFriends_OtherProfilePage_AddFriendButtonIsVisible()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            await Page.GotoAsync("users/6");
+            await Expect(Page.GetByTestId("add-friend")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task AddFriends_OtherProfilePage_ChangesToShowsFriendRequestSent()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            await Page.GotoAsync("users/6");
+            Page.Dialog += async (_, dialog) =>
+                {
+                    Assert.That(dialog.Message, Does.Contain("Are you sure you want to add this person?"));
+                    await dialog.AcceptAsync();
+                };
+            await Page.GetByTestId("add-friend").ClickAsync();
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/6");
+            await Expect(Page.GetByTestId("friend-request-sent")).ToBeVisibleAsync();
+        }
     }
 }
