@@ -1,5 +1,5 @@
 @{
-    ViewData["SearchPlaceholder"] = "Search posts...";
+  ViewData["SearchPlaceholder"] = "Search posts...";
 }
 <div class="flex justify-center w-full mt-8">
   <!-- Outer container holding sidebar, posts, and advert -->
@@ -45,9 +45,10 @@
         <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
           <div class="flex items-center space-x-3">
             <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
-            <a asp-controller="Friends" asp-action="Index" id="redirect-friends" data-testid="redirect-friends" method="get" class="text-xs font-medium text-gray-700 hover:text-teal-600">Friends</a>
+            <a asp-controller="Friends" asp-action="Index" id="redirect-friends" data-testid="redirect-friends"
+              method="get" class="text-xs font-medium text-gray-700 hover:text-teal-600">Friends</a>
           </div>
-          
+
           <!-- Dots only appear on hover -->
           <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
@@ -196,13 +197,13 @@
       <div class="bg-white rounded-lg w-full p-4 shadow-md hidden md:block">
         <h2 class="text-lg font-bold mb-3">Create a Post</h2>
         <form action="@Url.Action("Create", "Posts")" method="post">
-          <textarea
-            id="post-content" class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
+          <textarea id="post-content"
+            class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
             name="content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)">
           </textarea>
           <div class="flex justify-between items-center mt-3">
             <label class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
-            <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Posts")"/>
+            <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Posts")" />
             <button id="post-submit" type="submit"
               class="bg-teal-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-teal-400">
               Submit
@@ -252,26 +253,29 @@
           <p class="text-xs text-gray-400 mt-4">Created on: @post.FormattedCreatedOn</p>
 
           <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
+
+            <!-- Like -->
             <button
+              class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all"
+              data-testid="post-like-button" data-post-id="@post.Id" data-liked="@post.Likes.Any(l => l.UserId == Context.Session.GetInt32("user_id"))">
+              <span
+                class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+              <span data-testid ='home-post-like-total'class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                Like (<span class="like-count">@post.Likes.Count()</span>)
+              </span>
+            </button>
+
+            <!-- Comment -->
+            <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" data-testid="comment-button"
               class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
               <span
                 class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
               <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                Like (@post.Likes.Count())
+                Comment (@post.Comments.Count())
               </span>
-            </button>
-
-            <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" method="get" class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-              <button data-testid="comment-button"
-                class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                <span
-                  class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-                <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                  Comment (@post.Comments.Count())
-                </span>
-              </button>
             </a>
-            
+
+            <!-- View Profile Button -->
             <button
               class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
               <span
@@ -280,7 +284,9 @@
                 View Profile
               </span>
             </button>
+
           </div>
+
         </div>
       }
     </div>
@@ -298,3 +304,59 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const likeButtons = document.querySelectorAll('button[data-post-id]');
+
+    likeButtons.forEach(button => {
+      const postId = button.dataset.postId;
+      let liked = button.dataset.liked === 'True' || button.dataset.liked === 'true';
+
+      const bgSpan = button.querySelector('span.absolute');
+      const textSpan = button.querySelector('span.relative');
+
+      if (liked) {
+        bgSpan.classList.add('transition-none'); // disable transition
+        bgSpan.classList.remove('translate-x-full', 'translate-y-full');
+        textSpan.classList.remove('text-gray-600');
+        textSpan.classList.add('text-white');
+
+        requestAnimationFrame(() => {
+          bgSpan.classList.remove('transition-none');
+        });
+      }
+
+      button.addEventListener('click', async () => {
+        try {
+          const response = await fetch(`/posts/${postId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+          });
+
+          if (!response.ok) throw new Error('Network response was not ok');
+
+          const data = await response.json();
+          const countSpan = button.querySelector('.like-count');
+          countSpan.textContent = data.likeCount;
+
+          liked = !liked; // Toggle state
+          button.dataset.liked = liked;
+
+          if (liked) {
+            bgSpan.classList.remove('translate-x-full', 'translate-y-full');
+            textSpan.classList.remove('text-gray-600');
+            textSpan.classList.add('text-white');
+          } else {
+            bgSpan.classList.add('translate-x-full', 'translate-y-full');
+            textSpan.classList.remove('text-white');
+            textSpan.classList.add('text-gray-600');
+          }
+        } catch (err) {
+          console.error('Error toggling like:', err);
+        }
+      });
+    });
+  });
+
+</script>
