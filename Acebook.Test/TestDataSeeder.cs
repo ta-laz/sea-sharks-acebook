@@ -34,7 +34,7 @@ internal static class TestDataSeeder
 		"Nerite","Onyx","Azure","Cobalt","Indigo","Teal","Cerulean","Harbor","Reefy","Bluey"
 	};
 		string[] lasts = { "White", "Tiger", "Hammerhead", "Reef", "Blue", "Mako", "Bull", "Sandbar", "Nurse", "Lemon" };
-
+		string[] profilePics = { null,"/images/profile_pics/233aff90-5548-4fc5-9d09-ab293ef52db1.png","/images/profile_pics/15c34476-5803-431b-968c-31c1ec391063.png","/images/profile_pics/5e97e964-1320-4067-a159-9f8835179098.png","/images/profile_pics/708c093e-df72-4e92-bf09-ccd6001949b2.jpg","/images/profile_pics/e2d18531-0497-47b7-b593-9066f7c09d62.png","/images/profile_pics/5eda5f7a-83b0-47f3-8461-63115fd3eed0.png","/images/profile_pics/3485778a-755f-4172-9a20-cbba83acd63d.png","/images/profile_pics/e488266c-22b5-44c6-a83c-c043ddcd03ab.png","/images/profile_pics/a2fa1a1b-f815-4e75-a60f-7aa190611c53.jpg","/images/profile_pics/f2749ee6-0738-4357-9fc6-6c55646c70c8.png",null,null,"/images/profile_pics/94677373-89f7-40dd-a5cb-7e7733723f90.png",null,null,null,null,null,null,null,null,null,null,"/images/profile_pics/94566dc2-6ce1-4437-b907-76051e53cb97.jpg",null,null,null,null,null,null,null,null,null,null,null,null,null,"/images/profile_pics/8b1ca221-866f-4043-939f-1725e0d4e74d.png","/images/profile_pics/105cbbc5-eade-4455-9362-8a0a00af8e24.png","/images/profile_pics/7b0233be-eaeb-4604-afe4-2c4baba49a62.png","/images/profile_pics/b9c5befd-70df-42d8-baad-2230e0b708d5.png","/images/profile_pics/b11abf18-0146-4aff-bc6e-a2d51bf792d1.png","/images/profile_pics/1537620f-e9d9-42b6-8df8-6ac15732ae3c.png","/images/profile_pics/6fdcbcbe-885b-4c2b-b4e8-84ec01f9bc9e.png","/images/profile_pics/b94b608c-5a19-4dc7-8281-bcd610e756e0.png","/images/profile_pics/4cb8a41f-99b7-4c9e-ba6c-61f9ab9e209c.png","/images/profile_pics/d8b4dc69-d659-406b-a22e-2c51b4c251b6.png","/images/profile_pics/5586e5e3-bbbb-47e0-a144-cd1877dc4612.png","/images/profile_pics/d034287a-6243-4402-9398-d5de8cfef800.png"};
 		var users = new List<User>(50);
 		for (int i = 0; i < 50; i++)
 		{
@@ -46,6 +46,7 @@ internal static class TestDataSeeder
 				LastName = l,
 				Email = $"{f.ToLower()}.{l.ToLower()}@sharkmail.ocean",
 				Password = pwHash,
+				ProfilePicturePath = profilePics[i]
 				// If your model has CreatedAt, uncomment:
 				// CreatedAt = createdAt.AddMinutes(i * 7)
 			});
