@@ -24,13 +24,13 @@
 
       <!-- Profile Picture (hover reveal) -->
       <div class="relative group flex justify-center">
-        <img src="@imagePath" 
+        <img id="profile-pic" src="@imagePath" 
           alt="Profile Picture"
           class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm transition-opacity duration-300 group-hover:opacity-50 cursor-pointer" />
         <div
-          class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <form asp-action="UploadProfilePicture" asp-controller="Users" method="post" enctype="multipart/form-data">
-            <label class="cursor-pointer text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md ">
+            <label class="cursor-pointer text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md z-100">
               Change Picture
               <input type="file" name="profilePicture" accept="image/*" class="hidden" onchange="this.form.submit();" />
             </label>
@@ -80,9 +80,19 @@
           {
             other = friend.Requester;
           }
+
+          string otherImagePath; 
+            if (!string.IsNullOrEmpty(other.ProfilePicturePath)){
+                otherImagePath = other.ProfilePicturePath;
+            }
+            else
+            {
+                otherImagePath = "/images/Placeholder.png";
+            }
+
           <div class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-lg mb-1 transition">
             <div class="flex items-center space-x-3">
-              <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+              <img src="@otherImagePath" class="w-10 h-10 rounded-full object-cover border border-gray-300">
               <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name"
                 data-testid="Friend-link @other.FirstName" method="get"
                 class="text-xs font-medium text-gray-700 hover:text-teal-600">@other.FirstName
@@ -162,13 +172,22 @@
         </form>
       </div>
 
+
       <!-- Posts Section -->
       @foreach (Post post in ViewBag.Posts)
       {
+      string postImagePath; 
+      if (!string.IsNullOrEmpty(post.User.ProfilePicturePath)){
+          postImagePath = post.User.ProfilePicturePath;
+      }
+      else
+      {
+          postImagePath = "/images/Placeholder.png";
+      }
         <div class="bg-white rounded-lg w-full p-4 shadow-md">
           <div class="flex justify-between items-center">
             <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" id="post-user-name" data-testid="Post-link @post.User.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600">@post.User.FirstName @post.User.LastName</a>
-            <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400" />
+            <img src="@postImagePath" class="w-12 h-12 rounded-full object-cover border border-gray-400" />
           </div>
 
           <p class="text-gray-700 mt-2 leading-relaxed">
