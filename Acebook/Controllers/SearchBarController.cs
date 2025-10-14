@@ -6,6 +6,7 @@ namespace acebook.Controllers;
 
 public class SearchBarController : Controller
 {
+    
     private readonly ILogger<SearchBarController> _logger;
 
     public SearchBarController(ILogger<SearchBarController> logger)
@@ -39,7 +40,7 @@ public class SearchBarController : Controller
         }
 
         // Build LIKE pattern once
-        var term = SearchString.Trim();
+        var term = SearchString.Trim().ToLower();
         var like = $"%{term}%";
 
         // Run only the queries needed for requested scope
@@ -48,8 +49,8 @@ public class SearchBarController : Controller
             userResults = await db.Users
                 .AsNoTracking()
                 .Where(u =>
-                    EF.Functions.Like(u.FirstName, like) ||
-                    EF.Functions.Like(u.LastName,  like))
+                    EF.Functions.Like(u.FirstName.ToLower(), like) ||
+                    EF.Functions.Like(u.LastName.ToLower(),  like))
                 .OrderBy(u => u.FirstName).ThenBy(u => u.LastName)
                 .ToListAsync();
         }
@@ -62,9 +63,9 @@ public class SearchBarController : Controller
                 .Include(p => p.Likes)
                 .Include(p => p.Comments)
                 .Where(p =>
-                    EF.Functions.Like(p.Content, like) ||
-                    EF.Functions.Like(p.User.FirstName, like) ||
-                    EF.Functions.Like(p.User.LastName,  like))
+                    EF.Functions.Like(p.Content.ToLower(), like) ||
+                    EF.Functions.Like(p.User.FirstName.ToLower(), like) ||
+                    EF.Functions.Like(p.User.LastName.ToLower(),  like))
                 .OrderByDescending(p => p.CreatedOn)
                 .ToListAsync();
         }
@@ -79,9 +80,9 @@ public class SearchBarController : Controller
                 .Include(c => c.Post)
                     .ThenInclude(p => p.Likes)
                 .Where(c =>
-                    EF.Functions.Like(c.Content, like) ||
-                    EF.Functions.Like(c.User.FirstName, like) ||
-                    EF.Functions.Like(c.User.LastName,  like))
+                    EF.Functions.Like(c.Content.ToLower(), like) ||
+                    EF.Functions.Like(c.User.FirstName.ToLower(), like) ||
+                    EF.Functions.Like(c.User.LastName.ToLower(),  like))
                 .OrderByDescending(c => c.CreatedOn)
                 .ToListAsync();
         }
