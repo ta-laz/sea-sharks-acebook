@@ -12,11 +12,6 @@
     <h1 class="text-4xl font-bold mb-4 text-teal-600 pb-6 text-center">Search Results for: <strong>@searchString</strong>
     </h1>
 }
-@* @foreach (var comment in ViewBag.CommentsResults)
-{
-    <li><a asp-controller = "Posts" asp-action = "Post" asp-route-id = "@comment.Post.Id"  method="Get">   @comment.Post.Content</a></li>
-}   *@
-
 <!-- User List Section -->
 @{
     var users = ViewBag.UsersResults as List<acebook.Models.User>;
@@ -24,7 +19,7 @@
 
 @if (ViewBag.UsersResults != null && users.Count > 0)
 {
-    <div class="bg-teal-700/10 p-2 rounded-lg shadow-[0_0_15px_rgba(15,118,110,0.3)]">
+    <div class="bg-teal-700/10 p-2 mb-10 rounded-lg shadow-[0_0_15px_rgba(15,118,110,0.3)]">
         <h2 class="mb-4 text-teal-600 text-3xl font-bold p-2 ">User results</h2>
         <br />
         @foreach (var user in users.Take(3))
@@ -53,7 +48,7 @@
             <div data-section="users" class="hidden more-users">
                 @foreach (var user in users.Skip(3))
                 {
-                <div class="flex items-center justify-between gap-3 mb- p-4 rounded-lg bg-white  transition">
+                <div class="flex items-center justify-between gap-3 mb-10 p-4 rounded-lg bg-white  transition">
                 <div class="flex items-center gap-3 mb-2">
                     <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400">
                     <a asp-controller="Users" asp-action="Index" asp-route-id="@user.Id" id="friend-name"
@@ -85,7 +80,7 @@
 {
 
     <br />
-    <div class="bg-teal-700/10 p-2 rounded-lg shadow-[0_0_15px_rgba(15,118,110,0.3)] overflow-hidden">
+    <div class="bg-teal-700/10 mb-10 p-2 rounded-lg shadow-[0_0_15px_rgba(15,118,110,0.3)] overflow-hidden">
         <h2 class="mb-4 text-teal-600 text-3xl font-bold pb-2">Post results</h2>
         @foreach (Post post in posts.Take(3))
         {
@@ -132,7 +127,7 @@
 </div>
                 }
             </div>
-            <button class="see-more-btn text-teal-600 mt-2 font-semibold p-2 hover:bg-teal-600/20 rounded-lg transition" data-target="users"> Show All Results</button>
+            <button class="see-more-btn text-teal-600 mt-2 font-semibold p-2 hover:bg-teal-600/20 rounded-lg transition" data-target="posts"> Show All Results</button>
         }
     </div>
 }
@@ -142,146 +137,86 @@
 
 @if (ViewBag.CommentsResults != null && comments.Count > 0)
 {
+<br />
+<div class="bg-teal-700/10 p-2 mb-10 rounded-lg shadow-[0_0_15px_rgba(15,118,110,0.3)]">
+    <h2 class="mb-4 text-teal-600 text-3xl font-bold">Comment results</h2>
 
-    <!-- comments -->
-    <br />
-    <div class="bg-teal-700/10 p-2 rounded-lg shadow-[0_0_15px_rgba(15,118,110,0.3)] max-h-[70vh] overflow-hidden">
-        <h2 class="mb-4 text-teal-600 text-3xl text-center font-bold ">Comment results</h2>
+    @foreach (Comment comment in comments.Take(3))
+    {
+        <div class="bg-white rounded-lg w-full p-4 shadow-[0_0_15px_rgba(15,118,110,0.3)] relative mb-6">
+            <div class="flex items-start mb-3">
+                <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400 mr-3">
 
-        @foreach (Comment comment in comments.Take(3))
-        {
-            <div class="bg-white rounded-lg w-full p-4 mt-4 mb-2 shadow-md hidden md:block">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-md font-semibold text-gray-800">@comment.Post.User.FirstName @comment.Post.User.LastName
+                <div class="flex-1">
+                    <h3 class="text-md font-semibold text-gray-800">
+                        @comment.Post.User.FirstName @comment.Post.User.LastName
                     </h3>
-                    <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400">
-                </div>
-
-                <p class="text-gray-700 mt-2 leading-relaxed">
-                    @if (@comment.Post.CheckLength())
-                    {
-                        @comment.Post.Content
-                    }
-                    else
-                    {
-                        @comment.Post.FormatPostContent()
-                    }
-                </p>
-
-                <div class="flex justify-end mt-2">
-                    <a asp-controller="Posts" asp-action="Post" asp-route-id="@comment.Post.Id" method="get">
-                        <button data-testid="see-more-button" class="text-teal-600 text-sm hover:underline">see more</button>
-                    </a>
-                </div>
-
-                <p class="text-xs text-gray-400 mt-4">Created on: @comment.Post.FormattedCreatedOn</p>
-
-                <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
-                    <button
-                        class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                        <span
-                            class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-                        <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                            Like (@comment.Post.Likes.Count())
-                        </span>
-                    </button>
-
-                    <a asp-controller="Posts" asp-action="Post" asp-route-id="@comment.Post.Id" method="get"
-                        class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                        <button data-testid="comment-button"
-                            class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                            <span
-                                class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-                            <span
-                                class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                                Comment (@comment.Post.Comments.Count())
-                            </span>
-                        </button>
-                    </a>
-
-                    <button
-                        class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                        <span
-                            class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-                        <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                            View Profile
-                        </span>
-                    </button>
+                    <p class="text-gray-700 mt-1 leading-relaxed">@comment.Post.Content</p>
+                    <p class="text-xs text-gray-400 mt-2">Created on: @comment.Post.FormattedCreatedOn</p>
                 </div>
             </div>
-        }
+
+            <div class="bg-teal-700/10 rounded-lg mt-2 ml-1  p-3 shadow-md flex items-start justify-between">
+                <div class="flex items-start">
+                    <img src="/images/Placeholder.png" class="w-8 h-8 rounded-full object-cover border border-gray-400 mr-3">
+
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-800">
+                            @comment.User.FirstName @comment.User.LastName
+                        </h3>
+                        <p class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
+                        <p class="text-xs text-gray-400 mt-2">Commented on: @comment.FormattedCreatedOn</p>
+                    </div>
+                </div>
+
+                <div class="ml-4 flex items-center">
+                    <a asp-controller="Posts" asp-action="Post" asp-route-id="@comment.Post.Id" class="inline-flex items-center justify-center text-sm py-1.5 px-3 bg-teal-600 text-white font-medium rounded-lg shadow-md hover:bg-teal-700 transition">See all comments</a>
+                </div>
+            </div>
+        </div>
+    }
+        
         @if (comments.Count > 3)
         {
             <div data-section="comments" class="hidden more-comments">
                 @foreach (var comment in comments.Skip(3))
                 {
-                    <div class="bg-white rounded-lg w-full p-4 mt-4 shadow-md hidden md:block">
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-md font-semibold text-gray-800">@comment.Post.User.FirstName @comment.Post.User.LastName
-                            </h3>
-                            <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400">
-                        </div>
+    <div class="bg-white rounded-lg w-full p-4 shadow-[0_0_15px_rgba(15,118,110,0.3)] relative mb-6">
+            <div class="flex items-start mb-3">
+                <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400 mr-3">
 
-                        <p class="text-gray-700 mt-2 leading-relaxed">
-                            @if (@comment.Post.CheckLength())
-                            {
-                                @comment.Post.Content
-                            }
-                            else
-                            {
-                                @comment.Post.FormatPostContent()
-                            }
-                        </p>
+                <div class="flex-1">
+                    <h3 class="text-md font-semibold text-gray-800">
+                        @comment.Post.User.FirstName @comment.Post.User.LastName
+                    </h3>
+                    <p class="text-gray-700 mt-1 leading-relaxed">@comment.Post.Content</p>
+                    <p class="text-xs text-gray-400 mt-2">Created on: @comment.Post.FormattedCreatedOn</p>
+                </div>
+            </div>
 
-                        <div class="flex justify-end mt-2">
-                            <a asp-controller="Posts" asp-action="Post" asp-route-id="@comment.Post.Id" method="get">
-                                <button data-testid="see-more-button" class="text-teal-600 text-sm hover:underline">see
-                                    more</button>
-                            </a>
-                        </div>
+            <div class="bg-teal-700/10 rounded-lg mt-2 ml-1  p-3 shadow-md flex items-start justify-between">
+                <div class="flex items-start">
+                    <img src="/images/Placeholder.png" class="w-8 h-8 rounded-full object-cover border border-gray-400 mr-3">
 
-                        <p class="text-xs text-gray-400 mt-4">Created on: @comment.Post.FormattedCreatedOn</p>
-
-                        <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
-                            <button
-                                class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                                <span
-                                    class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-                                <span
-                                    class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                                    Like (@comment.Post.Likes.Count())
-                                </span>
-                            </button>
-
-                            <a asp-controller="Posts" asp-action="Post" asp-route-id="@comment.Post.Id" method="get"
-                                class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                                <button data-testid="comment-button"
-                                    class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                                    <span
-                                        class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-                                    <span
-                                        class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                                        Comment (@comment.Post.Comments.Count())
-                                    </span>
-                                </button>
-                            </a>
-
-                            <button
-                                class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                                <span
-                                    class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-                                <span
-                                    class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                                    View Profile
-                                </span>
-                            </button>
-                        </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-800">
+                            @comment.User.FirstName @comment.User.LastName
+                        </h3>
+                        <p class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
+                        <p class="text-xs text-gray-400 mt-2">Commented on: @comment.FormattedCreatedOn</p>
                     </div>
+                </div>
+
+                <div class="ml-4 flex items-center">
+                    <a asp-controller="Posts" asp-action="Post" asp-route-id="@comment.Post.Id" class="inline-flex items-center justify-center text-sm py-1.5 px-3 bg-teal-600 text-white font-medium rounded-lg shadow-md hover:bg-teal-700 transition">See all comments</a>
+                </div>
+            </div>
+        </div>
                 }
             </div>
             <button class="see-more-btn text-teal-600 hover:underline mt-2" data-target="comments"> Show All Results</button>
         }
-    </div>
+</div>
 }
 <script>
     document.addEventListener("DOMContentLoaded", function () {
