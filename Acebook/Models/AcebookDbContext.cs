@@ -1,4 +1,5 @@
 namespace acebook.Models;
+
 using Microsoft.EntityFrameworkCore;
 
 public class AcebookDbContext : DbContext
@@ -52,5 +53,17 @@ public class AcebookDbContext : DbContext
             .WithMany(u => u.FriendRequestsReceived)
             .HasForeignKey(f => f.AccepterId)
             .OnDelete(DeleteBehavior.Restrict);
+
+    modelBuilder.Entity<Like>() //Database logic to check that a like can only belong to a comment OR a post not both in the same instance
+                .HasCheckConstraint("Check_Likes_Only_One",
+                "(\"PostId\" IS NOT NULL AND \"CommentId\" IS NULL) OR (\"PostId\" IS NULL AND \"CommentId\" IS NOT NULL)");
+    modelBuilder.Entity<Like>()
+            .HasIndex(l => new { l.UserId, l.PostId })
+            .IsUnique();
+
+    modelBuilder.Entity<Like>()
+            .HasIndex(l => new { l.UserId, l.CommentId })
+            .IsUnique();
+
   }
 }
