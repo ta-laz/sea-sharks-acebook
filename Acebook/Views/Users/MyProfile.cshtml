@@ -83,10 +83,10 @@
       </div>
     </div>
 
-    <!-- 📜 Right column: profile info + edit tagline + posts -->
+    <!-- 📜 Right column: profile name + edit tagline + posts -->
     <div class="flex flex-col w-full lg:w-2/3 space-y-6 bg-teal-700/10 shadow-[0_0_15px_rgba(15,118,110,0.3)]">
 
-      <!-- Profile Info -->
+      <!-- Profile Name + Tagline -->
       <div class="bg-white rounded-lg p-6 shadow-md transition hover:shadow-xl">
         <h1 class="text-4xl font-bold text-teal-700 mb-2">@Model.FirstName @Model.LastName</h1>
 
@@ -121,7 +121,7 @@
 
       <!-- Create Post Form -->
       <div class="flex-1 bg-white rounded-lg overflow-y-auto px-4 py-4 p-4 shadow-md transition hover:shadow-xl">
-        <h2 class="text-lg font-bold mb-3">Create a Post</h2>
+        <h2 class="text-lg text-teal-700 font-bold mb-3">Create a Post</h2>
         <form action="@Url.Action("Create", "Posts")" method="post">
           <textarea id="create-post-input"
             class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
@@ -143,14 +143,14 @@
       <div class="flex flex-col w-full rounded-lg p-4 space-y-4 relative">
         <!-- Sticky Header -->
         <div class="sticky top-32 z-20 py-3 px-2 rounded-md">
-          <h1 class="text-4xl font-bold text-teal-700">@Model.FirstName's Wall</h1>
+          <h1 class="text-4xl font-bold text-teal-700">My Wall</h1>
         </div>
 
         <!-- Scrollable Post List with Clipping -->
         <div class="relative overflow-hidden">
           <div class="overflow-y-auto max-h-[70vh] pb-10 space-y-6"
             style="mask-image: linear-gradient(to bottom, transparent 0%, black 10%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 3%);">
-            
+
             @if (ViewBag.Posts == null || !((List<Post>)ViewBag.Posts).Any())
             {
               <div class="flex items-center justify-center py-8">
@@ -196,7 +196,6 @@
               }
             }
           </div>
-
         </div>
       </div>
 
