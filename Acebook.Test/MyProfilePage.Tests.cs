@@ -184,7 +184,7 @@ namespace Acebook.Tests
         {
             // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
             // Click friend's name on post
-            await Page.GetByTestId("Post-link Bluey").ClickAsync();
+            await Page.GetByTestId("Post-link Bluey").First.ClickAsync();
             // redirects to Bluey's profile page
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/50");
         }
@@ -204,13 +204,24 @@ namespace Acebook.Tests
         }
 
         [Test]
-        public async Task CommentButton_ClickedOnPost_NavigatesToPostPage()
+        public async Task CommentButton_MyProfilePage_NavigatesToPostPage()
         {
-            
+
             // Click on a post:
             await Task.WhenAll(
                 Page.WaitForURLAsync($"{BaseUrl}/posts/174"),
                 Page.GetByTestId("comment-button").First.ClickAsync()
+            );
+            await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
+        }
+        
+        [Test]
+        public async Task SeeMoreButton_MyProfilePage_NavigatesToPostPage()
+        {
+            // Click on a post:
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts/174"),
+                Page.GetByTestId("see-more-button").First.ClickAsync()
             );
             await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
         }

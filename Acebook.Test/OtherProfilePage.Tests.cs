@@ -168,5 +168,28 @@ namespace Acebook.Tests
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
             await Expect(Page.GetByTestId("create-post-input")).ToBeHiddenAsync();
         }
+
+        [Test]
+        public async Task CommentButton_OtherProfilePage_NavigatesToPostPage()
+        {
+
+            // Click on a post:
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts/7"),
+                Page.GetByTestId("comment-button").First.ClickAsync()
+            );
+            await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Shelly's Splash");
+        }
+        
+        [Test]
+        public async Task SeeMoreButton_OtherProfilePage_NavigatesToPostPage()
+        {
+            // Click on a post:
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts/7"),
+                Page.GetByTestId("see-more-button").First.ClickAsync()
+            );
+            await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Shelly's Splash");
+        }
     }
 }
