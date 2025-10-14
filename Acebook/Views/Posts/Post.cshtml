@@ -128,19 +128,19 @@
                         </div>
 
                         <!-- Comment content  -->
-                        <p id = "comment_content" class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
+                        <p id = "comment_content-@comment.Id" class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
                         
                         <!-- Edit comment form --> 
-                        <form asp-action="Update" asp-controller="Comments" asp-route-postId="@Model.Id" asp-route-commentId="@comment.Id" method="post" id="update-comment-form"
-                                data-testid="update-comment-form" label="update commnent form" class="hidden">
-                                <textarea name="comment_content" label="update comment box" id="update-comment-input" data-testid="update-comment-input"
+                        <form asp-action="Update" asp-controller="Comments" asp-route-postId="@Model.Id" asp-route-commentId="@comment.Id" method="post" id="update-comment-form-@comment.Id"
+                                data-testid="update-comment-form-@comment.Id" label="update commnent form" class="hidden">
+                                <textarea name="comment_content" label="update comment box" id="update-comment-input-@comment.Id" data-testid="update-comment-input-@comment.Id"
                                     class="border border-gray-300 rounded-md p-2 w-full mt-2" maxlength="2000">@comment.Content</textarea>
                                 
                                 <div class="flex justify-end space-x-2">
-                                    <button type="button" id="cancel-edit-comment"
+                                    <button type="button" id="cancel-edit-comment-@comment.Id"
                                         class="bg-gray-300 text-gray-800 text-sm w-36 px-4 py-2 rounded-md hover:bg-gray-400 mt-2">Cancel
                                     </button>
-                                    <button id="edit-comment-submit" data-testid="edit-comment-submit" type="submit"
+                                    <button id="edit-comment-submit-@comment.Id" data-testid="edit-comment-submit-@comment.Id" type="submit"
                                         class="bg-teal-600 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-teal-400 mt-2">Save Changes
                                     </button>
                                 </div>
@@ -152,9 +152,9 @@
                             <div class="flex justify-end space-x-2">
                                 @if (comment.UserId == Context.Session.GetInt32("user_id") || comment.Post.UserId == Context.Session.GetInt32("user_id"))
                                 {
-                                    <button id="edit-comment-button" class="bg-teal-600 text-white text-xs font-medium px-3 py-1 rounded-md hover:bg-teal-400 shadow-md">Edit comment</button>
+                                    <button id="edit-comment-button-@comment.Id" class="bg-teal-600 text-white text-xs font-medium px-3 py-1 rounded-md hover:bg-teal-400 shadow-md">Edit comment</button>
                                     <form action="@Url.Action("Delete", "Comments", new { postId = Model.Id, commentId = comment.Id })" method="post" onsubmit="return confirm('Are you sure you want to delete this comment?');">
-                                        <button data-testid="delete-comment-button" 
+                                        <button data-testid="delete-comment-button-@comment.Id" 
                                                 type="submit" 
                                                 class="bg-red-500 hover:bg-red-600 text-white text-xs font-medium py-1 px-3 rounded-md shadow-md">Delete Comment</button> 
                                     </form>
@@ -311,28 +311,26 @@
 </script>
 
 <script>
+// Logic for editing comments:
+
     document.addEventListener("DOMContentLoaded", function () {
-        // Comment editing logic
-        const editCommentButton = document.getElementById('edit-comment-button');
-        const commentText = document.getElementById('comment_content');
-        const editCommentForm = document.getElementById('update-comment-form');
-        const cancelEditCommentButton = document.getElementById("cancel-edit-comment");
+        document.querySelectorAll('[id^="edit-comment-button-"]').forEach(button => {
+            const id = button.id.split('-').pop(); // gets the comment ID
+            const commentText = document.getElementById(`comment_content-${id}`);
+            const editForm = document.getElementById(`update-comment-form-${id}`);
+            const cancelButton = document.getElementById(`cancel-edit-comment-${id}`);
 
-        if (editCommentButton && commentText && editCommentForm && cancelEditCommentButton) {
-            // Show the edit form:
-            editCommentButton.addEventListener('click', () => {
+            button.addEventListener('click', () => {
                 commentText.classList.add('hidden');
-                editCommentForm.classList.remove('hidden');
-                editCommentButton.classList.add('hidden');
+                editForm.classList.remove('hidden');
+                button.classList.add('hidden');
             });
 
-            // Cancel Comment edit
-            cancelEditCommentButton.addEventListener('click', () => {
+            cancelButton.addEventListener('click', () => {
                 commentText.classList.remove('hidden');
-                editCommentForm.classList.add('hidden');
-                editCommentButton.classList.remove('hidden');
+                editForm.classList.add('hidden');
+                button.classList.remove('hidden');
             });
-        }
+        });
     });
 </script>
-
