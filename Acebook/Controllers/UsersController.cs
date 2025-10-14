@@ -31,6 +31,9 @@ public class UsersController : Controller
     public IActionResult Index(int id)
     {
         AcebookDbContext dbContext = new AcebookDbContext();
+
+        // find the user that has the id of the page we're looking at
+        // include that user's posts and profile bio details
         var user = dbContext.Users
                   .Include(u => u.ProfileBio)
                   .Include(u => u.Posts)
@@ -39,13 +42,15 @@ public class UsersController : Controller
         if (user == null)
             return NotFound();
 
-        var posts = dbContext.Posts.Where(u => u.UserId == id)
-                                   .Include(p => p.User);
+        // retrieve all the posts where the wallid matches the id of the page we're on
+        var posts = dbContext.Posts.Where(p => p.WallId == id)
+                                   .Include(p => p.User)
+                                   .OrderByDescending(p => p.CreatedOn);
         ViewBag.Posts = posts.ToList();
-        ViewBag.Posts.Reverse();
 
-        int? currentUserId = HttpContext.Session.GetInt32("user_id");
-
+        // search through the friends table, filter for records where the requester and accepter have 
+        // the id of the page we're on and the status is accepted
+        // take up to 3 friends and make it a list to display it on the user's profile page
         var friends = dbContext.Friends
         .Include(f => f.Requester)
         .Include(f => f.Accepter)
@@ -53,11 +58,52 @@ public class UsersController : Controller
         .Take(3)
         .ToList();
 
-        ViewBag.Friends = friends;
+        int? currentUserId = HttpContext.Session.GetInt32("user_id");
         ViewBag.CurrentUserId = currentUserId;
+        ViewBag.Friends = friends;
         ViewBag.ProfileUserId = id;
 
-        return View(user);
+        // ✅ Check if logged-in user and viewed user are friends
+        bool friendship = dbContext.Friends.Any(f =>
+            ((f.RequesterId == currentUserId && f.AccepterId == id) ||
+             (f.RequesterId == id && f.AccepterId == currentUserId))
+             && f.Status == FriendStatus.Accepted
+        );
+        ViewBag.Friendship = friendship;
+
+        // ✅ Build list of accepted friendships for the logged-in user
+        var acceptedFriendships = dbContext.Friends
+            .Where(f => (f.RequesterId == currentUserId || f.AccepterId == currentUserId)
+                     && f.Status == FriendStatus.Accepted)
+            .ToList();
+
+        var alreadyFriends = new List<int>();
+        foreach (var f in acceptedFriendships)
+        {
+            alreadyFriends.Add(f.RequesterId == currentUserId ? f.AccepterId : f.RequesterId);
+        }
+
+        // ✅ Build list of pending requests involving the logged-in user
+        var pendingRequests = dbContext.Friends
+            .Where(f =>
+                (f.RequesterId == currentUserId || f.AccepterId == currentUserId) &&
+                f.Status == FriendStatus.Pending)
+            .ToList();
+
+        // ✅ Pass both lists to the view
+        ViewBag.AlreadyFriends = alreadyFriends;
+        ViewBag.PendingRequests = pendingRequests;
+
+        // if the logged in user's id matches the id of the page we're on render the my profile HTML
+        if (currentUserId == id)
+        {
+            return View("MyProfile", user);
+        }
+        // else render the other profile HTML
+        else
+        {
+            return View("OtherProfile", user);
+        }
     }
 
     [Route("/users")]

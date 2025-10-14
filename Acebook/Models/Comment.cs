@@ -16,8 +16,11 @@ public class Comment
     // Navigation Properties:
     public Post? Post { get; set; }
     public User? User { get; set; }
+    public ICollection<Like>? Likes { get; set; }
+
 
     [NotMapped] // prevents EF from treating it as a DB column
+    public bool UserHasLiked { get; set; }
     public string FormattedCreatedOn
     {
         get

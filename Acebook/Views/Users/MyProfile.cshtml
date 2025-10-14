@@ -26,15 +26,20 @@
       <div class="relative group flex justify-center">
         <img src="@imagePath" 
           alt="Profile Picture"
-          class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm transition-opacity duration-300 group-hover:opacity-50" />
+          class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm transition-opacity duration-300 group-hover:opacity-50 cursor-pointer" />
         <div
-          class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
           <form asp-action="UploadProfilePicture" asp-controller="Users" method="post" enctype="multipart/form-data">
-            <label class="cursor-pointer text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md">
+            <label class="cursor-pointer text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md ">
               Change Picture
               <input type="file" name="profilePicture" accept="image/*" class="hidden" onchange="this.form.submit();" />
             </label>
           </form>
+        @* <img id="profile-pic" src="/images/Placeholder.png" alt="Profile Picture"
+          class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm transition-opacity duration-300 cursor-pointer group-hover:opacity-50" />
+        <div <div
+          class="absolute inset-0 flex items-center justify-center  opacity-0 group-hover:opacity-100 transition-opacity  duration-300 pointer-events-none">
+          <p class="text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md">Change Picture</p> *@
         </div>
       </div>
 
@@ -76,12 +81,14 @@
             other = friend.Requester;
           }
           <div class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-lg mb-1 transition">
-            <div  class="flex items-center space-x-3">
+            <div class="flex items-center space-x-3">
               <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
-              <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name" data-testid="@other.FirstName" method="get" class="text-xs font-medium text-gray-700 hover:text-teal-600">@other.FirstName
+              <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name"
+                data-testid="Friend-link @other.FirstName" method="get"
+                class="text-xs font-medium text-gray-700 hover:text-teal-600">@other.FirstName
                 @other.LastName</a>
             </div>
-              
+
             <!-- Dots only appear on hover -->
             <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
@@ -104,7 +111,7 @@
 
       <!-- Profile Info -->
       <div class="bg-white rounded-lg p-6 shadow-md">
-        <h1 class="text-2xl font-bold text-teal-700 mb-2">@Model.FirstName @Model.LastName</h1>
+        <h1 class="text-4xl font-bold text-teal-700 mb-2">@Model.FirstName @Model.LastName</h1>
 
         <p id="under-name-tagline-text" data-testid="under-name-tagline-text" class="italic text-gray-400 mt-1 mb-4">
           @(Model.ProfileBio.Tagline ?? "Just keep swimming!")
@@ -139,14 +146,15 @@
       <div class="bg-white rounded-lg w-full p-4 shadow-md">
         <h2 class="text-lg font-bold mb-3">Create a Post</h2>
         <form action="@Url.Action("Create", "Posts")" method="post">
-          <textarea id="post-content"
+          <textarea id="create-post-input"
             class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
             name="content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)"></textarea>
 
           <div class="flex justify-between items-center mt-3">
             <label class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
+            <input type="hidden" name="WallId" value="@Model.Id" />
             <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Users", new { id = Model.Id })" />
-            <button id="post-submit" data-testid="post-submit" type="submit"
+            <button id="post-submit" data-testid="create-post-submit" type="submit"
               class="bg-teal-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-teal-400 transition">
               Submit
             </button>
@@ -159,7 +167,7 @@
       {
         <div class="bg-white rounded-lg w-full p-4 shadow-md">
           <div class="flex justify-between items-center">
-            <h3 class="text-md font-semibold text-gray-800">@post.User.FirstName @post.User.LastName</h3>
+            <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" id="post-user-name" data-testid="Post-link @post.User.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600">@post.User.FirstName @post.User.LastName</a>
             <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400" />
           </div>
 
@@ -193,22 +201,50 @@
   </div>
 </div>
 
+<!-- Fullscreen overlay for enlarged image -->
+<div id="image-overlay" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
+  <img id="overlay-image" src="/images/Placeholder.png" alt="Enlarged Profile Picture"
+    class="max-w-3xl w-11/12 md:w-auto rounded-lg shadow-lg cursor-pointer transition-transform duration-300 transform scale-100 hover:scale-105" />
+</div>
+
 <script>
-  const button = document.getElementById('update-tagline');
-  const text = document.getElementById('under-name-tagline-text');
-  const form = document.getElementById('tagline-form');
-  const cancel = document.getElementById("cancel-edit");
+  document.addEventListener("DOMContentLoaded", function () {
+    // 🟩 Tagline editing logic
+    const button = document.getElementById('update-tagline');
+    const text = document.getElementById('under-name-tagline-text');
+    const form = document.getElementById('tagline-form');
+    const cancel = document.getElementById("cancel-edit");
 
-  button.addEventListener('click', () => {
-    text.classList.add('hidden');
-    form.classList.remove('hidden');
-    button.classList.add('hidden');
+    if (button && text && form && cancel) {
+      button.addEventListener('click', () => {
+        text.classList.add('hidden');
+        form.classList.remove('hidden');
+        button.classList.add('hidden');
+      });
+
+      cancel.addEventListener('click', () => {
+        text.classList.remove('hidden');
+        form.classList.add('hidden');
+        button.classList.remove('hidden');
+      });
+    }
+
+    // 🟩 Profile picture enlarge logic
+    const profilePic = document.getElementById("profile-pic");
+    const overlay = document.getElementById("image-overlay");
+    const overlayImage = document.getElementById("overlay-image");
+
+    if (profilePic && overlay && overlayImage) {
+      profilePic.addEventListener("click", () => {
+        overlay.classList.remove("hidden");
+        overlayImage.src = profilePic.src;
+      });
+
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay || e.target === overlayImage) {
+          overlay.classList.add("hidden");
+        }
+      });
+    }
   });
-
-  cancel.addEventListener('click', () => {
-    text.classList.remove('hidden');
-    form.classList.add('hidden');
-    button.classList.remove('hidden');
-  });
-
 </script>
