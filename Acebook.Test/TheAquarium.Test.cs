@@ -55,14 +55,28 @@ namespace Acebook.Tests
         }
 
         [Test]
-        public async Task SeeAllFriendsButton_MyUserProfilePage_RedirectsToFriends()
+        public async Task FriendsButton_TheAquarium_RedirectsToMyFriends()
         {
-            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
-            // Click see all friends to redirect to friends page
+            // NOTE: [SetUp] signs in with user Finn then goes to the aquarium
+            // Click friends to redirect to friends page
             await Task.WhenAll(
                 Page.Locator("#redirect-friends").First.ClickAsync(),
                 Page.WaitForURLAsync($"{BaseUrl}/friends")
             );
+        }
+
+        [Test]
+        public async Task ViewingFriends_FriendProfilePage_ShowsListOfTheirFriends()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to the aquarium
+            // Click name on a post
+            await Page.GetByTestId("Shelly").First.ClickAsync();
+            // redirects to Shelly's profile page
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
+            // Expect Shelly's friends' names to be visible
+            await Expect(Page.GetByTestId("Finn")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("Bruce")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("Coral")).ToBeVisibleAsync();
         }
 
     }

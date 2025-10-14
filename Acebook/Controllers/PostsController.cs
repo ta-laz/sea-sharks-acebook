@@ -49,18 +49,24 @@ public class PostsController : Controller
 
   [Route("/posts/create")]
   [HttpPost]
-  public IActionResult Create(Post post, string returnUrl)
+  public IActionResult Create(Post post, string returnUrl, int? WallId = null)
   {
     using var dbContext = new AcebookDbContext();
     int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
+
     post.UserId = currentUserId;
     post.CreatedOn = DateTime.UtcNow;
+
+    // If WallId is null, default it to the current user’s wall
+    post.WallId = WallId ?? currentUserId;
+
     dbContext.Posts.Add(post);
     dbContext.SaveChanges();
 
     // Redirect to where the form came from
     if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
       return Redirect(returnUrl);
+      
     return RedirectToAction("Index", "Posts");
   }
 

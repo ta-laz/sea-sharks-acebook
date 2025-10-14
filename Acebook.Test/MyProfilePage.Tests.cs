@@ -52,10 +52,10 @@ namespace Acebook.Tests
         {
             // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
             // Create post
-            await Page.Locator("#post-content").FillAsync("Test content");
+            await Page.Locator("#create-post-input").FillAsync("Test content");
             // Wait for post submission + redirect
             await Task.WhenAll(
-                Page.GetByTestId("post-submit").ClickAsync(),
+                Page.GetByTestId("create-post-submit").ClickAsync(),
                 Page.WaitForURLAsync($"{BaseUrl}/users/1")
             );
             await Expect(Page.GetByText("Test content")).ToBeVisibleAsync();
@@ -164,19 +164,29 @@ namespace Acebook.Tests
             // Click see all friends to redirect to friends page
             await Expect(Page.GetByTestId("friends-header")).ToHaveTextAsync("Friends");
             // each friend get its own test id assigned dynamically by its first name
-            await Expect(Page.GetByTestId("Shelly")).ToBeVisibleAsync();
-            await Expect(Page.GetByTestId("Bruce")).ToBeVisibleAsync();
-            await Expect(Page.GetByTestId("Reefy")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("Friend-link Shelly")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("Friend-link Bruce")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("Friend-link Reefy")).ToBeVisibleAsync();
         }
 
         [Test]
-        public async Task FriendName_MyUserProfilePage_RedirectsToTheirProfile()
+        public async Task FriendNameInFriendsBlock_MyUserProfilePage_RedirectsToTheirProfile()
         {
             // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
             // Click friend's name
-            await Page.GetByTestId("Shelly").ClickAsync();
+            await Page.GetByTestId("Friend-link Shelly").ClickAsync();
             // redirects to Shelly's profile page
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
+        }
+
+        [Test]
+        public async Task FriendNameOnPost_MyUserProfilePage_RedirectsToTheirProfile()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
+            // Click friend's name on post
+            await Page.GetByTestId("Post-link Bluey").ClickAsync();
+            // redirects to Bluey's profile page
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/50");
         }
 
         [Test]
@@ -184,7 +194,7 @@ namespace Acebook.Tests
         {
             // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
             // Click friend's name
-            await Page.GetByTestId("Shelly").ClickAsync();
+            await Page.GetByTestId("Friend-link Shelly").ClickAsync();
             // redirects to Shelly's profile page
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
             // Expect Shelly's friends' names to be visible
