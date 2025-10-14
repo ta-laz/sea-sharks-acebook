@@ -28,9 +28,9 @@
           alt="Profile Picture"
           class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm transition-opacity duration-300 group-hover:opacity-50 cursor-pointer" />
         <div
-          class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
           <form asp-action="UploadProfilePicture" asp-controller="Users" method="post" enctype="multipart/form-data">
-            <label class="cursor-pointer text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md z-100">
+            <label class="cursor-pointer text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md z-100 pointer-events-auto">
               Change Picture
               <input type="file" name="profilePicture" accept="image/*" class="hidden" onchange="this.form.submit();" />
             </label>
