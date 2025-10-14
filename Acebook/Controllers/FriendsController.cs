@@ -130,7 +130,7 @@ public class FriendsController : Controller
         ViewBag.user = user;
         ViewBag.friends = friends.ToList();
         ViewBag.currentUserId = currentUserId;
-        ViewBag.PendingRequests = PendingRequests.ToList();        
+        ViewBag.PendingRequests = PendingRequests.ToList();
         ViewBag.AlreadyFriends = AlreadyFriends;
 
         return View();
@@ -139,15 +139,36 @@ public class FriendsController : Controller
 
     [Route("/friends/remove")]
     [HttpPost]
-    public IActionResult Remove(int friendId)
+    public IActionResult Remove(int friendId, string returnUrl)
     {
+        int? currentUserId = HttpContext.Session.GetInt32("user_id");
+        if (currentUserId == null) return RedirectToAction("Index"); // sanity check
+
         AcebookDbContext dbContext = new AcebookDbContext();
 
-        var friend = dbContext.Friends.Find(friendId);
+        // Find the Friend entity where the current user and friendId match
+        var friend = dbContext.Friends
+            .FirstOrDefault(f =>
+                (f.RequesterId == currentUserId && f.AccepterId == friendId) ||
+                (f.RequesterId == friendId && f.AccepterId == currentUserId)
+            );
+
+        if (friend == null)
+        {
+            // Handle error: friendship not found
+            return RedirectToAction("Index");
+        }
+
         dbContext.Friends.Remove(friend);
         dbContext.SaveChanges();
 
+        // Redirect to where the form came from
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            return Redirect(returnUrl);
+
         return RedirectToAction("Index");
+
+        // return RedirectToAction("Index"); // or redirect back to the profile page
     }
 
     [Route("/friends/accept")]

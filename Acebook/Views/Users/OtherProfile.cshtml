@@ -85,10 +85,18 @@
 
                 @if (alreadyFriends.Contains(@Model.Id))
                 {
+                    <form asp-action="Remove" asp-controller="Friends" method="post"
+                        onsubmit="return confirm('Are you sure you want to unfriend this person?');">
                     <button disabled data-testid="already-friends"
-                        class="bg-gray-300 text-gray-700 text-sm font-medium py-1 px-3 rounded">
+                        class="bg-gray-300 text-gray-700 text-sm font-medium py-1 px-3 rounded hover:bg-gray-200">
                         Friends
                     </button>
+                        <input type="hidden" name='friendId' value="@Model.Id" />
+                        <input type="hidden" name="returnUrl"
+                                value="@Url.Action("Index", "Users", new { id = Model.Id })" />
+                        <button type="submit"
+                            class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-1 px-3 rounded">Unfriend</button>
+                    </form> 
                 }
                 else if (pendingRequests.Any(f =>
                 (f.RequesterId == ViewBag.currentUserId && f.AccepterId == @Model.Id) ||
