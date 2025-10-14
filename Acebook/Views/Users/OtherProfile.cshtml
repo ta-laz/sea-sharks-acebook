@@ -45,7 +45,7 @@
                         <div class="flex items-center space-x-3">
                             <img src="/images/Placeholder.png"
                                 class="w-10 h-10 rounded-full object-cover border border-gray-300">
-                            <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id"
+                            <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" data-testid="@other.FirstName"
                                 class="text-xs font-medium text-gray-700 hover:text-teal-600">
                                 @other.FirstName @other.LastName
                             </a>
