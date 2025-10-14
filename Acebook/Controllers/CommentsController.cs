@@ -45,7 +45,33 @@ public class CommentsController : Controller
         dbContext.SaveChanges();
         return new RedirectResult($"/posts/{postId}");
     }
+
+
+    // UPDATE (Edit) a Comment -> submit the editing form and update the db
+    [Route("/posts/{postId}/{commentId}/update")]
+    [HttpPost]
+    public IActionResult Update(int postId, int commentId, string comment_content)
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+        int? sessionUserId = HttpContext.Session.GetInt32("user_id");
+        var comment = dbContext.Comments
+            .Include(c => c.Post)
+            .FirstOrDefault(c => c.Id == commentId && c.PostId == postId);
+
+        if (comment.UserId != sessionUserId) // Backend security, only comment authors can edit comments
+        {
+            return Forbid();
+        }
+        comment.Content = comment_content;
+        comment.CreatedOn = DateTime.UtcNow;
+        dbContext.SaveChanges();
+
+        // Reload individual post page
+        return new RedirectResult($"/posts/{postId}");
+    }
     
+    
+
     // DELETE a Comment
     [Route("/posts/{postId}/{commentId}/delete-comment")]
     [HttpPost]
@@ -71,7 +97,7 @@ public class CommentsController : Controller
         dbContext.SaveChanges();
 
         // Reload the individual post page
-        return RedirectToAction("Post", "Posts", new { id = comment.PostId });
+        return new RedirectResult($"/posts/{postId}");
     }
 
 }

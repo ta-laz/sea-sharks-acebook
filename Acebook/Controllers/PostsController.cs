@@ -93,19 +93,8 @@ public class PostsController : Controller
     return View(post);
   }
 
-  // UPDATE (Edit) a Post
-  [Route("/posts/{id}/update")]
-    [HttpGet]
-    public IActionResult Update(int id)
-    {
-        AcebookDbContext dbContext = new AcebookDbContext();
-    int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
-    var post = dbContext.Posts.Include(p => p.Comments).ThenInclude(c => c.Likes).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
 
-    return View(post);
-  }
-  
-  // UPDATE (Edit) a Post
+  // UPDATE (Edit) a Post -> submit the editing form and update the db
   [Route("/posts/{id}/update")]
   [HttpPost]
   public IActionResult Update(int id, string content)
@@ -113,19 +102,18 @@ public class PostsController : Controller
     AcebookDbContext dbContext = new AcebookDbContext();
     int? sessionUserId = HttpContext.Session.GetInt32("user_id");
     var post = dbContext.Posts.Find(id);
-    // Post post = dbContext.Posts.Include(p => p.Comments).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
-    // if (post.UserId != sessionUserId) // Server-side security (only authors can delete comments)
-    // {
-    //   return Forbid();
-    // }
-    // Update the post in the db with the new content
+    if (post.UserId != sessionUserId) // Server-side security (only post authors can update posts)
+    {
+      return Forbid();
+    }
     post.Content = content;
     post.CreatedOn = DateTime.UtcNow;
     dbContext.SaveChanges();
 
-    // Redirect to aquarium
+    // Reload individual post page
     return RedirectToAction("Post", "Posts", new { id = post.Id });
   }
+  
 
   // DELETE a Post
   [Route("/posts/{id}/delete")]

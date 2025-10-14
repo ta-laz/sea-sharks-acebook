@@ -28,7 +28,7 @@
                     <button type="button" id="cancel-edit-post"
                         class="bg-gray-300 text-gray-800 text-sm w-36 px-4 py-2 rounded-md hover:bg-gray-400 mt-2">Cancel
                     </button>
-                    <button id="edit-post-submit" data-testid="tagline-submit" type="submit"
+                    <button id="edit-post-submit" data-testid="edit-post-submit" type="submit"
                         class="bg-teal-600 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-teal-400 mt-2">Save Changes
                     </button>
                 </div>
@@ -110,6 +110,7 @@
                                 @comment.User.FirstName @comment.User.LastName
                             </h3>
 
+                            <!-- Like button -->
                             <form action="@Url.Action()" method="post">
                                 <button
                                     class="comment-like relative inline-flex items-center justify-center overflow-hidden text-gray-600 text-xs bg-transparent group py-1 px-3 font-medium rounded-md transition-all border border-gray-200 shadow-sm"
@@ -123,24 +124,42 @@
                                         Like (<span class="comment-like-count">@comment.Likes.Count()</span>)
                                     </span>
                                 </button>
-
                             </form>
                         </div>
 
                         <!-- Comment content  -->
-                        <p class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
+                        <p id = "comment_content" class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
                         
+                        <!-- Edit comment form --> 
+                        <form asp-action="Update" asp-controller="Comments" asp-route-postId="@Model.Id" asp-route-commentId="@comment.Id" method="post" id="update-comment-form"
+                                data-testid="update-comment-form" label="update commnent form" class="hidden">
+                                <textarea name="comment_content" label="update comment box" id="update-comment-input" data-testid="update-comment-input"
+                                    class="border border-gray-300 rounded-md p-2 w-full mt-2" maxlength="2000">@comment.Content</textarea>
+                                
+                                <div class="flex justify-end space-x-2">
+                                    <button type="button" id="cancel-edit-comment"
+                                        class="bg-gray-300 text-gray-800 text-sm w-36 px-4 py-2 rounded-md hover:bg-gray-400 mt-2">Cancel
+                                    </button>
+                                    <button id="edit-comment-submit" data-testid="edit-comment-submit" type="submit"
+                                        class="bg-teal-600 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-teal-400 mt-2">Save Changes
+                                    </button>
+                                </div>
+                            </form>
+
                         <!-- Commented on AND Delete Comment button  -->
                         <div class="flex justify-between items-start">
                             <p class="text-xs text-gray-400 mt-2">Commented on: @comment.FormattedCreatedOn</p>
-                            @if (comment.UserId == Context.Session.GetInt32("user_id") || comment.Post.UserId == Context.Session.GetInt32("user_id"))
-                            {
-                                <form action="@Url.Action("Delete", "Comments", new { postId = Model.Id, commentId = comment.Id })" method="post" onsubmit="return confirm('Are you sure you want to delete this comment?');">
-                                    <button data-testid="delete-comment-button" 
-                                            type="submit" 
-                                            class="bg-red-500 hover:bg-red-600 text-white text-xs font-medium py-1 px-3 rounded shadow-md">Delete Comment</button> 
-                                </form>
-                            }
+                            <div class="flex justify-end space-x-2">
+                                @if (comment.UserId == Context.Session.GetInt32("user_id") || comment.Post.UserId == Context.Session.GetInt32("user_id"))
+                                {
+                                    <button id="edit-comment-button" class="bg-teal-600 text-white text-xs font-medium px-3 py-1 rounded-md hover:bg-teal-400 shadow-md">Edit comment</button>
+                                    <form action="@Url.Action("Delete", "Comments", new { postId = Model.Id, commentId = comment.Id })" method="post" onsubmit="return confirm('Are you sure you want to delete this comment?');">
+                                        <button data-testid="delete-comment-button" 
+                                                type="submit" 
+                                                class="bg-red-500 hover:bg-red-600 text-white text-xs font-medium py-1 px-3 rounded-md shadow-md">Delete Comment</button> 
+                                    </form>
+                                }
+                            </div>
                         </div>
 
                     </div>
@@ -266,28 +285,54 @@
 
 <script>
 
-        document.addEventListener("DOMContentLoaded", function () {
-            // Post editing logic
-            const editButton = document.getElementById('edit-post-button');
-            const postText = document.getElementById('post-content');
-            const editPostForm = document.getElementById('update-post-form');
-            const cancelEditPostButton = document.getElementById("cancel-edit-post");
+    document.addEventListener("DOMContentLoaded", function () {
+        // Post editing logic
+        const editButton = document.getElementById('edit-post-button');
+        const postText = document.getElementById('post-content');
+        const editPostForm = document.getElementById('update-post-form');
+        const cancelEditPostButton = document.getElementById("cancel-edit-post");
 
-            if (editButton && postText && editPostForm && cancelEditPostButton) {
-                // Show the edit form:
-                editButton.addEventListener('click', () => {
-                    postText.classList.add('hidden');
-                    editPostForm.classList.remove('hidden');
-                    editButton.classList.add('hidden');
-                });
+        if (editButton && postText && editPostForm && cancelEditPostButton) {
+            // Show the edit form:
+            editButton.addEventListener('click', () => {
+                postText.classList.add('hidden');
+                editPostForm.classList.remove('hidden');
+                editButton.classList.add('hidden');
+            });
 
-                // Cancel Post edit
-                cancelEditPostButton.addEventListener('click', () => {
-                    postText.classList.remove('hidden');
-                    editPostForm.classList.add('hidden');
-                    editButton.classList.remove('hidden');
-                });
-            }
-        });
+            // Cancel Post edit
+            cancelEditPostButton.addEventListener('click', () => {
+                postText.classList.remove('hidden');
+                editPostForm.classList.add('hidden');
+                editButton.classList.remove('hidden');
+            });
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Comment editing logic
+        const editCommentButton = document.getElementById('edit-comment-button');
+        const commentText = document.getElementById('comment_content');
+        const editCommentForm = document.getElementById('update-comment-form');
+        const cancelEditCommentButton = document.getElementById("cancel-edit-comment");
+
+        if (editCommentButton && commentText && editCommentForm && cancelEditCommentButton) {
+            // Show the edit form:
+            editCommentButton.addEventListener('click', () => {
+                commentText.classList.add('hidden');
+                editCommentForm.classList.remove('hidden');
+                editCommentButton.classList.add('hidden');
+            });
+
+            // Cancel Comment edit
+            cancelEditCommentButton.addEventListener('click', () => {
+                commentText.classList.remove('hidden');
+                editCommentForm.classList.add('hidden');
+                editCommentButton.classList.remove('hidden');
+            });
+        }
+    });
 </script>
 
