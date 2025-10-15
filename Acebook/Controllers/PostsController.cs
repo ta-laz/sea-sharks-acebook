@@ -28,6 +28,7 @@ public class PostsController : Controller
                   .FirstOrDefault(u => u.Id == currentUserId);
 
     var posts = dbContext.Posts
+                               .Where(p => p.UserId == p.WallId)
                                .Include(p => p.User)
                                .Include(p => p.Comments)
                                   .ThenInclude(c => c.Likes)

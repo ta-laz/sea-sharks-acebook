@@ -55,6 +55,22 @@ namespace Acebook.Tests
         }
 
         [Test]
+        public async Task WriteOnOtherProfileWall_TheAquarium_DoesNotDisplayWallPost()
+        {
+            // Go to Shelly's profile, submit a post on their wall
+            await Page.GotoAsync("Users/2");
+            await Task.WhenAll(
+                Page.GetByTestId("create-post-input").FillAsync("Hello, Shelly!"),
+                Page.GetByTestId("create-post-submit").ClickAsync(),
+                Page.WaitForURLAsync($"{BaseUrl}/Users/2")
+            );
+            await Expect(Page.GetByText("Hello, Shelly!")).ToBeVisibleAsync();
+            // Go the aquarium, the post on Shelly's wall should not be visible
+            await Page.GotoAsync("Posts/");
+            await Expect(Page.GetByText("Hello, Shelly!")).ToBeHiddenAsync();
+        }
+
+        [Test]
         public async Task FriendsButton_TheAquarium_RedirectsToMyFriends()
         {
             // NOTE: [SetUp] signs in with user Finn then goes to the aquarium
@@ -89,12 +105,12 @@ namespace Acebook.Tests
         }
 
         [Test]
-        public async Task LeftSideBar_TheAquarium_UsersNameRedirectsToProfile()
+        public async Task ViewProfileButton_TheAquarium_RedirectsToProfile()
         {
             // NOTE: [SetUp] signs in with user Finn then goes to the aquarium
-            await Page.GetByTestId("sidebar-username").ClickAsync();
+            await Page.GetByTestId("view-profile").First.ClickAsync();
             // redirects to Finn's profile page
-            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/50");
         }
 
     }
