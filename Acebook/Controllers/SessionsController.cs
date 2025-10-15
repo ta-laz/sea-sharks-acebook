@@ -42,6 +42,14 @@ public class SessionsController : Controller
     if (user != null && user.Password == hashed)
     {
       HttpContext.Session.SetInt32("user_id", user.Id);
+      if (!string.IsNullOrEmpty(user.ProfilePicturePath))
+      {
+        HttpContext.Session.SetString("user_profile_picture", user.ProfilePicturePath);
+      }
+      else
+      {
+        HttpContext.Session.SetString("user_profile_picture", "");
+      }
       return new RedirectResult("/posts");
     }
     else
@@ -64,13 +72,13 @@ public class SessionsController : Controller
     var hash = sha256.ComputeHash(bytes);
     return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
   }
-  
+
   [Route("/Signout")]
   [HttpPost]
   public IActionResult Signout()
   {
-      HttpContext.Session.Clear();
+    HttpContext.Session.Clear();
 
-      return RedirectToAction("Index", "Home");
+    return RedirectToAction("Index", "Home");
   }
 }
