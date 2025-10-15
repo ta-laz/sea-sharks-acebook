@@ -69,9 +69,13 @@ namespace Acebook.Tests
         {
             await Page.Locator("#search-input").FillAsync("Reef");
             await Page.GetByTestId("search-submit").ClickAsync();
-            await Expect(Page.GetByTestId("user-results")).ToBeVisibleAsync();
-            await Expect(Page.GetByTestId("post-results")).ToBeVisibleAsync();
-            await Expect(Page.GetByTestId("comment-results")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("Chomp-user-search")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("Cobalt-user-search")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("Coral-user-search")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("post-search-Bluey").First).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("comment-search-Harbor").First).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("comment-search-Cerulean")).ToBeVisibleAsync();
+
         }
     }
 }
