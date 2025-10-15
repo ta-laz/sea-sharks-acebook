@@ -65,5 +65,26 @@ public class AcebookDbContext : DbContext
             .HasIndex(l => new { l.UserId, l.CommentId })
             .IsUnique();
 
+    // When a Post is deleted -> delete its Comments
+    modelBuilder.Entity<Post>()
+        .HasMany(p => p.Comments)
+        .WithOne(c => c.Post)
+        .HasForeignKey(c => c.PostId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+    // When a Post is deleted -> delete its Likes
+    modelBuilder.Entity<Post>()
+        .HasMany(p => p.Likes)
+        .WithOne(l => l.Post)
+        .HasForeignKey(l => l.PostId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+    // When a Comment is deleted -> delete its Likes
+    modelBuilder.Entity<Comment>()
+        .HasMany(c => c.Likes)
+        .WithOne(l => l.Comment)
+        .HasForeignKey(l => l.CommentId)
+        .OnDelete(DeleteBehavior.Cascade);
+
   }
 }

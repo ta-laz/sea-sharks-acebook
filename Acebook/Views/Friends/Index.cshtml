@@ -31,9 +31,13 @@
                 @foreach (var request in ViewBag.ReceivedRequests)
                 {
                     var sender = request.Requester;
+                    var imagePath = sender.ProfilePicturePath;
+                    if (string.IsNullOrEmpty(imagePath)){
+                        imagePath = "/images/Placeholder.png";
+                    }
 
                     <div class="flex flex-wrap items-center gap-3">
-                        <img src="/images/Placeholder.png"
+                        <img src="@imagePath"
                             class="w-12 h-12 rounded-full object-cover border border-gray-400" />
                         <span class="font-medium text-gray-800">@sender.FirstName @sender.LastName</span>
 
@@ -65,9 +69,13 @@
                 @foreach (var request in ViewBag.SentRequests)
                 {
                     var receiver = request.Accepter;
+                    var imagePath = receiver.ProfilePicturePath;
+                    if (string.IsNullOrEmpty(imagePath)){
+                        imagePath = "/images/Placeholder.png";
+                    }
 
                     <div class="flex items-center gap-3">
-                        <img src="/images/Placeholder.png"
+                        <img src="@imagePath"
                             class="w-12 h-12 rounded-full object-cover border border-gray-400" />
                         <span class="font-medium text-gray-800">@receiver.FirstName @receiver.LastName</span>
 
@@ -127,9 +135,15 @@
                     other = friend.Requester;
                 }
 
+                var imagePath = other.ProfilePicturePath;
+                if (string.IsNullOrEmpty(imagePath))
+                    {
+                        imagePath = "/images/Placeholder.png";
+                    }
+
                 <div class="flex items-center justify-between gap-3 mb-2 p-2 rounded-lg hover:bg-gray-100 transition">
-                <div class="flex items-center gap-3 mb-2">
-                        <img src="/images/Placeholder.png"
+                    <div class="flex items-center gap-3 mb-2">
+                        <img src="@imagePath"
                             class="w-12 h-12 rounded-full object-cover border border-gray-400">
                         <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name" data-testid="@other.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600">@other.FirstName @other.LastName</a>
                         
