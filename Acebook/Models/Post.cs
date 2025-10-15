@@ -32,7 +32,7 @@ public class Post
 
   public bool CheckLength()
   {
-    if (this.Content.Length <= 500)
+    if (this.Content.Length <= 500 )
     {
       return true;
     }

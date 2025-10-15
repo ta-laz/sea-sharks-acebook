@@ -72,7 +72,6 @@ public class PostsController : Controller
       }
       post.PostPicturePath = $"/images/post_pics/{fileName}";
     }
-
     dbContext.Posts.Add(post);
     dbContext.SaveChanges();
 

@@ -49,7 +49,7 @@ namespace Acebook.Tests
         public async Task CanUploadImage_OnAquarium()
         {
             await Page.Locator("#post-content").FillAsync("Test content");
-            var path = Path.Combine(Directory.GetCurrentDirectory(),"testImage.jpg");
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "testImage.jpg");
             await Page.SetInputFilesAsync("#file-upload", path);
 
             await Task.WhenAll(
@@ -75,13 +75,13 @@ namespace Acebook.Tests
             await Expect(Page.GetByText("Test content")).ToBeVisibleAsync();
             await Expect(Page.GetByTestId("post-picture-176")).ToBeVisibleAsync();
         }
-        
-                [Test]
+
+        [Test]
         public async Task CanUploadImage_OnFriendsProfile()
         {
             await Page.GotoAsync("/users/2");
             await Page.GetByTestId("create-post-input").FillAsync("Test content");
-            var path = Path.Combine(Directory.GetCurrentDirectory(),"testImage.jpg");
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "testImage.jpg");
             await Page.SetInputFilesAsync("#file-upload", path);
 
             await Task.WhenAll(
@@ -90,6 +90,54 @@ namespace Acebook.Tests
             );
             await Expect(Page.GetByText("Test content")).ToBeVisibleAsync();
             await Expect(Page.GetByTestId("post-picture-176")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task CreatePost_EmptyContent_ShowsBrowserValidation_onAquarium()
+        {
+            await Page.GotoAsync("/posts");
+
+
+            await Page.Locator("#post-submit").ClickAsync();
+
+            var isValid = await Page.GetByTestId("create-post-input").EvaluateAsync<bool>("el => el.checkValidity()");
+            Assert.That(isValid, Is.False, "Expected the textarea to be invalid due to 'required' attribute");
+
+            var validationMessage = await Page.GetByTestId("create-post-input").EvaluateAsync<string>("el => el.validationMessage");
+            Console.WriteLine(validationMessage);
+            Assert.That(validationMessage, Does.Contain("Please fill out this field."));
+        }
+
+        [Test]
+        public async Task CreatePost_EmptyContent_ShowsBrowserValidation_onMyProfile()
+        {
+            await Page.GotoAsync("/users/1");
+
+
+            await Page.Locator("#post-submit").ClickAsync();
+
+            var isValid = await Page.GetByTestId("create-post-input").EvaluateAsync<bool>("el => el.checkValidity()");
+            Assert.That(isValid, Is.False, "Expected the textarea to be invalid due to 'required' attribute");
+
+            var validationMessage = await Page.GetByTestId("create-post-input").EvaluateAsync<string>("el => el.validationMessage");
+            Console.WriteLine(validationMessage);
+            Assert.That(validationMessage, Does.Contain("Please fill out this field."));
+        }
+        
+        [Test]
+        public async Task CreatePost_EmptyContent_ShowsBrowserValidation_onFriendsProfile()
+        {
+            await Page.GotoAsync("/users/2");
+
+            
+            await Page.Locator("#post-submit").ClickAsync();
+
+            var isValid = await Page.Locator("#post-content").EvaluateAsync<bool>("el => el.checkValidity()");
+            Assert.That(isValid, Is.False, "Expected the textarea to be invalid due to 'required' attribute");
+
+            var validationMessage = await Page.Locator("#post-content").EvaluateAsync<string>("el => el.validationMessage");
+            Console.WriteLine(validationMessage);
+            Assert.That(validationMessage, Does.Contain("Please fill out this field."));
         }
 
     }

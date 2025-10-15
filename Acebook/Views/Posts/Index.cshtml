@@ -200,8 +200,7 @@
         <form action="@Url.Action("Create", "Posts")" method="post" enctype="multipart/form-data">
           <textarea id="post-content" required
             class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
-            name="content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)">
-          </textarea>
+            name="content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)"></textarea>
           <div class="flex justify-between items-center mt-3">
             <label for="file-upload" class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
             <input id="file-upload" type="file" name="postPicture" accept="image/*"class="hidden"/>
@@ -249,6 +248,7 @@
 
 
           <p class="text-gray-700 mt-2 leading-relaxed">
+          @if(!string.IsNullOrEmpty(post.Content)){
             @if (@post.CheckLength())
             {
               @post.Content
@@ -256,6 +256,11 @@
             else
             {
               @post.FormatPostContent()
+            }
+            }
+            else
+            {
+              @post.Content;
             }
           </p>
           @if (@post.PostPicturePath != null) 
