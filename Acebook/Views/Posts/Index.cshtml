@@ -272,9 +272,7 @@
               <img src="@imagePath" class="w-12 h-12 rounded-full object-cover border border-gray-400">
             </div>
 
-
-
-            <p class="text-gray-700 mt-2 line-clamp-3 leading-relaxed break-all leading-relaxed">
+            <p class="text-gray-700 mt-2 leading-relaxed overflow-hidden break-words [overflow-wrap:anywhere] line-clamp-3">
             @if(!string.IsNullOrEmpty(post.Content)){
             @if (@post.CheckLength())
               {

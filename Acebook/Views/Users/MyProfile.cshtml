@@ -20,9 +20,9 @@
   <div class="flex flex-col lg:flex-row w-full max-w-7xl gap-8">
 
     <!-- 🧍 Left column: profile picture + bio + friends -->
-    <div class="flex flex-col top-20 self-start top-32 sticky items-center w-full lg:w-1/3 space-y-6">
+    <div class="flex flex-col sticky top-32 self-start items-center w-full lg:w-1/3 space-y-6">
       <!-- Profile Picture (hover reveal) -->
-      <div class="relative group flex justify-center w-full">
+      <div class="relative group flex justify-center w-full hover:-translate-y-1">
         <img id="profile-pic" src="@imagePath" 
           alt="Profile Picture"
           class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm transition-opacity duration-300 group-hover:opacity-50 cursor-pointer" />
@@ -34,16 +34,12 @@
               <input type="file" name="profilePicture" accept="image/*" class="hidden" onchange="this.form.submit();" />
             </label>
           </form>
-        @* <img id="profile-pic" src="/images/Placeholder.png" alt="Profile Picture"
-          class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm transition-opacity duration-300 cursor-pointer group-hover:opacity-50" />
-        <div
-          class="absolute inset-0 flex items-center justify-center  opacity-0 group-hover:opacity-100 transition-opacity  duration-300 pointer-events-none">
-          <p class="text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md">Change Picture</p> *@
+
         </div>
       </div>
 
       <!-- Profile bio block -->
-      <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl">
+      <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl hover:-translate-y-1">
         <h2 data-testid="bio-name" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2"> @Model.FirstName's
           Bio</h2>
 
@@ -66,8 +62,8 @@
 
 
       <!-- Friends block -->
-      <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl">
-        <h2 data-testid="friends-header" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Friends</h2>
+      <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl hover:-translate-y-1">
+        <h2 data-testid="friends-header" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Fronds</h2>
         @foreach (var friend in ViewBag.Friends)
         {
           User other;
@@ -89,7 +85,7 @@
                 otherImagePath = "/images/Placeholder.png";
             }
 
-          <div class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-lg mb-1 transition">
+          <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-2 p-1 transform transition duration-200 hover:scale-105">
             <div class="flex items-center space-x-3">
               <img src="@otherImagePath" class="w-10 h-10 rounded-full object-cover border border-gray-300">
               <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name"
@@ -119,7 +115,7 @@
     <div class="flex flex-col w-full lg:w-2/3 space-y-6 bg-teal-700/10 shadow-[0_0_15px_rgba(15,118,110,0.3)]">
 
       <!-- Profile Name + Tagline -->
-      <div class="bg-white rounded-lg p-6 shadow-md transition hover:shadow-xl">
+      <div class="bg-white rounded-lg p-6 shadow-md transition hover:shadow-xl hover:-translate-y-1">
         <h1 class="text-4xl font-bold text-teal-700 mb-2">@Model.FirstName @Model.LastName</h1>
 
         <p id="under-name-tagline-text" data-testid="under-name-tagline-text" class="italic text-gray-400 mt-1">
@@ -152,8 +148,8 @@
 
 
       <!-- Create Post Form -->
-      <div class="flex-1 bg-white rounded-lg overflow-y-auto px-4 py-4 p-4 shadow-md transition hover:shadow-xl space-x-3">
-        <h2 class="text-lg text-teal-700 font-bold mb-3">Create a Post</h2>
+      <div class="flex-1 bg-white rounded-lg overflow-y-auto px-4 py-4 p-4 shadow-md transition hover:shadow-xl space-x-3 hover:-translate-y-1">
+        <h2 class="text-lg text-teal-700 font-bold px-3 mb-3">Create a Post</h2>
         <form action="@Url.Action("Create", "Posts")" method="post" enctype="multipart/form-data" >
           <textarea required id="create-post-input" data-testid="create-post-input"
             class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
@@ -179,7 +175,7 @@
       <div class="flex flex-col w-full rounded-lg space-y-4 relative">
         <!-- Sticky Header -->
         <div class="sticky top-32 z-20 py-1 px-2 rounded-md">
-          <h1 class="text-3xl font-bold text-teal-700">My Wall</h1>
+          <h1 class="text-3xl font-bold text-teal-700">My Tank</h1>
         </div>
 
         <!-- Scrollable Post List with Clipping -->
@@ -205,7 +201,7 @@
       {
           profilePictureImagePath = "/images/Placeholder.png";
       }
-        <div class="bg-white rounded-lg w-[98%] p-4 mx-auto shadow-md transition hover:shadow-xl">
+        <div class="bg-white rounded-lg w-[98%] p-4 mx-auto shadow-md transition hover:shadow-xl hover:-translate-y-1">
                   <div class="flex justify-between items-center">
                     <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" id="post-user-name"
                       data-testid="Post-link @post.User.FirstName"
@@ -214,7 +210,7 @@
                     <img src="@profilePictureImagePath" class="w-10 h-10 rounded-full object-cover border border-gray-400" />
                   </div>
 
-          <p class="text-gray-700 mt-2 leading-relaxed break-all">
+          <p class="text-gray-700 mt-2 leading-relaxed break-words [overflow-wrap:anywhere] line-clamp-3">
           @if(!string.IsNullOrEmpty(post.Content)){
             @if (@post.CheckLength())
             {
