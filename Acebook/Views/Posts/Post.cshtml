@@ -53,6 +53,7 @@
         <!-- Edit post form --> 
         <form asp-action="Update" asp-controller="Posts" asp-route-id="@Model.Id" method="post" id="update-post-form"
                 data-testid="update-post-form" label="update post form" class="hidden">
+                @Html.AntiForgeryToken()
                 <textarea required name="content" label="update post box" id="update-post-input" data-testid="update-post-input"
                     class="border border-gray-300 rounded-md p-2 w-full mt-2" maxlength="2000">@Model.Content</textarea>
                 
@@ -102,6 +103,7 @@
             @if (Model.UserId == Context.Session.GetInt32("user_id"))
             {
                 <form action="/posts/@Model.Id/delete" method="post" class="flex-1" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                    @Html.AntiForgeryToken()
                     <button data-testid="delete-post-button" type="submit"
                         class="relative w-full inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
                         <span class="absolute inset-0 bg-red-600 right-0 top-0 translate-x-full ease-out duration-500 transition-all group-hover:translate-x-0"></span>
@@ -144,6 +146,7 @@
 
                             <!-- Like button -->
                             <form action="@Url.Action()" method="post">
+                            @Html.AntiForgeryToken()
                                 <button
                                     class="comment-like relative inline-flex items-center justify-center overflow-hidden text-gray-600 text-xs bg-transparent group py-1 px-3 font-medium rounded-md transition-all border border-gray-200 shadow-sm"
                                     data-comment-id="@comment.Id"
@@ -165,6 +168,7 @@
                         <!-- Edit comment form --> 
                         <form asp-action="Update" asp-controller="Comments" asp-route-postId="@Model.Id" asp-route-commentId="@comment.Id" method="post" id="update-comment-form-@comment.Id"
                                 data-testid="update-comment-form-@comment.Id" label="update commnent form" class="hidden">
+                                @Html.AntiForgeryToken()
                                 <textarea required name="comment_content" label="update comment box" id="update-comment-input-@comment.Id" data-testid="update-comment-input-@comment.Id"
                                     class="border border-gray-300 rounded-md p-2 w-full mt-2" maxlength="2000">@comment.Content</textarea>
                                 
@@ -186,6 +190,7 @@
                                 {
                                     <button id="edit-comment-button-@comment.Id" data-testid="edit-comment-button-@comment.Id" class="bg-teal-600 text-white text-xs font-medium px-3 py-1 rounded-md hover:bg-teal-400 shadow-md h-[25px] leading-none">Edit</button>
                                     <form action="@Url.Action("Delete", "Comments", new { postId = Model.Id, commentId = comment.Id })" method="post" onsubmit="return confirm('Are you sure you want to delete this comment?');" class="inline-flex items-center">
+                                    @Html.AntiForgeryToken()
                                         <button data-testid="delete-comment-button-@comment.Id" 
                                                 type="submit" 
                                                 class="bg-red-500 hover:bg-red-600 text-white text-xs font-medium py-1 px-3 rounded-md shadow-md h-[25px] leading-none">Delete</button> 
@@ -203,6 +208,7 @@
         <div class="bg-white rounded-b-lg w-full px-4 py-2 shadow-[0_0_15px_rgba(15,118,110,0.3)]">
             <h2 class="text-lg font-semibold mb-1">Add a comment</h2>
             <form action="@Url.Action("Create", "Comments")" method="post">
+            @Html.AntiForgeryToken()
                 <input type="hidden" name="returnURL" value="@Url.Action("Post", "Comments", new { id = Model.Id })" />
                 <input type="hidden" name="postId" value="@Model.Id" />
                 <textarea id="comment-box"
@@ -225,7 +231,12 @@
             class="max-w-3xl w-11/12 md:w-auto rounded-lg shadow-lg cursor-pointer transition-transform duration-300 transform scale-100 hover:scale-105" />
     </div>
 
+
     <script>
+    const csrf = document
+    .querySelector('meta[name="request-verification-token"]')
+    ?.getAttribute('content');
+
         document.addEventListener('DOMContentLoaded', () => {
 
             // -------- Post Likes --------
@@ -244,7 +255,8 @@
                     try {
                         const response = await fetch(`/posts/${postId}`, {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' }
+                            headers: { 'Content-Type': 'application/json',
+                            'RequestVerificationToken': csrf }
                         });
 
                         if (!response.ok) throw new Error('Network response was not ok');
@@ -290,7 +302,8 @@
                     try {
                         const response = await fetch(`/comments/${commentId}/like`, {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' }
+                            headers: { 'Content-Type': 'application/json',
+                            'RequestVerificationToken': csrf }
                         });
 
                         if (!response.ok) throw new Error('Network response was not ok');

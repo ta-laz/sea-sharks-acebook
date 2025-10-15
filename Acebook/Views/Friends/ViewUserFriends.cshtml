@@ -78,6 +78,7 @@
                     {
                 <form asp-action="AddFriend" asp-controller="Friends" method="post"
                     onsubmit="return confirm('Are you sure you want to add this person?');">
+                    @Html.AntiForgeryToken()
                     <input type="hidden" name="receiverId" value="@other.Id" />
                                     <button data-testid="add-friend"type="submit"
                             class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium py-1 px-3 rounded">
