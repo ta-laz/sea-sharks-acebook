@@ -5,7 +5,6 @@
     <div class="flex flex-col items-center space-y-4 w-full max-w-screen-lg">
         <h1 id="myFriendsPageTitle" data-testid="myFriendsPageTitle" class="text-3xl font-bold mb-3">My Friends</h1>
         <!-- Filter buttons -->
-        <!-- Filter buttons -->
         <div class="flex justify-center mt-4" role="group" aria-label="requests filters">
             <label id="received-label" for="received"
                 class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md cursor-pointer hover:bg-gray-200 text-center transition-colors">
@@ -36,10 +35,10 @@
                         imagePath = "/images/Placeholder.png";
                     }
 
-                    <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex flex-wrap items-center gap-3 ">
                         <img src="@imagePath"
                             class="w-12 h-12 rounded-full object-cover border border-gray-400" />
-                        <span class="font-medium text-gray-800">@sender.FirstName @sender.LastName</span>
+                        <a asp-controller="Users" asp-action="Index" asp-route-id="@sender.Id" id="friend-name" data-testid="@sender.FirstName" class="font-medium text-gray-800 hover:text-teal-600 cursor-pointer">@sender.FirstName @sender.LastName</a>
 
                         <form asp-action="Accept" asp-controller="Friends" method="post"
                             onsubmit="return confirm('Are you sure you want to be friends?');" class="ml-auto">
@@ -77,7 +76,7 @@
                     <div class="flex items-center gap-3">
                         <img src="@imagePath"
                             class="w-12 h-12 rounded-full object-cover border border-gray-400" />
-                        <span class="font-medium text-gray-800">@receiver.FirstName @receiver.LastName</span>
+                        <a asp-controller="Users" asp-action="Index" asp-route-id="@receiver.Id" id="friend-name" data-testid="@receiver.FirstName" class="font-medium text-gray-800 hover:text-teal-600 cursor-pointer">@receiver.FirstName @receiver.LastName</a>
 
                         <form asp-action="Remove" asp-controller="Friends" method="post"
                             onsubmit="return confirm('Are you sure you want to cancel your request?');" class="ml-auto">
@@ -145,7 +144,7 @@
                     <div class="flex items-center gap-3 mb-2">
                         <img src="@imagePath"
                             class="w-12 h-12 rounded-full object-cover border border-gray-400">
-                        <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name" data-testid="@other.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600">@other.FirstName @other.LastName</a>
+                        <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name" data-testid="@other.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600 ">@other.FirstName @other.LastName</a>
                         
                     </div>
 
