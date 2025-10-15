@@ -1,21 +1,24 @@
+@model User
+
 @{
   ViewData["SearchPlaceholder"] = "Search posts...";
 }
 
 <div class="flex justify-center w-full mt-8">
   <!-- Outer container holding sidebar, posts, and advert -->
-  <div class="flex justify-between w-full max-w-7xl relative">
+  <div class="flex justify-between w-full max-w-7xl space-x-8 relative">
 
     <!-- 🦈 Left Sidebar -->
-    <div class="hidden lg:block sticky top-20 mr-8 self-start w-52">
-      <div class="bg-white rounded-lg p-4 shadow-md">
-
+    <div class="hidden lg:block sticky top-20 self-start w-52">
+      <div class="bg-white rounded-xl p-4 shadow-md transition hover:shadow-xl border-l-2 border-r-2 border-teal-500 hover:-translate-y-1">
 
         <!-- Example sidebar item -->
-        <div class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-lg mb-1 transition">
+        <div
+          class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-xl mb-1 transform transition duration-200 hover:scale-105">
           <div class="flex items-center space-x-3">
-            <img src="/images/temp_imgs/temp_8.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
-            <button class="text-xs font-medium text-gray-700 hover:text-teal-600">John Doe</button>
+            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+            <a asp-controller="Users" asp-action="Index" asp-route-id="@Model.Id" data-testid="sidebar-username"
+              class="text-xs font-medium text-gray-700 hover:text-teal-600">@Model.FirstName @Model.LastName</a>
           </div>
           <!-- Dots only appear on hover -->
           <button class="hidden group-hover:block text-gray-500 hover:text-gray-700">
@@ -28,7 +31,8 @@
 
 
         <!-- Example sidebar item -->
-        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+        <div
+          class="group flex items-center justify-between hover:bg-gray-100 rounded-xl mb-1 transform transition duration-200 hover:scale-105">
           <div class="flex items-center space-x-3">
             <img src="/images/temp_imgs/temp_7.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
             <button class="text-xs font-medium text-gray-700 hover:text-teal-600">The Aquarium</button>
@@ -43,7 +47,8 @@
         </div>
 
         <!-- Example sidebar item -->
-        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+        <div
+          class="group flex items-center justify-between hover:bg-gray-100 rounded-xl mb-1 transform transition duration-200 hover:scale-105">
           <div class="flex items-center space-x-3">
             <img src="/images/temp_imgs/temp_6.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
             <a asp-controller="Friends" asp-action="Index" id="redirect-friends" data-testid="redirect-friends"
@@ -63,7 +68,8 @@
         <h2 class="text-sm font-semibold text-gray-400 mb-3 mt-3">EXPLORE</h2>
 
         <!-- Example sidebar item -->
-        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+        <div
+          class="group flex items-center justify-between hover:bg-gray-100 rounded-xl mb-1 transform transition duration-200 hover:scale-105">
           <div class="flex items-center space-x-3">
             <img src="/images/temp_imgs/temp_1.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
             <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Pages</button>
@@ -79,7 +85,8 @@
 
 
         <!-- Example sidebar item -->
-        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+        <div
+          class="group flex items-center justify-between hover:bg-gray-100 rounded-xl mb-1 transform transition duration-200 hover:scale-105">
           <div class="flex items-center space-x-3">
             <img src="/images/temp_imgs/temp_2.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
             <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Groups</button>
@@ -94,7 +101,8 @@
         </div>
 
         <!-- Example sidebar item -->
-        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+        <div
+          class="group flex items-center justify-between hover:bg-gray-100 rounded-xl mb-1 transform transition duration-200 hover:scale-105">
           <div class="flex items-center space-x-3">
             <img src="/images/temp_imgs/temp_4.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
             <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Saved</button>
@@ -109,7 +117,8 @@
         </div>
 
         <!-- Example sidebar item -->
-        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+        <div
+          class="group flex items-center justify-between hover:bg-gray-100 rounded-xl mb-1 transform transition duration-200 hover:scale-105">
           <div class="flex items-center space-x-3">
             <img src="/images/temp_imgs/temp_5.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
             <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Events</button>
@@ -124,7 +133,8 @@
         </div>
 
         <!-- Example sidebar item -->
-        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+        <div
+          class="group flex items-center justify-between hover:bg-gray-100 rounded-xl mb-1 transform transition duration-200 hover:scale-105">
           <div class="flex items-center space-x-3">
             <img src="/images/temp_imgs/temp_6.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
             <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Photos</button>
@@ -140,7 +150,8 @@
 
 
         <!-- Example sidebar item -->
-        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+        <div
+          class="group flex items-center justify-between hover:bg-gray-100 rounded-xl mb-1 transform transition duration-200 hover:scale-105">
           <div class="flex items-center space-x-3">
             <img src="/images/temp_imgs/temp_7.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
             <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Insights</button>
@@ -155,7 +166,8 @@
         </div>
 
         <!-- Example sidebar item -->
-        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+        <div
+          class="group flex items-center justify-between hover:bg-gray-100 rounded-xl mb-1 transform transition duration-200 hover:scale-105">
           <div class="flex items-center space-x-3">
             <img src="/images/temp_imgs/temp_8.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
             <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Moments</button>
@@ -170,7 +182,8 @@
         </div>
 
         <!-- Example sidebar item -->
-        <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-1 transition">
+        <div
+          class="group flex items-center justify-between hover:bg-gray-100 rounded-xl mb-1 transform transition duration-200 hover:scale-105">
           <div class="flex items-center space-x-3">
             <img src="/images/temp_imgs/temp_1.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
             <button class="text-xs font-medium text-gray-700 hover:text-teal-600">Games</button>
@@ -184,30 +197,38 @@
           </button>
         </div>
 
-        <h2 class="text-sm font-semibold text-teal-400 mb-3 mt-3">See More...</h2>
+        <h2 class="text-sm font-semibold cursor-pointer text-teal-400 mb-3 mt-3 hover:underline">See More...</h2>
 
         <h2 class="text-xs font-semibold text-gray-300 mb-3 mt-3">CREATE</h2>
 
-        <h2 class="text-xs font-semibold text-teal-400 mb-3 mt-3">Ad - Page - Group - Event</h2>
+        <h2 class="text-xs font-semibold cursor-pointer text-teal-400 mb-3 mt-3">
+          <span class="hover:underline">Ad</span> -
+          <span class="hover:underline">Page</span> -
+          <span class="hover:underline">Group</span> -
+          <span class="hover:underline">Event</span>
+        </h2>
 
       </div>
     </div>
 
-    <!-- 🧭 Center column (posts) -->
-    <div class="flex flex-col items-center space-y-4 w-full max-w-3xl">
-      <div class="bg-white rounded-lg w-full p-4 shadow-md hidden md:block">
-        <h2 class="text-lg font-bold mb-3">Create a Post</h2>
+    <!-- 🧭 Center column (posts) + advert -->
+    <div class="flex flex-col flex-1 space-y-6">
+
+      <!-- Create post box -->
+      <div
+        class="bg-white rounded-xl overflow-y-auto px-4 py-4 p-4 shadow-md transition hover:shadow-xl hover:-translate-y-1 border-l-2 border-r-2 border-teal-500 space-x-3">
+        <h2 class="text-lg text-teal-700 font-bold mb-3">Create a Post</h2>
         <form action="@Url.Action("Create", "Posts")" method="post" enctype="multipart/form-data">
-          <textarea id="post-content" required
+          <textarea data-testid="post-content-input" id="post-content-input" required
             class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
             name="content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)"></textarea>
           <div class="flex justify-between items-center mt-3">
-            <label for="file-upload" class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
+            <label for="file-upload" class="flex items-center text-sm text-teal-500 cursor-pointer hover:underline">Attach Image</label>
             <input id="file-upload" type="file" name="postPicture" accept="image/*"class="hidden"/>
             <span id="file-name" class="text-gray-500 text-sm italic">No file chosen</span>
             <input type="hidden" name="WallId" value="@Context.Session.GetInt32("user_id")" />
-            <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Posts")"/>
-            <button id="post-submit" type="submit"
+            <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Posts")" />
+            <button data-testid="post-submit" id="post-submit" type="submit"
               class="bg-teal-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-teal-400">
               Submit
             </button>
@@ -216,7 +237,8 @@
       </div>
 
       <!-- Filter buttons -->
-      <div class="flex justify-center mt-4" role="group" aria-label="post filters">
+      <div class="flex justify-center mt-4 sticky top-20 z-20 py-1 px-2 rounded-md" role="group"
+        aria-label="post filters">
         <button
           class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md hover:bg-gray-200">
           All Posts
@@ -227,10 +249,12 @@
         </button>
       </div>
 
-      <!-- Posts -->
-      @foreach (Post post in ViewBag.Posts)
-      {
-              string imagePath; 
+      <!-- Scrollable Post List with Clipping -->
+      <div class="overflow-y-auto max-h-[70vh] pb-10 space-y-6"
+        style="mask-image: linear-gradient(to bottom, transparent 0%, black 20%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 1%);">
+        @foreach (Post post in ViewBag.Posts)
+        {
+                string imagePath; 
               if (!string.IsNullOrEmpty(post.User.ProfilePicturePath)){
                 imagePath = post.User.ProfilePicturePath;
               }
@@ -239,25 +263,28 @@
                 imagePath = "/images/Placeholder.png";
               }
             
-        <div class="bg-white rounded-lg w-full p-4 mt-4 shadow-md hidden md:block">
-          <div class="flex justify-between items-center">
-            <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" id="post-user-name" data-testid="@post.User.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600">@post.User.FirstName @post.User.LastName</a>
-            <img src="@imagePath" class="w-12 h-12 rounded-full object-cover border border-gray-400">
-          </div>
+        <div class="bg-white rounded-xl w-full p-4 mt-4 shadow-md hidden md:block transition hover:shadow-xl hover:-translate-y-1 border-l-2 border-r-2 border-teal-500">
+            <div class="flex justify-between items-center">
+              <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" id="post-user-name"
+                data-testid="@post.User.FirstName"
+                class="text-md font-semibold text-gray-800 hover:text-teal-600">@post.User.FirstName
+                @post.User.LastName</a>
+              <img src="@imagePath" class="w-12 h-12 rounded-full object-cover border border-gray-400">
+            </div>
 
 
 
-          <p class="text-gray-700 mt-2 leading-relaxed">
-          @if(!string.IsNullOrEmpty(post.Content)){
+            <p class="text-gray-700 mt-2 line-clamp-3 leading-relaxed break-all leading-relaxed">
+            @if(!string.IsNullOrEmpty(post.Content)){
             @if (@post.CheckLength())
-            {
-              @post.Content
-            }
-            else
-            {
-              @post.FormatPostContent()
-            }
-            }
+              {
+                @post.Content
+              }
+              else
+              {
+                @post.FormatPostContent()
+              }
+              }
             else
             {
               @post.Content;
@@ -269,56 +296,60 @@
             <img id="post-picture-@post.Id" data-testid="post-picture-@post.Id" src="@post.PostPicturePath" alt="Post Picture" class="post-picture max-w-[65%] h-auto inline-block object-contain rounded-md"/>
             </div>
           }
-          <div class="flex justify-end mt-2">
-            <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" method="get">
-              <button data-testid="see-more-button" class="text-teal-600 text-sm hover:underline">see more</button>
-            </a>
+            <div class="flex justify-end mt-2">
+              <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" method="get">
+                <button data-testid="see-more-button" class="text-teal-600 text-sm hover:underline">see
+                  more</button>
+              </a>
+            </div>
+
+            <p class="text-xs text-gray-400 mt-4">Created on: @post.FormattedCreatedOn</p>
+
+            <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
+
+              <!-- Like -->
+              <button
+                class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all"
+                data-testid="post-like-button" data-post-id="@post.Id"
+                data-liked="@post.Likes.Any(l => l.UserId == Context.Session.GetInt32("user_id"))">
+                <span
+                  class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                <span data-testid='home-post-like-total'
+                  class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                  Like (<span class="like-count">@post.Likes.Count()</span>)
+                </span>
+              </button>
+
+              <!-- Comment -->
+              <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" data-testid="comment-button"
+                class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+                <span
+                  class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                  Comment (@post.Comments.Count())
+                </span>
+              </a>
+
+              <!-- View Profile Button -->
+              <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" id="post-user-name"
+                data-testid="view-profile"
+                class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+                <span
+                  class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                  View Profile
+                </span>
+              </a>
+
+            </div>
           </div>
-
-          <p class="text-xs text-gray-400 mt-4">Created on: @post.FormattedCreatedOn</p>
-
-          <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
-
-            <!-- Like -->
-            <button
-              class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all"
-              data-testid="post-like-button" data-post-id="@post.Id" data-liked="@post.Likes.Any(l => l.UserId == Context.Session.GetInt32("user_id"))">
-              <span
-                class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-              <span data-testid ='home-post-like-total'class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                Like (<span class="like-count">@post.Likes.Count()</span>)
-              </span>
-            </button>
-
-            <!-- Comment -->
-            <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" data-testid="comment-button"
-              class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-              <span
-                class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-              <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                Comment (@post.Comments.Count())
-              </span>
-            </a>
-
-            <!-- View Profile Button -->
-            <button
-              class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-              <span
-                class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-              <span class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                View Profile
-              </span>
-            </button>
-
-          </div>
-
-        </div>
-      }
+        }
+      </div>
     </div>
 
     <!-- 🪧 Advert -->
-    <div class="hidden lg:block sticky top-20 ml-8 self-start w-64">
-      <div class="bg-white rounded-lg p-4 shadow-md">
+    <div class="hidden lg:block sticky top-20 self-start w-64 rounded-xl transition hover:shadow-xl border-l-2 border-r-2 border-teal-500 hover:-translate-y-1">
+      <div class="bg-white rounded-xl p-4 shadow-md">
         <h2 class="text-md mb-3 text-gray-400 font-semibold">Sponsored</h2>
         <img src="/images/temp_imgs/ad.png"     
         alt="Woman wearing a watch" class="rounded-lg w-full h-auto object-cover mb-2">

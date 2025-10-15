@@ -9,7 +9,7 @@
     <div class="flex flex-col lg:flex-row w-full max-w-7xl gap-8">
 
         <!-- 🧍 Left column: profile picture + bio + friends -->
-        <div class="flex flex-col top-20 self-start sticky items-center lg:items-start w-full lg:w-1/3 space-y-6">
+        <div class="flex flex-col top-20 self-start top-32 sticky items-center w-full lg:w-1/3 space-y-6">
 
             @{
             string imagePath; 
@@ -23,14 +23,14 @@
             }
 
 
-            <!-- Profile Picture -->
+            <!-- Profile Picture  -->
             <div class="relative flex justify-center">
                 <img id="profile-pic" src="@imagePath" alt="Profile Picture"
                     class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm cursor-pointer transition-transform duration-300 hover:opacity-80" />
             </div>
 
             <!-- Bio -->
-            <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs">
+            <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl">
                 <h2 data-testid="bio-name" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">
                     @Model.FirstName's Bio
                 </h2>
@@ -45,7 +45,7 @@
             </div>
 
             <!-- Friends -->
-            <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs">
+            <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl">
                 <h2 data-testid="friends-header" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Friends
                 </h2>
 
@@ -66,7 +66,8 @@
                         <div class="flex items-center space-x-3">
                             <img src="@otherImagePath"
                                 class="w-10 h-10 rounded-full object-cover border border-gray-300">
-                            <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" data-testid="@other.FirstName"
+                            <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id"
+                                data-testid="@other.FirstName"
                                 class="text-xs font-medium text-gray-700 hover:text-teal-600">
                                 @other.FirstName @other.LastName
                             </a>
@@ -81,18 +82,18 @@
                     </div>
                 }
 
-                <a asp-controller="Friends" asp-action="ViewUserFriends" asp-route-id=@Model.Id data-testid="see-all-friends"
-                    class="text-teal-500 hover:underline text-sm cursor-pointer">
+                <a asp-controller="Friends" asp-action="ViewUserFriends" asp-route-id=@Model.Id
+                    data-testid="see-all-friends" class="text-teal-500 hover:underline text-sm cursor-pointer">
                     See All Friends
                 </a>
             </div>
         </div>
 
-        <!-- 📜 Right column -->
-        <div class="flex flex-col w-full lg:w-2/3 space-y-6">
+        <!-- 📜 Right column:  -->
+        <div class="flex flex-col w-full lg:w-2/3 space-y-6 bg-teal-700/10 shadow-[0_0_15px_rgba(15,118,110,0.3)]">
 
             <!-- Name + Tagline + Friend Button -->
-            <div class="bg-white rounded-lg p-6 shadow-md">
+            <div class="bg-white rounded-lg p-6 shadow-md transition hover:shadow-xl">
                 <h1 class="text-4xl font-bold text-teal-700 mb-2">@Model.FirstName @Model.LastName</h1>
                 <p data-testid="under-name-tagline-text" class="italic text-gray-400 mb-4">
                     @(Model.ProfileBio.Tagline ?? "Just keep swimming!")
@@ -105,16 +106,26 @@
 
                 @if (alreadyFriends.Contains(@Model.Id))
                 {
-                    <button disabled data-testid="already-friends" class="bg-gray-300 text-gray-700 text-sm font-medium py-1 px-3 rounded">
-                        Already Friends
+                    <form asp-action="Remove" asp-controller="Friends" method="post"
+                        onsubmit="return confirm('Are you sure you want to unfriend this person?');">
+                    <button disabled data-testid="already-friends"
+                        class="bg-gray-300 text-gray-700 text-sm font-medium py-1 px-3 rounded hover:bg-gray-200">
+                        Friends
                     </button>
+                        <input type="hidden" name='friendId' value="@Model.Id" />
+                        <input type="hidden" name="returnUrl"
+                                value="@Url.Action("Index", "Users", new { id = Model.Id })" />
+                        <button type="submit"
+                            class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-1 px-3 rounded" data-testid="unfriend">Unfriend</button>
+                    </form> 
                 }
                 else if (pendingRequests.Any(f =>
                 (f.RequesterId == ViewBag.currentUserId && f.AccepterId == @Model.Id) ||
                 (f.RequesterId == @Model.Id && f.AccepterId == ViewBag.currentUserId)))
                 {
-                    <button disabled class="bg-orange-200 text-gray-700 text-sm font-medium py-1 px-3 rounded">
-                        Pending Request
+                    <button data-testid="friend-request-sent" disabled
+                        class="bg-orange-200 text-gray-700 text-sm font-medium py-1 px-3 rounded">
+                        Friend request sent
                     </button>
                 }
                 else
@@ -131,10 +142,10 @@
             </div>
 
             <!-- Write on Wall -->
-            @if (ViewBag.Friendship)
-            {
-                <div class="bg-white rounded-lg w-full p-4 shadow-md">
-                    <h2 class="text-lg font-bold mb-3">Write on their wall</h2>
+@if(ViewBag.Friendship)
+{
+                <div class="flex-1 bg-white rounded-lg overflow-y-auto px-4 py-4 p-4 shadow-md transition hover:shadow-xl space-x-3">
+                    <h2 class="text-lg text-teal-700 font-bold mb-3">Write on their wall</h2>
                     <form action="@Url.Action("Create", "Posts")" method="post" enctype="multipart/form-data">
                         <textarea required id="post-input" data-testid="create-post-input"
                         class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
@@ -154,12 +165,31 @@
                         </div>
                     </form>
                 </div>
-            }
+}
 
-            <!-- Posts -->
-            @foreach (Post post in ViewBag.Posts)
-            {
-                string profilePictureImagePath; 
+            <!-- Posts Section -->
+            <div class="flex flex-col w-full rounded-lg space-y-4 relative">
+                <!-- Sticky Header -->
+                <div class="sticky top-32 z-20 py-1 px-2 rounded-md">
+                    <h1 class="text-3xl font-bold text-teal-700">@Model.FirstName's Wall</h1>
+                </div>
+
+                <!-- Scrollable Post List with Clipping -->
+                <div class="relative overflow-hidden">
+                    <div class="overflow-y-auto max-h-[70vh] pb-10 space-y-6"
+                        style="mask-image: linear-gradient(to bottom, transparent 0%, black 10%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 1%);">
+
+                        @if (ViewBag.Posts == null || !((List<Post>)ViewBag.Posts).Any())
+                        {
+                            <div class="flex items-center justify-center py-8">
+                                <h3 class="text-teal-600 font-semibold">No posts yet!</h3>
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (Post post in ViewBag.Posts)
+                            {
+                                string profilePictureImagePath; 
                 if (!string.IsNullOrEmpty(post.User.ProfilePicturePath)){
                     profilePictureImagePath = post.User.ProfilePicturePath;
                 }
@@ -167,27 +197,28 @@
                 {
                     profilePictureImagePath = "/images/Placeholder.png";
                 }
-                <div class="bg-white rounded-lg w-full p-4 shadow-md">
-                    <div class="flex justify-between items-center">
-                        <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" data-testid="Post-link @post.User.FirstName"
-                            class="text-md font-semibold text-gray-800 hover:text-teal-600">
-                            @post.User.FirstName @post.User.LastName
-                        </a>
-                        <img src="@profilePictureImagePath"
-                            class="w-12 h-12 rounded-full object-cover border border-gray-400" />
-                    </div>
+                <div class="bg-white rounded-lg w-[98%] p-4 mx-auto shadow-md transition hover:shadow-xl">
+                                    <div class="flex justify-between items-center">
+                                        <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id"
+                                            data-testid="Post-link @post.User.FirstName"
+                                            class="text-md font-semibold text-gray-800 hover:text-teal-600">
+                                            @post.User.FirstName @post.User.LastName
+                                        </a>
+                                        <img src="@profilePictureImagePath"
+                                            class="w-10 h-10 rounded-full object-cover border border-gray-400" />
+                                    </div>
 
-                    <p data-testid="post-content" class="text-gray-700 mt-2 leading-relaxed">
+                                    <p data-testid="post-content" class="text-gray-700 mt-2 leading-relaxed break-all">
                     @if(!string.IsNullOrEmpty(post.Content)){
-                        @if (@post.CheckLength())
-                        {
-                        @post.Content
-                        }
-                        else
-                        {
-                        @post.FormatPostContent()
-                        }
-                        }
+                                        @if (@post.CheckLength())
+                                        {
+                                        @post.Content
+                                        }
+                                        else
+                                        {
+                                        @post.FormatPostContent()
+                                        }
+                                        }
                         else
                         {
                         @post.Content;
@@ -200,44 +231,81 @@
                         class="post-picture max-w-[65%] h-auto inline-block object-contain rounded-md" />
                         </div>
                     }
-                    <div class="flex justify-end mt-2">
-                        <button class="text-teal-600 text-sm hover:underline">see more</button>
-                    </div>
+                                    <div class="flex justify-end mt-2">
+            <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" method="get">
+              <button data-testid="see-more-button" class="text-teal-600 text-sm hover:underline">see more</button>
+            </a>
+          </div>
 
-                    <p class="text-xs text-gray-400 mt-4">Created on: @post.FormattedCreatedOn</p>
+                                    <p class="text-xs text-gray-400 mt-4">Created on: @post.FormattedCreatedOn</p>
 
-                    <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
-                        <button class="text-gray-600 text-sm hover:text-teal-600">Like (12)</button>
-                        <button class="text-gray-600 text-sm hover:text-teal-600">Comment (0)</button>
-                        <button class="text-gray-600 text-sm hover:text-teal-600">View Profile</button>
+                                    <div
+                                        class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
+                                        <!-- Like -->
+                    <button
+                      class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all"
+                      data-testid="post-like-button" data-post-id="@post.Id"
+                      data-liked="@post.Likes.Any(l => l.UserId == Context.Session.GetInt32("user_id"))">
+                      <span
+                        class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                      <span data-testid='home-post-like-total'
+                        class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                        Like (<span class="like-count">@post.Likes.Count()</span>)
+                      </span>
+                    </button>
+
+                    <!-- Comment -->
+                    <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" data-testid="comment-button"
+                      class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+                      <span
+                        class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                      <span
+                        class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                        Comment (@post.Comments.Count())
+                      </span>
+                    </a>
+
+                    <!-- View Profile Button -->
+                    <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" id="post-user-name"
+                      data-testid="view-profile"
+                      class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+                      <span
+                        class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                      <span
+                        class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                        View Profile
+                      </span>
+                    </a>
+                                    </div>
+                                </div>
+                            }
+                        }
                     </div>
                 </div>
-            }
-        </div>
-    </div>
-</div>
+            </div>
 
 
-<!-- Fullscreen overlay for enlarged image -->
-<div id="image-overlay" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
-    <img id="overlay-image" src="/images/Placeholder.png" alt="Enlarged Profile Picture"
-        class="max-w-3xl w-11/12 md:w-auto rounded-lg shadow-lg cursor-pointer transition-transform duration-300 transform scale-100 hover:scale-105" />
-</div>
+            <!-- Fullscreen overlay for enlarged image -->
+            <div id="image-overlay"
+                class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
+                <img id="overlay-image" src="/images/Placeholder.png" alt="Enlarged Profile Picture"
+                    class="max-w-3xl w-11/12 md:w-auto rounded-lg shadow-lg cursor-pointer transition-transform duration-300 transform scale-100 hover:scale-105" />
+            </div>
 
-<script>
-    const profilePic = document.getElementById("profile-pic");
-    const overlay = document.getElementById("image-overlay");
-    const overlayImage = document.getElementById("overlay-image");
+            <script>
+                const profilePic = document.getElementById("profile-pic");
+                const overlay = document.getElementById("image-overlay");
+                const overlayImage = document.getElementById("overlay-image");
 
-    profilePic.addEventListener("click", () => {
-        overlay.classList.remove("hidden");
-        overlayImage.src = profilePic.src; // Use the same image
-    });
+                profilePic.addEventListener("click", () => {
+                    overlay.classList.remove("hidden");
+                    overlayImage.src = profilePic.src; // Use the same image
+                });
 
-    // Hide overlay when user clicks outside or on the image
-    overlay.addEventListener("click", (e) => {
-        if (e.target === overlay || e.target === overlayImage) {
-            overlay.classList.add("hidden");
+                // Hide overlay when user clicks outside or on the image
+                overlay.addEventListener("click", (e) => {
+                    if (e.target === overlay || e.target === overlayImage) {
+                        overlay.classList.add("hidden");
         }
     });
 </script>
@@ -279,6 +347,60 @@
       // Reset text if no file is chosen
       fileNameDisplay.textContent = "No file chosen";
       fileNameDisplay.classList.add("text-gray-500", "italic");
-    }
-  });
-</script>
+                }
+                });
+
+                // 🟩 like button logic
+        document.addEventListener('DOMContentLoaded', () => {
+          const likeButtons = document.querySelectorAll('button[data-post-id]');
+
+          likeButtons.forEach(button => {
+            const postId = button.dataset.postId;
+            let liked = button.dataset.liked === 'True' || button.dataset.liked === 'true';
+
+            const bgSpan = button.querySelector('span.absolute');
+            const textSpan = button.querySelector('span.relative');
+
+            if (liked) {
+              bgSpan.classList.add('transition-none'); // disable transition
+              bgSpan.classList.remove('translate-x-full', 'translate-y-full');
+              textSpan.classList.remove('text-gray-600');
+              textSpan.classList.add('text-white');
+
+              requestAnimationFrame(() => {
+                bgSpan.classList.remove('transition-none');
+              });
+            }
+
+            button.addEventListener('click', async () => {
+              try {
+                const response = await fetch(`/posts/${postId}`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
+                const countSpan = button.querySelector('.like-count');
+                countSpan.textContent = data.likeCount;
+
+                liked = !liked; // Toggle state
+                button.dataset.liked = liked;
+
+                if (liked) {
+                  bgSpan.classList.remove('translate-x-full', 'translate-y-full');
+                  textSpan.classList.remove('text-gray-600');
+                  textSpan.classList.add('text-white');
+                } else {
+                  bgSpan.classList.add('translate-x-full', 'translate-y-full');
+                  textSpan.classList.remove('text-white');
+                  textSpan.classList.add('text-gray-600');
+                }
+              } catch (err) {
+                console.error('Error toggling like:', err);
+              }
+            });
+          });
+      });
+            </script>

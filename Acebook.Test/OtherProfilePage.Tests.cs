@@ -27,8 +27,8 @@ namespace Acebook.Tests
             // Wait for form to load
             await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
             // Fill and submit
-            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
-            await Page.Locator("#password").FillAsync("password123");
+            await Page.GetByTestId("email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.GetByTestId("password").FillAsync("password123");
             await Task.WhenAll(
                 Page.WaitForURLAsync($"{BaseUrl}/posts"),
                 Page.GetByTestId("signin-submit").ClickAsync()
@@ -83,6 +83,16 @@ namespace Acebook.Tests
         }
 
         [Test]
+        public async Task ViewProfileOnPost_OtherProfilePage_RedirectsToTheirProfile()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            // Click view profile on post
+            await Page.GetByTestId("view-profile").First.ClickAsync();
+            // redirects to Shelly's profile page
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
+        }
+
+        [Test]
         public async Task ViewPage_NotFriendProfilePage_WriteOnWallNotVisible()
         {
             // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
@@ -107,16 +117,89 @@ namespace Acebook.Tests
         public async Task FriendsProfilePage_OtherProfilePage_ShowsAlreadyFriends()
         {
             // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
-            // Click see all friends to redirect to Shelly's friends page
             await Expect(Page.GetByTestId("already-friends")).ToBeVisibleAsync();
         }
 
-        // [Test]
-        // public async Task FriendRequestSent_OtherProfilePage_ShowsPending()
-        // {
-        //     // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
-        //     // Click see all friends to redirect to Shelly's friends page
-        //     // await Expect(Page.GetByTestId("pending")).ToBeVisibleAsync();
-        // }
+        [Test]
+        public async Task PendingFriendRequest_OtherProfilePage_ShowsFriendRequestSent()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            await Page.GotoAsync("users/4");
+            await Expect(Page.GetByTestId("friend-request-sent")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task NotFriends_OtherProfilePage_AddFriendButtonIsVisible()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            await Page.GotoAsync("users/6");
+            await Expect(Page.GetByTestId("add-friend")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task AddFriends_OtherProfilePage_ChangesToShowFriendRequestSent()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            await Page.GotoAsync("users/6");
+            Page.Dialog += async (_, dialog) =>
+                {
+                    Assert.That(dialog.Message, Does.Contain("Are you sure you want to add this person?"));
+                    await dialog.AcceptAsync();
+                };
+            await Page.GetByTestId("add-friend").ClickAsync();
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/6");
+            await Expect(Page.GetByTestId("friend-request-sent")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task Unfriend_OtherProfilePage_ChangesToAddFriend()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            Page.Dialog += async (_, dialog) =>
+                {
+                    Assert.That(dialog.Message, Does.Contain("Are you sure"));
+                    await dialog.AcceptAsync();
+                };
+            await Page.GetByTestId("unfriend").ClickAsync();
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
+            await Expect(Page.GetByTestId("add-friend")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task Unfriend_OtherProfilePage_WriteOnWallNowHidden()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
+            Page.Dialog += async (_, dialog) =>
+                {
+                    Assert.That(dialog.Message, Does.Contain("Are you sure"));
+                    await dialog.AcceptAsync();
+                };
+            await Page.GetByTestId("unfriend").ClickAsync();
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
+            await Expect(Page.GetByTestId("create-post-input")).ToBeHiddenAsync();
+        }
+
+        [Test]
+        public async Task CommentButton_OtherProfilePage_NavigatesToPostPage()
+        {
+
+            // Click on a post:
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts/7"),
+                Page.GetByTestId("comment-button").First.ClickAsync()
+            );
+            await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Shelly's Splash");
+        }
+        
+        [Test]
+        public async Task SeeMoreButton_OtherProfilePage_NavigatesToPostPage()
+        {
+            // Click on a post:
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts/7"),
+                Page.GetByTestId("see-more-button").First.ClickAsync()
+            );
+            await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Shelly's Splash");
+        }
     }
 }

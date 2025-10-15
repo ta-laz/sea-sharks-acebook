@@ -20,10 +20,9 @@
   <div class="flex flex-col lg:flex-row w-full max-w-7xl gap-8">
 
     <!-- 🧍 Left column: profile picture + bio + friends -->
-    <div class="flex flex-col top-20 self-start top-32 sticky items-center lg:items-start w-full lg:w-1/3 space-y-6">
-
+    <div class="flex flex-col top-20 self-start top-32 sticky items-center w-full lg:w-1/3 space-y-6">
       <!-- Profile Picture (hover reveal) -->
-      <div class="relative group flex justify-center">
+      <div class="relative group flex justify-center w-full">
         <img id="profile-pic" src="@imagePath" 
           alt="Profile Picture"
           class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm transition-opacity duration-300 group-hover:opacity-50 cursor-pointer" />
@@ -37,14 +36,14 @@
           </form>
         @* <img id="profile-pic" src="/images/Placeholder.png" alt="Profile Picture"
           class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm transition-opacity duration-300 cursor-pointer group-hover:opacity-50" />
-        <div <div
+        <div
           class="absolute inset-0 flex items-center justify-center  opacity-0 group-hover:opacity-100 transition-opacity  duration-300 pointer-events-none">
           <p class="text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md">Change Picture</p> *@
         </div>
       </div>
 
       <!-- Profile bio block -->
-      <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs">
+      <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl">
         <h2 data-testid="bio-name" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2"> @Model.FirstName's
           Bio</h2>
 
@@ -67,7 +66,7 @@
 
 
       <!-- Friends block -->
-      <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs">
+      <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl">
         <h2 data-testid="friends-header" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Friends</h2>
         @foreach (var friend in ViewBag.Friends)
         {
@@ -116,14 +115,14 @@
       </div>
     </div>
 
-    <!-- 📜 Right column: profile info + posts + edit tagline -->
-    <div class="flex flex-col w-full lg:w-2/3 space-y-6">
+    <!-- 📜 Right column: profile name + edit tagline + posts -->
+    <div class="flex flex-col w-full lg:w-2/3 space-y-6 bg-teal-700/10 shadow-[0_0_15px_rgba(15,118,110,0.3)]">
 
-      <!-- Profile Info -->
-      <div class="bg-white rounded-lg p-6 shadow-md">
+      <!-- Profile Name + Tagline -->
+      <div class="bg-white rounded-lg p-6 shadow-md transition hover:shadow-xl">
         <h1 class="text-4xl font-bold text-teal-700 mb-2">@Model.FirstName @Model.LastName</h1>
 
-        <p id="under-name-tagline-text" data-testid="under-name-tagline-text" class="italic text-gray-400 mt-1 mb-4">
+        <p id="under-name-tagline-text" data-testid="under-name-tagline-text" class="italic text-gray-400 mt-1">
           @(Model.ProfileBio.Tagline ?? "Just keep swimming!")
         </p>
 
@@ -146,15 +145,15 @@
           </button>
         </form>
 
-        <button id="update-tagline" class="text-teal-500 text-sm py-4 rounded-md hover:underline transition">
+        <button id="update-tagline" class="text-teal-500 text-sm mt-4 rounded-md hover:underline transition">
           Edit tagline
         </button>
       </div>
 
 
       <!-- Create Post Form -->
-      <div class="bg-white rounded-lg w-full p-4 shadow-md">
-        <h2 class="text-lg font-bold mb-3">Create a Post</h2>
+      <div class="flex-1 bg-white rounded-lg overflow-y-auto px-4 py-4 p-4 shadow-md transition hover:shadow-xl space-x-3">
+        <h2 class="text-lg text-teal-700 font-bold mb-3">Create a Post</h2>
         <form action="@Url.Action("Create", "Posts")" method="post" enctype="multipart/form-data" >
           <textarea required id="create-post-input" data-testid="create-post-input"
             class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
@@ -177,9 +176,28 @@
 
 
       <!-- Posts Section -->
-      @foreach (Post post in ViewBag.Posts)
-      {
-      string profilePictureImagePath; 
+      <div class="flex flex-col w-full rounded-lg space-y-4 relative">
+        <!-- Sticky Header -->
+        <div class="sticky top-32 z-20 py-1 px-2 rounded-md">
+          <h1 class="text-3xl font-bold text-teal-700">My Wall</h1>
+        </div>
+
+        <!-- Scrollable Post List with Clipping -->
+        <div class="relative overflow-hidden">
+          <div class="overflow-y-auto max-h-[70vh] pb-10 space-y-6"
+            style="mask-image: linear-gradient(to bottom, transparent 0%, black 20%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 1%);">
+
+            @if (ViewBag.Posts == null || !((List<Post>)ViewBag.Posts).Any())
+            {
+              <div class="flex items-center justify-center py-8">
+                <h3 class="text-teal-600 font-semibold">No posts yet!</h3>
+              </div>
+            }
+            else
+            {
+              @foreach (Post post in ViewBag.Posts)
+              {
+              string profilePictureImagePath; 
       if (!string.IsNullOrEmpty(post.User.ProfilePicturePath)){
           profilePictureImagePath = post.User.ProfilePicturePath;
       }
@@ -187,13 +205,16 @@
       {
           profilePictureImagePath = "/images/Placeholder.png";
       }
-        <div class="bg-white rounded-lg w-full p-4 shadow-md">
-          <div class="flex justify-between items-center">
-            <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" id="post-user-name" data-testid="Post-link @post.User.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600">@post.User.FirstName @post.User.LastName</a>
-            <img src="@profilePictureImagePath" class="w-12 h-12 rounded-full object-cover border border-gray-400" />
-          </div>
+        <div class="bg-white rounded-lg w-[98%] p-4 mx-auto shadow-md transition hover:shadow-xl">
+                  <div class="flex justify-between items-center">
+                    <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" id="post-user-name"
+                      data-testid="Post-link @post.User.FirstName"
+                      class="text-md font-semibold text-gray-800 hover:text-teal-600">@post.User.FirstName
+                      @post.User.LastName</a>
+                    <img src="@profilePictureImagePath" class="w-10 h-10 rounded-full object-cover border border-gray-400" />
+                  </div>
 
-          <p class="text-gray-700 mt-2 leading-relaxed">
+          <p class="text-gray-700 mt-2 leading-relaxed break-all">
           @if(!string.IsNullOrEmpty(post.Content)){
             @if (@post.CheckLength())
             {
@@ -217,71 +238,161 @@
               </div>
           }
 
-          <div class="flex justify-end mt-2">
-            <button class="text-teal-600 text-sm hover:underline">see more</button>
-          </div>
+                  <div class="flex justify-end mt-2">
+                    <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" method="get">
+                      <button data-testid="see-more-button" class="text-teal-600 text-sm hover:underline">see more</button>
+                    </a>
+                  </div>
 
-          <p class="text-xs text-gray-400 mt-4">Created on: @post.FormattedCreatedOn</p>
+                  <p class="text-xs text-gray-400 mt-4">Created on: @post.FormattedCreatedOn</p>
 
-          <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
-            <button class="text-gray-600 text-sm hover:text-teal-600">Like (12)</button>
-            <button class="text-gray-600 text-sm hover:text-teal-600">Comment (0)</button>
-            <button class="text-gray-600 text-sm hover:text-teal-600">View Profile</button>
+                  <div class="flex border-t border-gray-200 divide-x divide-gray-200 justify-around mt-4 pt-3">
+
+                    <!-- Like -->
+                    <button
+                      class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all"
+                      data-testid="post-like-button" data-post-id="@post.Id"
+                      data-liked="@post.Likes.Any(l => l.UserId == Context.Session.GetInt32("user_id"))">
+                      <span
+                        class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                      <span data-testid='home-post-like-total'
+                        class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                        Like (<span class="like-count">@post.Likes.Count()</span>)
+                      </span>
+                    </button>
+
+                    <!-- Comment -->
+                    <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" data-testid="comment-button"
+                      class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+                      <span
+                        class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                      <span
+                        class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                        Comment (@post.Comments.Count())
+                      </span>
+                    </a>
+
+                    <!-- View Profile Button -->
+                    <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" id="post-user-name"
+                      data-testid="view-profile"
+                      class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+                      <span
+                        class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                      <span
+                        class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                        View Profile
+                      </span>
+                    </a>
+
+                  </div>
+                </div>
+              }
+            }
           </div>
         </div>
-      }
-    </div>
+      </div>
 
-  </div>
-</div>
+      <!-- Fullscreen overlay for enlarged image -->
+      <div id="image-overlay" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
+        <img id="overlay-image" src="/images/Placeholder.png" alt="Enlarged Profile Picture"
+          class="max-w-3xl w-11/12 md:w-auto rounded-lg shadow-lg cursor-pointer transition-transform duration-300 transform scale-100 hover:scale-105" />
+      </div>
 
-<!-- Fullscreen overlay for enlarged image -->
-<div id="image-overlay" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
-  <img id="overlay-image" src="/images/Placeholder.png" alt="Enlarged Profile Picture"
-    class="max-w-3xl w-11/12 md:w-auto rounded-lg shadow-lg cursor-pointer transition-transform duration-300 transform scale-100 hover:scale-105" />
-</div>
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          // 🟩 Tagline editing logic
+          const button = document.getElementById('update-tagline');
+          const text = document.getElementById('under-name-tagline-text');
+          const form = document.getElementById('tagline-form');
+          const cancel = document.getElementById("cancel-edit");
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // 🟩 Tagline editing logic
-    const button = document.getElementById('update-tagline');
-    const text = document.getElementById('under-name-tagline-text');
-    const form = document.getElementById('tagline-form');
-    const cancel = document.getElementById("cancel-edit");
+          if (button && text && form && cancel) {
+            button.addEventListener('click', () => {
+              text.classList.add('hidden');
+              form.classList.remove('hidden');
+              button.classList.add('hidden');
+            });
 
-    if (button && text && form && cancel) {
-      button.addEventListener('click', () => {
-        text.classList.add('hidden');
-        form.classList.remove('hidden');
-        button.classList.add('hidden');
-      });
+            cancel.addEventListener('click', () => {
+              text.classList.remove('hidden');
+              form.classList.add('hidden');
+              button.classList.remove('hidden');
+            });
+          }
 
-      cancel.addEventListener('click', () => {
-        text.classList.remove('hidden');
-        form.classList.add('hidden');
-        button.classList.remove('hidden');
-      });
-    }
+          // 🟩 Profile picture enlarge logic
+          const profilePic = document.getElementById("profile-pic");
+          const overlay = document.getElementById("image-overlay");
+          const overlayImage = document.getElementById("overlay-image");
 
-    // 🟩 Profile picture enlarge logic
-    const profilePic = document.getElementById("profile-pic");
-    const overlay = document.getElementById("image-overlay");
-    const overlayImage = document.getElementById("overlay-image");
+          if (profilePic && overlay && overlayImage) {
+            profilePic.addEventListener("click", () => {
+              overlay.classList.remove("hidden");
+              overlayImage.src = profilePic.src;
+            });
 
-    if (profilePic && overlay && overlayImage) {
-      profilePic.addEventListener("click", () => {
-        overlay.classList.remove("hidden");
-        overlayImage.src = profilePic.src;
-      });
+            overlay.addEventListener("click", (e) => {
+              if (e.target === overlay || e.target === overlayImage) {
+                overlay.classList.add("hidden");
+              }
+            });
+          }
+        });
 
-      overlay.addEventListener("click", (e) => {
-        if (e.target === overlay || e.target === overlayImage) {
-          overlay.classList.add("hidden");
-        }
-      });
-    }
-  });
-</script>
+        // 🟩 like button logic
+        document.addEventListener('DOMContentLoaded', () => {
+          const likeButtons = document.querySelectorAll('button[data-post-id]');
+
+          likeButtons.forEach(button => {
+            const postId = button.dataset.postId;
+            let liked = button.dataset.liked === 'True' || button.dataset.liked === 'true';
+
+            const bgSpan = button.querySelector('span.absolute');
+            const textSpan = button.querySelector('span.relative');
+
+            if (liked) {
+              bgSpan.classList.add('transition-none'); // disable transition
+              bgSpan.classList.remove('translate-x-full', 'translate-y-full');
+              textSpan.classList.remove('text-gray-600');
+              textSpan.classList.add('text-white');
+
+              requestAnimationFrame(() => {
+                bgSpan.classList.remove('transition-none');
+              });
+            }
+
+            button.addEventListener('click', async () => {
+              try {
+                const response = await fetch(`/posts/${postId}`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
+                const countSpan = button.querySelector('.like-count');
+                countSpan.textContent = data.likeCount;
+
+                liked = !liked; // Toggle state
+                button.dataset.liked = liked;
+
+                if (liked) {
+                  bgSpan.classList.remove('translate-x-full', 'translate-y-full');
+                  textSpan.classList.remove('text-gray-600');
+                  textSpan.classList.add('text-white');
+                } else {
+                  bgSpan.classList.add('translate-x-full', 'translate-y-full');
+                  textSpan.classList.remove('text-white');
+                  textSpan.classList.add('text-gray-600');
+                }
+              } catch (err) {
+                console.error('Error toggling like:', err);
+              }
+            });
+          });
+        });
+      </script>
 
 <script>
   // 🟩 Post picture enlarge logic

@@ -27,8 +27,8 @@ namespace Acebook.Tests
             // Wait for form to load
             await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
             // Fill and submit
-            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
-            await Page.Locator("#password").FillAsync("password123");
+            await Page.GetByTestId("email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.GetByTestId("password").FillAsync("password123");
             await Task.WhenAll(
                 Page.WaitForURLAsync($"{BaseUrl}/posts"),
                 Page.GetByTestId("signin-submit").ClickAsync()
@@ -184,7 +184,17 @@ namespace Acebook.Tests
         {
             // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
             // Click friend's name on post
-            await Page.GetByTestId("Post-link Bluey").ClickAsync();
+            await Page.GetByTestId("Post-link Bluey").First.ClickAsync();
+            // redirects to Bluey's profile page
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/50");
+        }
+
+        [Test]
+        public async Task ViewProfileOnPost_MyUserProfilePage_RedirectsToTheirProfile()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
+            // Click view profile on post
+            await Page.GetByTestId("view-profile").First.ClickAsync();
             // redirects to Bluey's profile page
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/50");
         }
@@ -201,6 +211,29 @@ namespace Acebook.Tests
             await Expect(Page.GetByTestId("Finn")).ToBeVisibleAsync();
             await Expect(Page.GetByTestId("Bruce")).ToBeVisibleAsync();
             await Expect(Page.GetByTestId("Coral")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task CommentButton_MyProfilePage_NavigatesToPostPage()
+        {
+
+            // Click on a post:
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts/174"),
+                Page.GetByTestId("comment-button").First.ClickAsync()
+            );
+            await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
+        }
+        
+        [Test]
+        public async Task SeeMoreButton_MyProfilePage_NavigatesToPostPage()
+        {
+            // Click on a post:
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts/174"),
+                Page.GetByTestId("see-more-button").First.ClickAsync()
+            );
+            await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
         }
     }
 }

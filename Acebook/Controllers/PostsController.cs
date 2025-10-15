@@ -24,7 +24,11 @@ public class PostsController : Controller
     AcebookDbContext dbContext = new AcebookDbContext();
     int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
 
+    var user = dbContext.Users
+                  .FirstOrDefault(u => u.Id == currentUserId);
+
     var posts = dbContext.Posts
+                               .Where(p => p.UserId == p.WallId)
                                .Include(p => p.User)
                                .Include(p => p.Comments)
                                   .ThenInclude(c => c.Likes)
@@ -44,7 +48,7 @@ public class PostsController : Controller
 
     ViewBag.Posts = posts;
     ViewBag.Posts.Reverse();
-    return View();
+    return View(user);
   }
 
   // CREATE a Post

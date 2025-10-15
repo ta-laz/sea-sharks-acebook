@@ -28,8 +28,8 @@ namespace Acebook.Tests
             // Wait for form to load
             await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
             // Fill and submit
-            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
-            await Page.Locator("#password").FillAsync("password123");
+            await Page.GetByTestId("email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.GetByTestId("password").FillAsync("password123");
             await Task.WhenAll(
                 Page.WaitForURLAsync($"{BaseUrl}/posts"),
                 Page.GetByTestId("signin-submit").ClickAsync()
@@ -52,8 +52,8 @@ namespace Acebook.Tests
         public async Task FriendListPage_GoToURL_DisplaysFriendList()
         {
             // NOTE: each test is set up as signed in with Finn and goes to /friends
-            await Expect(Page.GetByText("My Friends")).ToBeVisibleAsync();
-            await Expect(Page.GetByText("Friend List")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("myFriendsPageTitle")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("friends-list-subheader")).ToBeVisibleAsync();
 
         }
 
@@ -98,7 +98,7 @@ namespace Acebook.Tests
 
             await Page.WaitForURLAsync($"{BaseUrl}/friends");
 
-            var friendListSection = Page.Locator("div:has(h2:text('Friend List'))");
+            var friendListSection = Page.Locator("div:has(h2:text('Friends'))");
             await Expect(friendListSection.GetByText("Harbor")).ToBeVisibleAsync();
         }
 

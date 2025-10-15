@@ -32,8 +32,8 @@ namespace Acebook.Tests
             // Wait for form to load
             await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
             // Fill and submit
-            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
-            await Page.Locator("#password").FillAsync("password123");
+            await Page.GetByTestId("email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.GetByTestId("password").FillAsync("password123");
             await Task.WhenAll(
                 Page.WaitForURLAsync($"{BaseUrl}/posts"),
                 Page.Locator("#signin-submit").ClickAsync()
@@ -132,7 +132,7 @@ namespace Acebook.Tests
         public async Task NewPostWithNoComments_DisplaysNoCommentsMessage()
         {
             // Create post
-            await Page.Locator("#post-content").FillAsync("Test content");
+            await Page.GetByTestId("post-content-input").FillAsync("Test content");
             // Wait for post submission + redirect
             await Task.WhenAll(
                 Page.Locator("#post-submit").ClickAsync(),
@@ -195,7 +195,7 @@ namespace Acebook.Tests
         public async Task DeletePost_PostAuthor_DeletesPost()
         {
             // Create post
-            await Page.Locator("#post-content").FillAsync("Test delete post button works properly");
+            await Page.GetByTestId("post-content-input").FillAsync("Test delete post button works properly");
             // Wait for post submission + redirect
             await Task.WhenAll(
                 Page.Locator("#post-submit").ClickAsync(),
@@ -232,7 +232,7 @@ namespace Acebook.Tests
         public async Task DeletePost_NotPostAuthor_CannotDeletePost()
         {
             // Create post
-            await Page.Locator("#post-content").FillAsync("Test delete post button works properly");
+            await Page.GetByTestId("post-content-input").FillAsync("Test delete post button works properly");
             
             // Wait for post submission + redirect
             await Task.WhenAll(
@@ -428,7 +428,7 @@ namespace Acebook.Tests
         public async Task UpdatePost_PostAuthor_CanUpdatePost()
         {
             // Create post
-            await Page.Locator("#post-content").FillAsync("Test Edit post button works properly");
+            await Page.GetByTestId("post-content-input").FillAsync("Test Edit post button works properly");
 
             // Wait for post submission + redirect
             await Task.WhenAll(
@@ -465,7 +465,7 @@ namespace Acebook.Tests
         public async Task UpdatePost_NOTPostAuthor_CannotUpdatePost()
         {
             // Create post
-            await Page.Locator("#post-content").FillAsync("Test Edit post button works properly");
+            await Page.GetByTestId("post-content-input").FillAsync("Test Edit post button works properly");
 
             // Wait for post submission + redirect
             await Task.WhenAll(

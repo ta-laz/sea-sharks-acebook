@@ -48,7 +48,7 @@ namespace Acebook.Tests
         [Test]
         public async Task CanUploadImage_OnAquarium()
         {
-            await Page.Locator("#post-content").FillAsync("Test content");
+            await Page.GetByTestId("post-content-input").FillAsync("Test content");
             var path = Path.Combine(Directory.GetCurrentDirectory(), "testImage.jpg");
             await Page.SetInputFilesAsync("#file-upload", path);
 
@@ -100,10 +100,10 @@ namespace Acebook.Tests
 
            await Page.Locator("#post-submit").ClickAsync();
 
-            var isValid = await Page.Locator("#post-content").EvaluateAsync<bool>("el => el.checkValidity()");
+            var isValid = await Page.GetByTestId("post-content-input").EvaluateAsync<bool>("el => el.checkValidity()");
             Assert.That(isValid, Is.False, "Expected the textarea to be invalid due to 'required' attribute");
 
-            var validationMessage = await Page.Locator("#post-content").EvaluateAsync<string>("el => el.validationMessage");
+            var validationMessage = await Page.GetByTestId("post-content-input").EvaluateAsync<string>("el => el.validationMessage");
             Console.WriteLine(validationMessage);
             Assert.That(validationMessage, Does.Contain("Please fill out this field."));
         }
