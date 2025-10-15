@@ -43,9 +43,9 @@
                 </div>
                 <a asp-controller="Users" asp-action="Index" asp-route-id="@user.Id" class="flex justify-center">
                     <button
-                        class="relative h-10 w-28 flex items-center justify-center text-gray-600 text-xs bg-transparent group font-medium rounded-md transition-all border border-gray-200 shadow-sm overflow-hidden">
+                        class="relative h-10 w-28 flex items-center justify-center text-gray-600 bg-transparent group font-medium rounded-md transition-all  shadow-sm overflow-hidden">
                         <span
-                            class="absolute inset-0 bg-teal-600 transition-all flex items-center justify-center text-white hover:bg-white hover:text-teal-600">
+                            class="absolute inset-0 bg-teal-600 transition-all flex items-center justify-center text-white hover:bg-teal-700 text-sm">
                             View Profile
                         </span>
                     </button>
@@ -57,7 +57,7 @@
             <div data-section="users" class="hidden more-users">
                 @foreach (var user in users.Skip(3))
                 {
-                <div class="flex items-center justify-between gap-3 mb-10 p-4 rounded-lg bg-white  transition">
+                <div class="flex items-center justify-between gap-3 mb-4 mb-10 p-4 rounded-lg bg-white  transition">
                 <div class="flex items-center gap-3 mb-2">
                     <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400">
                     <a asp-controller="Users" asp-action="Index" asp-route-id="@user.Id" id="friend-name"
@@ -67,9 +67,9 @@
                 </div>
                 <a asp-controller="Users" asp-action="Index" asp-route-id="@user.Id" class="flex justify-center">
                     <button
-                        class="relative h-10 w-28 flex items-center justify-center text-gray-600 text-xs bg-transparent group font-medium rounded-md transition-all border border-gray-200 shadow-sm overflow-hidden">
+                        class="relative h-10 w-28 flex items-center justify-center text-gray-600 bg-transparent group font-medium rounded-md transition-all shadow-sm overflow-hidden">
                         <span
-                            class="absolute inset-0 bg-teal-600 transition-all flex items-center justify-center text-white hover:bg-white hover:text-teal-600">
+                            class="absolute inset-0 bg-teal-600 transition-all flex items-center justify-center text-white hover:bg-teal-700 text-sm">
                             View Profile
                         </span>
                     </button>
@@ -102,7 +102,7 @@
 
         <div class="flex items-center">
             <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id"
-                class="inline-flex items-center justify-center text-gray-600 text-sm py-2 px-4 font-medium transition-all bg-teal-600 text-white rounded-lg">
+                class="inline-flex items-center justify-center text-gray-600 text-sm py-2 px-4 font-medium transition-all bg-teal-600 text-white rounded-lg hover:bg-teal-700">
                 View Post
             </a>
         </div>
@@ -126,7 +126,7 @@
 
         <div class="flex items-center">
             <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id"
-                class="inline-flex items-center justify-center text-gray-600 text-sm py-2 px-4 font-medium transition-all bg-teal-600 text-white rounded-lg">
+                class="inline-flex items-center justify-center text-gray-600 text-sm py-2 px-4 font-medium transition-all bg-teal-600 text-white rounded-lg hover:bg-teal-700">
                 View Post
             </a>
         </div>
@@ -179,7 +179,7 @@
                 </div>
 
                 <div class="ml-4 flex items-center">
-                    <a asp-controller="Posts" asp-action="Post" asp-route-id="@comment.Post.Id" class="inline-flex items-center justify-center text-sm py-1.5 px-3 bg-teal-600 text-white font-medium rounded-lg shadow-md hover:bg-teal-700 transition">See all comments</a>
+                    <a asp-controller="Posts" asp-action="Post" asp-route-id="@comment.Post.Id" class="inline-flex items-center justify-center text-gray-600 text-sm py-2 px-4 font-medium transition-all bg-teal-600 text-white rounded-lg hover:bg-teal-700">See all comments</a>
                 </div>
             </div>
         </div>
@@ -217,7 +217,7 @@
                 </div>
 
                 <div class="ml-4 flex items-center">
-                    <a asp-controller="Posts" asp-action="Post" asp-route-id="@comment.Post.Id" class="inline-flex items-center justify-center text-sm py-1.5 px-3 bg-teal-600 text-white font-medium rounded-lg shadow-md hover:bg-teal-700 transition">See all comments</a>
+                    <a asp-controller="Posts" asp-action="Post" asp-route-id="@comment.Post.Id" class="inline-flex items-center justify-center text-gray-600 text-sm py-2 px-4 font-medium transition-all bg-teal-600 text-white rounded-lg hover:bg-teal-700">See all comments</a>
                 </div>
             </div>
         </div>

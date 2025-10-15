@@ -64,5 +64,14 @@ namespace Acebook.Tests
             await Expect(Page.GetByTestId("post-results")).ToBeVisibleAsync();
             await Expect(Page.GetByTestId("comment-results")).ToBeVisibleAsync();
         }
+        [Test]
+        public async Task CheckCorrectResultsShowInAll()
+        {
+            await Page.Locator("#search-input").FillAsync("Reef");
+            await Page.GetByTestId("search-submit").ClickAsync();
+            await Expect(Page.GetByTestId("user-results")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("post-results")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("comment-results")).ToBeVisibleAsync();
+        }
     }
 }
