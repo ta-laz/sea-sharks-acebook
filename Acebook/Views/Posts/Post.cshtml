@@ -44,11 +44,13 @@
         }
 
         <p id="post-content" data-testid="post-content" class="text-gray-700 mt-2 leading-relaxed">@Model.Content</p>
+        @if (@Model.PostPicturePath != null)
+        {
         <div class="w-full text-center">
             <img id="post-picture-@Model.Id" src="@Model.PostPicturePath" alt="Post Picture"
                 class="post-picture max-w-[65%] h-auto inline-block object-contain rounded-md" />
         </div>
-
+        }
 
         <!-- Edit post form --> 
         <form asp-action="Update" asp-controller="Posts" asp-route-id="@Model.Id" method="post" id="update-post-form"
