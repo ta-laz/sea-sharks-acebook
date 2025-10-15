@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using acebook.Models;
@@ -11,9 +12,11 @@ using acebook.Models;
 namespace acebook.Migrations
 {
     [DbContext(typeof(AcebookDbContext))]
-    partial class AcebookDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251014160637_AddCascadeDeleteForPostsCommentsLikes")]
+    partial class AddCascadeDeleteForPostsCommentsLikes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,9 +129,6 @@ namespace acebook.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("PostPicturePath")
-                        .HasColumnType("text");
-
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
@@ -194,9 +194,6 @@ namespace acebook.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Password")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProfilePicturePath")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
