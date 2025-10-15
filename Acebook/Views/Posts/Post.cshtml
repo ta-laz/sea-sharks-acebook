@@ -39,7 +39,7 @@
             <p class="text-xs text-gray-400 mt-4">Created on: @Model.FormattedCreatedOn</p>
             @if (Model.UserId == Context.Session.GetInt32("user_id"))
             {
-                <button id="edit-post-button" class="bg-white text-grey-600 text-xs font-medium px-3 py-1 rounded-md hover:bg-gray-100 border border-gray-200 shadow-md h-[25px] leading-none">
+                <button id="edit-post-button" data-testid="edit-post-button" class="bg-white text-grey-600 text-xs font-medium px-3 py-1 rounded-md hover:bg-gray-100 border border-gray-200 shadow-md h-[25px] leading-none">
                     Edit Post
                 </button>
             }
@@ -128,7 +128,7 @@
                         </div>
 
                         <!-- Comment content  -->
-                        <p id = "comment_content-@comment.Id" class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
+                        <p id="comment_content-@comment.Id" data-testid="comment-text-@comment.Id" class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
                         
                         <!-- Edit comment form --> 
                         <form asp-action="Update" asp-controller="Comments" asp-route-postId="@Model.Id" asp-route-commentId="@comment.Id" method="post" id="update-comment-form-@comment.Id"
@@ -152,7 +152,7 @@
                             <div class="flex justify-end items-center space-x-2">
                                 @if (comment.UserId == Context.Session.GetInt32("user_id") || comment.Post.UserId == Context.Session.GetInt32("user_id"))
                                 {
-                                    <button id="edit-comment-button-@comment.Id" class="bg-teal-600 text-white text-xs font-medium px-3 py-1 rounded-md hover:bg-teal-400 shadow-md h-[25px] leading-none">Edit</button>
+                                    <button id="edit-comment-button-@comment.Id" data-testid="edit-comment-button-@comment.Id" class="bg-teal-600 text-white text-xs font-medium px-3 py-1 rounded-md hover:bg-teal-400 shadow-md h-[25px] leading-none">Edit</button>
                                     <form action="@Url.Action("Delete", "Comments", new { postId = Model.Id, commentId = comment.Id })" method="post" onsubmit="return confirm('Are you sure you want to delete this comment?');" class="inline-flex items-center">
                                         <button data-testid="delete-comment-button-@comment.Id" 
                                                 type="submit" 
