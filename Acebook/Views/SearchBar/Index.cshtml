@@ -1,0 +1,261 @@
+@using acebook.Controllers
+
+@{
+    ViewData["Title"] = "Search Results";
+    var searchString = ViewData["SearchString"] as string;
+}
+
+
+
+@{
+    bool hasResults =
+        (ViewBag.UsersResults != null && (ViewBag.UsersResults as List<acebook.Models.User>).Count > 0) ||
+        (ViewBag.PostsResults != null && (ViewBag.PostsResults as List<acebook.Models.Post>).Count > 0) ||
+        (ViewBag.CommentsResults != null && (ViewBag.CommentsResults as List<acebook.Models.Comment>).Count > 0);
+}
+
+@if (!string.IsNullOrWhiteSpace(searchString) && hasResults)
+{
+    <h1 class="text-5xl font-bold mb-4 text-teal-600 pb-6 text-center">
+        Search Results for: <strong>@searchString</strong>
+    </h1>
+}
+
+<!-- User List Section -->
+@{
+    var users = ViewBag.UsersResults as List<acebook.Models.User>;
+}
+
+@if (ViewBag.UsersResults != null && users.Count > 0)
+{
+    <div class="bg-teal-700/10 p-2 mb-10 rounded-lg shadow-[0_0_15px_rgba(15,118,110,0.3)]">
+        <h2 data-testid="user-results" class="mb-4 text-teal-600 text-3xl font-bold p-2 ">User results</h2>
+        <br />
+        @foreach (var user in users.Take(3))
+        {
+            <div data-testid="@($"{user.FirstName}-user-search")" class="flex items-center justify-between gap-3 mb-4 p-4 rounded-lg bg-white  transition">
+                <div class="flex items-center gap-3">
+                    <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400">
+                    <a asp-controller="Users" asp-action="Index" asp-route-id="@user.Id" id="friend-name"
+                        data-testid="@user.FirstName"
+                        class="text-md font-semibold text-gray-800 hover:text-teal-600">@user.FirstName @user.LastName</a>
+
+                </div>
+                <a asp-controller="Users" asp-action="Index" asp-route-id="@user.Id" class="flex justify-center">
+                    <button
+                        class="relative h-10 w-28 flex items-center justify-center text-gray-600 bg-transparent group font-medium rounded-md transition-all  shadow-sm overflow-hidden">
+                        <span
+                            class="absolute inset-0 bg-teal-600 transition-all flex items-center justify-center text-white hover:bg-teal-700 text-sm">
+                            View Profile
+                        </span>
+                    </button>
+                </a>
+            </div>
+        }
+        @if (users.Count > 3)
+        {
+            <div data-section="users" class="hidden more-users">
+                @foreach (var user in users.Skip(3))
+                {
+                <div class="flex items-center justify-between gap-3 mb-4 mb-10 p-4 rounded-lg bg-white  transition">
+                <div class="flex items-center gap-3 mb-2">
+                    <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400">
+                    <a asp-controller="Users" asp-action="Index" asp-route-id="@user.Id" id="friend-name"
+                        data-testid="@user.FirstName"
+                        class="text-md font-semibold text-gray-800 hover:text-teal-600">@user.FirstName @user.LastName</a>
+
+                </div>
+                <a asp-controller="Users" asp-action="Index" asp-route-id="@user.Id" class="flex justify-center">
+                    <button
+                        class="relative h-10 w-28 flex items-center justify-center text-gray-600 bg-transparent group font-medium rounded-md transition-all shadow-sm overflow-hidden">
+                        <span
+                            class="absolute inset-0 bg-teal-600 transition-all flex items-center justify-center text-white hover:bg-teal-700 text-sm">
+                            View Profile
+                        </span>
+                    </button>
+                </a>
+            </div>
+                }
+            </div>
+            <button class="see-more-btn text-teal-600 font-semibold p-2 hover:bg-teal-600/20 rounded-lg transition" data-target="users" data-testid="showing-all-results-test2"> Show All Results</button>
+        }
+    </div>
+}
+@{
+    var posts = ViewBag.PostsResults as List<acebook.Models.Post>;
+}
+
+@if (ViewBag.PostsResults != null && posts.Count > 0)
+{
+
+    <br />
+    <div class="bg-teal-700/10 mb-10 p-2 rounded-lg shadow-[0_0_15px_rgba(15,118,110,0.3)] overflow-hidden">
+        <h2 data-testid="post-results" class="mb-4 text-teal-600 text-3xl font-bold pb-2">Post results</h2>
+        @foreach (Post post in posts.Take(3))
+        {
+<div class="bg-white rounded-lg w-full p-4 mt-4 shadow-md hidden md:block">
+    <div class="flex justify-between">
+        <div class="flex items-center space-x-4">
+            <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400">
+            <h3 data-testid="post-search-@post.User.FirstName" class="text-md font-semibold text-gray-800">@post.User.FirstName @post.User.LastName</h3>
+        </div>
+
+        <div class="flex items-center">
+            <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id"
+                class="inline-flex items-center justify-center text-gray-600 text-sm py-2 px-4 font-medium transition-all bg-teal-600 text-white rounded-lg hover:bg-teal-700">
+                View Post
+            </a>
+        </div>
+    </div>
+    <p class="text-gray-700 mt-4 leading-relaxed">@post.Content</p>
+    <p class="text-xs text-gray-400 mt-2">Created on: @post.FormattedCreatedOn</p>
+</div>
+
+        }
+        @if (posts.Count > 3) //IF USERS ARE MORE THAN 3 HIDE THIS CONTENT TO BE TRIGGERED BY JS
+        {
+            <div class="hidden more-posts" data-section="posts">
+                @foreach (var post in posts.Skip(3))
+                {
+                    <div class="bg-white rounded-lg w-full p-4 mt-4 shadow-md hidden md:block">
+    <div class="flex justify-between">
+        <div class="flex items-center space-x-4">
+            <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400">
+            <h3 class="text-md font-semibold text-gray-800">@post.User.FirstName @post.User.LastName</h3>
+        </div>
+
+        <div class="flex items-center">
+            <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id"
+                class="inline-flex items-center justify-center text-gray-600 text-sm py-2 px-4 font-medium transition-all bg-teal-600 text-white rounded-lg hover:bg-teal-700">
+                View Post
+            </a>
+        </div>
+    </div>
+    <p data-testid='content-test-for-post' class="text-gray-700 mt-4 leading-relaxed">@post.Content</p>
+    <p class="text-xs text-gray-400 mt-2">Created on: @post.FormattedCreatedOn</p>
+</div>
+                }
+            </div>
+            <button class="see-more-btn text-teal-600 mt-2 font-semibold p-2 hover:bg-teal-600/20 rounded-lg transition" data-target="posts" data-testid="showing-all-results-test1"> Show All Results</button>
+        }
+    </div>
+}
+@{
+    List<Comment>? comments = ViewBag.CommentsResults as List<acebook.Models.Comment>;
+}
+
+@if (ViewBag.CommentsResults != null && comments.Count > 0)
+{
+<br />
+<div class="bg-teal-700/10 p-2 mb-10 rounded-lg shadow-[0_0_15px_rgba(15,118,110,0.3)]">
+    <h2 data-testid="comment-results" class="mb-4 text-teal-600 text-3xl font-bold">Comment results</h2>
+
+    @foreach (Comment comment in comments.Take(3))
+    {
+        <div class="bg-white rounded-lg w-full mb-4 p-4 shadow-[0_0_15px_rgba(15,118,110,0.3)] relative">
+            <div class="flex items-start mb-3">
+                <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400 mr-3">
+
+                <div class="flex-1">
+                    <h3 data-testid="comment-search-@comment.Post.User.FirstName" class="text-md font-semibold text-gray-800">
+                        @comment.Post.User.FirstName @comment.Post.User.LastName
+                    </h3>
+                    <p class="text-gray-700 mt-1 leading-relaxed">@comment.Post.Content</p>
+                    <p class="text-xs text-gray-400 mt-2">Created on: @comment.Post.FormattedCreatedOn</p>
+                </div>
+            </div>
+
+            <div class="bg-teal-700/10 rounded-lg mt-2 ml-1  p-3 shadow-md flex items-start justify-between">
+                <div class="flex items-start">
+                    <img src="/images/Placeholder.png" class="w-8 h-8 rounded-full object-cover border border-gray-400 mr-3">
+
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-800">
+                            @comment.User.FirstName @comment.User.LastName
+                        </h3>
+                        <p class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
+                        <p class="text-xs text-gray-400 mt-2">Commented on: @comment.FormattedCreatedOn</p>
+                    </div>
+                </div>
+
+                <div class="ml-4 flex items-center">
+                    <a asp-controller="Posts" asp-action="Post" asp-route-id="@comment.Post.Id" class="inline-flex items-center justify-center text-gray-600 text-sm py-2 px-4 font-medium transition-all bg-teal-600 text-white rounded-lg hover:bg-teal-700">See all comments</a>
+                </div>
+            </div>
+        </div>
+    }
+        
+        @if (comments.Count > 3)
+        {
+            <div data-section="comments" class="hidden more-comments">
+                @foreach (var comment in comments.Skip(3))
+                {
+    <div class="bg-white rounded-lg w-full mb-4 p-4 shadow-[0_0_15px_rgba(15,118,110,0.3)] relative">
+            <div class="flex items-start mb-3">
+                <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400 mr-3">
+
+                <div class="flex-1">
+                    <h3 class="text-md font-semibold text-gray-800">
+                        @comment.Post.User.FirstName @comment.Post.User.LastName
+                    </h3>
+                    <p class="text-gray-700 mt-1 leading-relaxed" data-testid='comment-expanded-saw-more-comments'>@comment.Post.Content</p>
+                    <p class="text-xs text-gray-400 mt-2">Created on: @comment.Post.FormattedCreatedOn</p>
+                </div>
+            </div>
+
+            <div class="bg-teal-700/10 rounded-lg mt-2 ml-1  p-3 shadow-md flex items-start justify-between">
+                <div class="flex items-start">
+                    <img src="/images/Placeholder.png" class="w-8 h-8 rounded-full object-cover border border-gray-400 mr-3">
+
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-800">
+                            @comment.User.FirstName @comment.User.LastName
+                        </h3>
+                        <p class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
+                        <p class="text-xs text-gray-400 mt-2">Commented on: @comment.FormattedCreatedOn</p>
+                    </div>
+                </div>
+
+                <div class="ml-4 flex items-center">
+                    <a asp-controller="Posts" asp-action="Post" asp-route-id="@comment.Post.Id" class="inline-flex items-center justify-center text-gray-600 text-sm py-2 px-4 font-medium transition-all bg-teal-600 text-white rounded-lg hover:bg-teal-700">See all comments</a>
+                </div>
+            </div>
+        </div>
+                }
+            </div>
+            <button class="see-more-btn text-teal-600 mt-2 font-semibold p-2 hover:bg-teal-600/20 rounded-lg transition" data-target="comments" data-testid="showing-all-results-test3"> Show All Results</button>
+        }
+</div>
+}
+
+@if (!hasResults)
+{
+    <div class="text-center mt-20">
+        <h2 class="text-3xl font-bold text-gray-700 mb-6">
+            No results found for: <span class="text-teal-600">@searchString</span>
+        </h2>
+        <a asp-action="Index" asp-controller="Home" method ="get"
+           class="inline-block bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
+            Back to Aquarium
+        </a>
+    </div>
+}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const buttons = document.querySelectorAll(".see-more-btn");
+
+        buttons.forEach(button => {
+            button.addEventListener("click", function () {
+                const target = button.getAttribute("data-target");
+                const hiddenDiv = document.querySelector(`[data-section='${target}']`);
+                if (hiddenDiv) {
+                    hiddenDiv.classList.toggle("hidden");
+                    button.textContent = hiddenDiv.classList.contains("hidden")
+                        ? "Show All Results"
+                        : "Show Less";
+                }
+            });
+        });
+    });
+</script>
