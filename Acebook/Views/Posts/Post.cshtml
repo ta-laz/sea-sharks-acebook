@@ -21,7 +21,7 @@
         <!-- Edit post form --> 
         <form asp-action="Update" asp-controller="Posts" asp-route-id="@Model.Id" method="post" id="update-post-form"
                 data-testid="update-post-form" label="update post form" class="hidden">
-                <textarea name="content" label="update post box" id="update-post-input" data-testid="update-post-input"
+                <textarea required name="content" label="update post box" id="update-post-input" data-testid="update-post-input"
                     class="border border-gray-300 rounded-md p-2 w-full mt-2" maxlength="2000">@Model.Content</textarea>
                 
                 <div class="flex justify-end space-x-2">
@@ -133,7 +133,7 @@
                         <!-- Edit comment form --> 
                         <form asp-action="Update" asp-controller="Comments" asp-route-postId="@Model.Id" asp-route-commentId="@comment.Id" method="post" id="update-comment-form-@comment.Id"
                                 data-testid="update-comment-form-@comment.Id" label="update commnent form" class="hidden">
-                                <textarea name="comment_content" label="update comment box" id="update-comment-input-@comment.Id" data-testid="update-comment-input-@comment.Id"
+                                <textarea required name="comment_content" label="update comment box" id="update-comment-input-@comment.Id" data-testid="update-comment-input-@comment.Id"
                                     class="border border-gray-300 rounded-md p-2 w-full mt-2" maxlength="2000">@comment.Content</textarea>
                                 
                                 <div class="flex justify-end space-x-2 mb-2">

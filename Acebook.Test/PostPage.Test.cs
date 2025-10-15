@@ -50,7 +50,7 @@ namespace Acebook.Tests
         [Test]
         public async Task CommentButton_ClickedOnPost_NavigatesToPostPage()
         {
-            
+
             // Click on a post:
             await Task.WhenAll(
                 Page.WaitForURLAsync($"{BaseUrl}/posts/175"),
@@ -159,7 +159,7 @@ namespace Acebook.Tests
         }
 
         [Test]
-        
+
         public async Task LikeAPostDynamicallyUpdatesLikeTotal()
         {
             await Task.WhenAll(
@@ -171,7 +171,7 @@ namespace Acebook.Tests
             await Expect(Page.GetByTestId("post-like-total")).ToContainTextAsync("Like (3)");
         }
         [Test]
-        
+
         public async Task LikeButtonDynamicallyUpdatesOnComments()
         {
             await Task.WhenAll(
@@ -276,52 +276,104 @@ namespace Acebook.Tests
             await Expect(Page.GetByText("Test comment")).Not.ToBeVisibleAsync();
         }
 
-        
 
-        [Test]
-        public async Task DeleteComment_NOTCommentAuthor_CannotDeleteComment()
-        {
-            // Click “See more” on the top post (not ours hopefully)
-            await Page.GetByTestId("see-more-button").First.ClickAsync();
 
-            // Create comment
-            await Page.Locator("#comment-box").FillAsync("Test comment");
+        // [Test]
+        // public async Task DeleteComment_NOTCommentAuthor_CannotDeleteComment()
+        // {
+        //     // Click “See more” on the top post (not ours hopefully) -> CHANGE THIS SO IT MAKES A POST
+        //     await Page.GetByTestId("see-more-button").First.ClickAsync();
 
-            // Wait for post submission + redirect
-            await Task.WhenAll(
-                Page.GetByTestId("comment-submit").ClickAsync(),
-                Page.WaitForURLAsync(new Regex($"{BaseUrl}/posts/\\d+"))
-            );
+        //     // Create comment
+        //     await Page.Locator("#comment-box").FillAsync("Test comment");
 
-            await Expect(Page.GetByText("Test comment")).ToBeVisibleAsync();
+        //     // Wait for post submission + redirect
+        //     await Task.WhenAll(
+        //         Page.GetByTestId("comment-submit").ClickAsync(),
+        //         Page.WaitForURLAsync(new Regex($"{BaseUrl}/posts/\\d+"))
+        //     );
 
-            // Signout:
-            await Task.WhenAll(
-                Page.Locator("#dropdownDefaultButton").ClickAsync(),
-                Page.GetByTestId("signout").ClickAsync()
-            );
+        //     await Expect(Page.GetByText("Test comment")).ToBeVisibleAsync();
 
-            // Wait for form to load
-            await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+        //     // Signout:
+        //     await Task.WhenAll(
+        //         Page.Locator("#dropdownDefaultButton").ClickAsync(),
+        //         Page.GetByTestId("signout").ClickAsync()
+        //     );
+
+        //     // Wait for form to load
+        //     await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
+
+        //     // Sign in with different details 
+        //     await Page.Locator("#email").FillAsync("shelly.tiger@sharkmail.ocean");
+        //     await Page.Locator("#password").FillAsync("password123");
+        //     await Task.WhenAll(
+        //         Page.WaitForURLAsync($"{BaseUrl}/posts"),
+        //         Page.Locator("#signin-submit").ClickAsync()
+        //     );
+
+        //     await Page.ScreenshotAsync(new() { Path = "after_signed_in.png" });
+
+        //     // Click “See more” on the top post (just made)
+        //     await Page.GetByTestId("see-more-button").First.ClickAsync();
+
+        //     await Page.ScreenshotAsync(new() { Path = "after_clicked_new_post.png" });
+
+
+        //     // Confirm the delete comment button is not visible
+        //     await Expect(Page.GetByTestId("delete-comment-button")).Not.ToBeVisibleAsync();
+        // }
+
+
+
+
+        // /// TESTS FOR UPDATING COMMENTS AND POSTS:
+
+
+        // [Test]
+        // public async Task UpdateComment_NOTCommentAuthor_CannotUpdateComment()
+        // {
+        //     // Click “See more” on the first post
+        //     await Page.GetByTestId("see-more-button").First.ClickAsync();
+
+        //     // Create comment
+        //     await Page.Locator("#comment-box").FillAsync("Test comment");
+
+        //     // Wait for post submission + redirect
+        //     await Task.WhenAll(
+        //         Page.GetByTestId("comment-submit").ClickAsync(),
+        //         Page.WaitForURLAsync(new Regex($"{BaseUrl}/posts/\\d+"))
+        //     );
+
+        //     await Expect(Page.GetByText("Test comment")).ToBeVisibleAsync();
+
+        //     await Page.ScreenshotAsync(new() { Path = "after_clicked_submit_comment.png" });
+
+
+        //     // Signout:
+        //     await Task.WhenAll(
+        //         Page.Locator("#dropdownDefaultButton").ClickAsync(),
+        //         Page.GetByTestId("signout").ClickAsync()
+        //     );
+
+        //     // Wait for form to load
+        //     await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
             
-            // Sign in with different details 
-            await Page.Locator("#email").FillAsync("shelly.tiger@sharkmail.ocean");
-            await Page.Locator("#password").FillAsync("password123");
-            await Task.WhenAll(
-                Page.WaitForURLAsync($"{BaseUrl}/posts"),
-                Page.Locator("#signin-submit").ClickAsync()
-            );
+        //     // Sign in with different details 
+        //     await Page.Locator("#email").FillAsync("shelly.tiger@sharkmail.ocean");
+        //     await Page.Locator("#password").FillAsync("password123");
+        //     await Task.WhenAll(
+        //         Page.WaitForURLAsync($"{BaseUrl}/posts"),
+        //         Page.Locator("#signin-submit").ClickAsync()
+        //     );
 
-            await Page.ScreenshotAsync(new() { Path = "after_signed_in.png" });
+        //     // Click “See more” on the top post (just made)
+        //     await Page.GetByTestId("see-more-button").First.ClickAsync();
 
-            // Click “See more” on the top post (not ours hopefully)
-            await Page.GetByTestId("see-more-button").First.ClickAsync();
+        //     await Page.ScreenshotAsync(new() { Path = "after_clicked_new_post.png" });
 
-            await Page.ScreenshotAsync(new() { Path = "after_clicked_new_post.png" });
-
-
-            // Confirm the delete comment button is not visible
-            await Expect(Page.GetByTestId("delete-comment-button")).Not.ToBeVisibleAsync();
-        }
+        //     // Confirm the delete comment button is not visible
+        //     await Expect(Page.GetByTestId("update-comment-button")).Not.ToBeVisibleAsync();
+        // }
     }
 }
