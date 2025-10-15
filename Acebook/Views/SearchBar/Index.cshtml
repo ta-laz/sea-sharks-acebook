@@ -77,7 +77,7 @@
             </div>
                 }
             </div>
-            <button class="see-more-btn text-teal-600 font-semibold p-2 hover:bg-teal-600/20 rounded-lg transition" data-target="users"> Show All Results</button>
+            <button class="see-more-btn text-teal-600 font-semibold p-2 hover:bg-teal-600/20 rounded-lg transition" data-target="users" data-testid="showing-all-results-test2"> Show All Results</button>
         }
     </div>
 }
@@ -136,7 +136,7 @@
 </div>
                 }
             </div>
-            <button class="see-more-btn text-teal-600 mt-2 font-semibold p-2 hover:bg-teal-600/20 rounded-lg transition" data-target="posts"> Show All Results</button>
+            <button class="see-more-btn text-teal-600 mt-2 font-semibold p-2 hover:bg-teal-600/20 rounded-lg transition" data-target="posts" data-testid="showing-all-results-test1"> Show All Results</button>
         }
     </div>
 }
@@ -249,7 +249,6 @@
             button.addEventListener("click", function () {
                 const target = button.getAttribute("data-target");
                 const hiddenDiv = document.querySelector(`[data-section='${target}']`);
-
                 if (hiddenDiv) {
                     hiddenDiv.classList.toggle("hidden");
                     button.textContent = hiddenDiv.classList.contains("hidden")
