@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using Acebook.ViewModels;
 using acebook.ActionFilters;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication;
 
 namespace acebook.Controllers;
 
@@ -21,6 +22,11 @@ public class UsersController : Controller
     [HttpGet]
     public IActionResult New()
     {
+        int? id = HttpContext.Session.GetInt32("user_id");
+        if (id != null)
+        {
+            return Redirect("/posts");
+        }
         return View();
     }
 
@@ -193,5 +199,29 @@ public class UsersController : Controller
             return NotFound();
 
         return new RedirectResult($"/users/{id}");
+    }
+
+    [ServiceFilter(typeof(AuthenticationFilter))]
+    [Route("/users/upload-profile-picture")]
+    [HttpPost]
+    public async Task<IActionResult> UploadProfilePicture(IFormFile profilePicture)
+    {
+        var currentUserId = HttpContext.Session.GetInt32("user_id");
+
+        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/profile_pics");
+        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(profilePicture.FileName);
+        var filePath = Path.Combine(uploadsFolder, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await profilePicture.CopyToAsync(stream);
+        }
+
+        var dbContext = new AcebookDbContext();
+        var user = dbContext.Users.Find(currentUserId);
+        user.ProfilePicturePath = $"/images/profile_pics/{fileName}";
+        dbContext.SaveChanges();
+
+        return Redirect($"/users/{currentUserId}");
     }
 }

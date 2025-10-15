@@ -13,6 +13,7 @@ public class Post
   public User? User { get; set; }
   public ICollection<Comment>? Comments { get; set; }
   public ICollection<Like>? Likes { get; set; }
+  public string? PostPicturePath { get; set; }
 
   [NotMapped] // prevents EF from treating it as a DB column
   public bool UserHasLiked { get; set; }
@@ -31,7 +32,7 @@ public class Post
 
   public bool CheckLength()
   {
-    if (this.Content.Length <= 500)
+    if (this.Content.Length <= 500 )
     {
       return true;
     }

@@ -5,9 +5,10 @@ using System.Security.Cryptography;
 using Acebook.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
+using acebook.ActionFilters;
 
 namespace acebook.Controllers;
-
+[ServiceFilter(typeof(AuthenticationFilter))]
 public class FriendsController : Controller
 {
     private readonly ILogger<FriendsController> _logger;

@@ -11,9 +11,21 @@
         <!-- 🧍 Left column: profile picture + bio + friends -->
         <div class="flex flex-col top-20 self-start sticky items-center lg:items-start w-full lg:w-1/3 space-y-6">
 
+            @{
+            string imagePath; 
+            if (!string.IsNullOrEmpty(Model.ProfilePicturePath)){
+                imagePath = Model.ProfilePicturePath;
+            }
+            else
+            {
+                imagePath = "/images/Placeholder.png";
+            }
+            }
+
+
             <!-- Profile Picture -->
             <div class="relative flex justify-center">
-                <img id="profile-pic" src="/images/Placeholder.png" alt="Profile Picture"
+                <img id="profile-pic" src="@imagePath" alt="Profile Picture"
                     class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm cursor-pointer transition-transform duration-300 hover:opacity-80" />
             </div>
 
@@ -41,9 +53,18 @@
                 {
                     User other = (friend.RequesterId == ViewBag.ProfileUserId) ? friend.Accepter : friend.Requester;
 
+                string otherImagePath; 
+                if (!string.IsNullOrEmpty(other.ProfilePicturePath)){
+                    otherImagePath = other.ProfilePicturePath;
+                }
+                else
+                {
+                    otherImagePath = "/images/Placeholder.png";
+                }
+
                     <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-2 p-1 transition">
                         <div class="flex items-center space-x-3">
-                            <img src="/images/Placeholder.png"
+                            <img src="@otherImagePath"
                                 class="w-10 h-10 rounded-full object-cover border border-gray-300">
                             <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" data-testid="@other.FirstName"
                                 class="text-xs font-medium text-gray-700 hover:text-teal-600">
@@ -114,14 +135,16 @@
             {
                 <div class="bg-white rounded-lg w-full p-4 shadow-md">
                     <h2 class="text-lg font-bold mb-3">Write on their wall</h2>
-                    <form action="@Url.Action("Create", "Posts")" method="post">
-                        <textarea id="post-input" data-testid="create-post-input"
+                    <form action="@Url.Action("Create", "Posts")" method="post" enctype="multipart/form-data">
+                        <textarea required id="post-input" data-testid="create-post-input"
                         class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
                         name="content" maxlength="2000"
                         placeholder="Say something nice... (max 2000 characters)"></textarea>
                         <input type="hidden" name="WallId" value="@Model.Id" />
                         <div class="flex justify-between items-center mt-3">
-                            <label class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
+                            <label for="file-upload" class="flex items-center text-sm text-teal-500 hover:underline">Attach Image</label>
+                            <input id="file-upload" type="file" name="postPicture" accept="image/*"class="hidden"/>
+                            <span id="file-name" class="text-gray-500 text-sm italic">No file chosen</span>
                             <input type="hidden" name="returnUrl"
                                 value="@Url.Action("Index", "Users", new { id = Model.Id })" />
                             <button id="post-submit" data-testid="create-post-submit" type="submit"
@@ -136,27 +159,47 @@
             <!-- Posts -->
             @foreach (Post post in ViewBag.Posts)
             {
+                string profilePictureImagePath; 
+                if (!string.IsNullOrEmpty(post.User.ProfilePicturePath)){
+                    profilePictureImagePath = post.User.ProfilePicturePath;
+                }
+                else
+                {
+                    profilePictureImagePath = "/images/Placeholder.png";
+                }
                 <div class="bg-white rounded-lg w-full p-4 shadow-md">
                     <div class="flex justify-between items-center">
                         <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" data-testid="Post-link @post.User.FirstName"
                             class="text-md font-semibold text-gray-800 hover:text-teal-600">
                             @post.User.FirstName @post.User.LastName
                         </a>
-                        <img src="/images/Placeholder.png"
+                        <img src="@profilePictureImagePath"
                             class="w-12 h-12 rounded-full object-cover border border-gray-400" />
                     </div>
 
                     <p data-testid="post-content" class="text-gray-700 mt-2 leading-relaxed">
-                        @if (post.CheckLength())
+                    @if(!string.IsNullOrEmpty(post.Content)){
+                        @if (@post.CheckLength())
                         {
-                            @post.Content
+                        @post.Content
                         }
                         else
                         {
-                            @post.FormatPostContent()
+                        @post.FormatPostContent()
+                        }
+                        }
+                        else
+                        {
+                        @post.Content;
                         }
                     </p>
-
+                    @if (@post.PostPicturePath != null)
+                    {
+                        <div class="w-full text-center">
+                        <img id="post-picture-@post.Id" data-testid="post-picture-@post.Id" src="@post.PostPicturePath" alt="Post Picture"
+                        class="post-picture max-w-[65%] h-auto inline-block object-contain rounded-md" />
+                        </div>
+                    }
                     <div class="flex justify-end mt-2">
                         <button class="text-teal-600 text-sm hover:underline">see more</button>
                     </div>
@@ -197,4 +240,45 @@
             overlay.classList.add("hidden");
         }
     });
+</script>
+
+<script>
+  // 🟩 Post picture enlarge logic
+  document.addEventListener('DOMContentLoaded', () => {
+    const pics = document.querySelectorAll('.post-picture');
+    const overlay = document.getElementById('image-overlay');
+    const overlayImage = document.getElementById('overlay-image');
+
+    pics.forEach(img => {
+      img.addEventListener('click', () => {
+        overlayImage.src = img.src;
+        overlay.classList.remove('hidden');
+      });
+    });
+
+    // Close on outside click or ESC
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.add('hidden');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') overlay.classList.add('hidden');
+    });
+  });
+</script>
+
+<script>
+  const fileInput = document.getElementById("file-upload");
+  const fileNameDisplay = document.getElementById("file-name");
+  fileInput.addEventListener("change", function () {
+    // If at least one file is chosen
+    if (fileInput.files.length > 0) {
+      fileNameDisplay.textContent = fileInput.files[0].name;
+      fileNameDisplay.classList.remove("text-gray-500", "italic");
+      fileNameDisplay.classList.add("text-teal-700", "font-medium");
+    } else {
+      // Reset text if no file is chosen
+      fileNameDisplay.textContent = "No file chosen";
+      fileNameDisplay.classList.add("text-gray-500", "italic");
+    }
+  });
 </script>

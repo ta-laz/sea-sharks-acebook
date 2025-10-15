@@ -11,6 +11,7 @@ public class User
   public string? LastName { get; set; }
   public string? Email { get; set; }
   public string? Password { get; set; }
+  public string? ProfilePicturePath { get; set; }
 
   // Navigation Properties:
   public ICollection<Post>? Posts { get; set; }

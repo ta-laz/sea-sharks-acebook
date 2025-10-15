@@ -15,7 +15,6 @@
     @{
         int? userId = Context.Session.GetInt32("user_id");
         string? userName = Context.Session.GetString("user_name");
-        @* @ViewData["filter"] = "All"; *@
         var currentScope = (ViewData["Scope"] as string) ?? "all";
         string Label(string s) => s switch
         {
@@ -24,7 +23,15 @@
             "comments" => "Comments",
             _ => "All categories"
         };
-    
+
+            string imagePath; 
+        if (!string.IsNullOrEmpty(Context.Session.GetString("user_profile_picture")))
+        {
+            imagePath = Context.Session.GetString("user_profile_picture");
+        }
+        else
+        {
+            imagePath = "/images/Placeholder.png";
 
     }
     <header>
@@ -102,7 +109,8 @@
                                 <div>
                                     <button data-testid="dropdown1" id="dropdownDefaultButton" data-dropdown-toggle="dropdown1" class="absolute top-1/2 -translate-y-1/2 right-6 rounded-full ring-offset-0 focus:ring-4 focus:outline-none focus:ring-teal-900" type="button">
                                         <img 
-                                            src="@Url.Content("~/images/placeholder.png")" 
+                                            @* src="@Url.Content("@imagePath")"  *@
+                                            src = "@imagePath"
                                             alt="User menu" 
                                             class="h-12 w-12 rounded-full border-2 border-white"
                                         />
