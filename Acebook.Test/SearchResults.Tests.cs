@@ -77,5 +77,91 @@ namespace Acebook.Tests
             await Expect(Page.GetByTestId("comment-search-Cerulean")).ToBeVisibleAsync();
 
         }
+        [Test]
+        public async Task CheckThatPostsCanBeExpandedIntoMore()
+        {
+            await Page.Locator("#dropdown-button").ClickAsync();
+            await Page.GetByTestId("post-test-button").ClickAsync();
+            await Page.Locator("#search-input").FillAsync("Finn");
+            await Page.GetByTestId("search-submit").ClickAsync();
+            await Expect(Page.GetByTestId("showing-all-results-test1")).ToBeVisibleAsync();
+            await Page.GetByTestId("showing-all-results-test1").ClickAsync();
+            await Expect(Page.GetByTestId("showing-all-results-test1")).ToHaveTextAsync("Show Less");
+        }
+        [Test]
+        public async Task CheckThatPeopleCanBeExpandedIntoMore()
+        {
+            await Page.Locator("#dropdown-button").ClickAsync();
+            await Page.GetByTestId("user-test-button").ClickAsync();
+            await Page.Locator("#search-input").FillAsync("Reef");
+            await Page.GetByTestId("search-submit").ClickAsync();
+            await Expect(Page.GetByTestId("showing-all-results-test2")).ToBeVisibleAsync();
+            await Page.GetByTestId("showing-all-results-test2").ClickAsync();
+            await Expect(Page.GetByTestId("showing-all-results-test2")).ToHaveTextAsync("Show Less");
+        }
+        [Test]
+        public async Task CheckThatCommentsCanBeExpandedIntoMore()
+        {
+            await Page.Locator("#dropdown-button").ClickAsync();
+            await Page.GetByTestId("comment-test-button").ClickAsync();
+            await Page.Locator("#search-input").FillAsync("Reef");
+            await Page.GetByTestId("search-submit").ClickAsync();
+            await Expect(Page.GetByTestId("showing-all-results-test3")).ToBeVisibleAsync();
+            await Page.GetByTestId("showing-all-results-test3").ClickAsync();
+            await Expect(Page.GetByTestId("showing-all-results-test3")).ToHaveTextAsync("Show Less");
+        }
+        [Test]
+        public async Task CheckThatdefualtCanBeExpandedIntoMore()
+        {
+            await Page.Locator("#dropdown-button").ClickAsync();
+            //await Page.GetByTestId("comment-test-button").ClickAsync();
+            await Page.Locator("#search-input").FillAsync("Reef");
+            await Page.GetByTestId("search-submit").ClickAsync();
+            await Expect(Page.GetByTestId("showing-all-results-test1")).ToBeVisibleAsync();
+            await Page.GetByTestId("showing-all-results-test1").ClickAsync();
+            await Expect(Page.GetByTestId("showing-all-results-test1")).ToHaveTextAsync("Show Less");
+            await Expect(Page.GetByTestId("showing-all-results-test2")).ToBeVisibleAsync();
+            await Page.GetByTestId("showing-all-results-test2").ClickAsync();
+            await Expect(Page.GetByTestId("showing-all-results-test2")).ToHaveTextAsync("Show Less");
+            await Expect(Page.GetByTestId("showing-all-results-test3")).ToBeVisibleAsync();
+            await Page.GetByTestId("showing-all-results-test3").ClickAsync();
+            await Expect(Page.GetByTestId("showing-all-results-test3")).ToHaveTextAsync("Show Less");
+        }
+        [Test]
+        public async Task CheckThatPostsIfExpandedDisplayResults()
+        {
+            await Page.Locator("#dropdown-button").ClickAsync();
+            await Page.GetByTestId("post-test-button").ClickAsync();
+            await Page.Locator("#search-input").FillAsync("Finn");
+            await Page.GetByTestId("search-submit").ClickAsync();
+            await Expect(Page.GetByTestId("showing-all-results-test1")).ToBeVisibleAsync();
+            await Page.GetByTestId("showing-all-results-test1").ClickAsync();
+            var tag = Page.Locator("[data-testid='content-test-for-post']");
+            await Expect(tag).ToHaveCountAsync(2);
+        }
+        [Test]
+        public async Task CheckThatUserIfExpandedDisplayResults()
+        {
+            await Page.Locator("#dropdown-button").ClickAsync();
+            await Page.GetByTestId("user-test-button").ClickAsync();
+            await Page.Locator("#search-input").FillAsync("Reef");
+            await Page.GetByTestId("search-submit").ClickAsync();
+            await Expect(Page.GetByTestId("showing-all-results-test2")).ToBeVisibleAsync();
+            await Page.GetByTestId("showing-all-results-test2").ClickAsync();
+            var tag = Page.Locator("#friend-name");//they cant see @user.FirstName data-testid's probs cus the test cant access the firstname from the db
+            await Expect(tag).ToHaveCountAsync(7);// so i did it for the id which isnt skipped so it counts. them all this time
+        }
+        [Test]
+        public async Task CheckThatCommentIfExpandedDisplayResults()
+        {
+            await Page.Locator("#dropdown-button").ClickAsync();
+            await Page.GetByTestId("comment-test-button").ClickAsync();
+            await Page.Locator("#search-input").FillAsync("Reef");
+            await Page.GetByTestId("search-submit").ClickAsync();
+            await Expect(Page.GetByTestId("showing-all-results-test3")).ToBeVisibleAsync();
+            await Page.GetByTestId("showing-all-results-test3").ClickAsync();
+            var tag = Page.Locator("[data-testid='comment-expanded-saw-more-comments']");
+            await Expect(tag).ToHaveCountAsync(45);
+        }
     }
 }
