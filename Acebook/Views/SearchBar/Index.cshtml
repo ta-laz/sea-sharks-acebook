@@ -131,7 +131,7 @@
             </a>
         </div>
     </div>
-    <p class="text-gray-700 mt-4 leading-relaxed">@post.Content</p>
+    <p data-testid='content-test-for-post' class="text-gray-700 mt-4 leading-relaxed">@post.Content</p>
     <p class="text-xs text-gray-400 mt-2">Created on: @post.FormattedCreatedOn</p>
 </div>
                 }
@@ -198,7 +198,7 @@
                     <h3 class="text-md font-semibold text-gray-800">
                         @comment.Post.User.FirstName @comment.Post.User.LastName
                     </h3>
-                    <p class="text-gray-700 mt-1 leading-relaxed">@comment.Post.Content</p>
+                    <p class="text-gray-700 mt-1 leading-relaxed" data-testid='comment-expanded-saw-more-comments'>@comment.Post.Content</p>
                     <p class="text-xs text-gray-400 mt-2">Created on: @comment.Post.FormattedCreatedOn</p>
                 </div>
             </div>
