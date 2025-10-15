@@ -195,7 +195,7 @@ namespace Acebook.Tests
         public async Task DeletePost_PostAuthor_DeletesPost()
         {
             // Create post
-            await Page.Locator("#post-content").FillAsync("Test delete post button works properly");
+            await Page.GetByTestId("post-content-input").FillAsync("Test delete post button works properly");
             // Wait for post submission + redirect
             await Task.WhenAll(
                 Page.Locator("#post-submit").ClickAsync(),
@@ -232,7 +232,7 @@ namespace Acebook.Tests
         public async Task DeletePost_NotPostAuthor_CannotDeletePost()
         {
             // Create post
-            await Page.Locator("#post-content").FillAsync("Test delete post button works properly");
+            await Page.GetByTestId("post-content-input").FillAsync("Test delete post button works properly");
             
             // Wait for post submission + redirect
             await Task.WhenAll(
@@ -428,7 +428,7 @@ namespace Acebook.Tests
         public async Task UpdatePost_PostAuthor_CanUpdatePost()
         {
             // Create post
-            await Page.Locator("#post-content").FillAsync("Test Edit post button works properly");
+            await Page.GetByTestId("post-content-input").FillAsync("Test Edit post button works properly");
 
             // Wait for post submission + redirect
             await Task.WhenAll(
@@ -465,7 +465,7 @@ namespace Acebook.Tests
         public async Task UpdatePost_NOTPostAuthor_CannotUpdatePost()
         {
             // Create post
-            await Page.Locator("#post-content").FillAsync("Test Edit post button works properly");
+            await Page.GetByTestId("post-content-input").FillAsync("Test Edit post button works properly");
 
             // Wait for post submission + redirect
             await Task.WhenAll(
