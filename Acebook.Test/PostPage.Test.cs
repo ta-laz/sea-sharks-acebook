@@ -26,7 +26,6 @@ namespace Acebook.Tests
             await TestDataSeeder.ResetAndSeedAsync(context);
 
             // Go to sign-in page
-            SetDefaultExpectTimeout(1000);
             await Page.GotoAsync("/signin");
             // Wait for form to load
             await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });

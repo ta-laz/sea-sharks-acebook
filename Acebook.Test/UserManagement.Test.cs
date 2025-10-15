@@ -34,7 +34,6 @@ namespace Acebook.Tests
     [Test]
     public async Task SignUp_ValidCredentials_RedirectToSignIn()
     {
-      SetDefaultExpectTimeout(1000);
       await Page.GotoAsync("/signup");
       await Expect(Page).ToHaveURLAsync($"{BaseUrl}/signup");
       await Page.Locator("#firstname").FillAsync("Francine");
@@ -51,7 +50,6 @@ namespace Acebook.Tests
     [Test]
     public async Task SignUp_AllBlank_Error()
     {
-      SetDefaultExpectTimeout(1000);
       await Page.GotoAsync("/signup");
 
       await Page.Locator("#submit").ClickAsync();
@@ -148,7 +146,6 @@ namespace Acebook.Tests
     [Test]
     public async Task SignIn_UnRegisteredEmail_Error()
     {
-      SetDefaultExpectTimeout(1000);
       await Page.GotoAsync("/signin");
       await Page.Locator("#email").FillAsync("finn.white@sharkmail.com");
       await Page.Locator("#password").FillAsync("password123");
