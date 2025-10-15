@@ -147,9 +147,11 @@
 
                     <div class="flex-1">
                         <div class="flex justify-between items-start">
-                            <h3 class="text-sm font-semibold text-gray-800">
-                                @comment.User.FirstName @comment.User.LastName
-                            </h3>
+                            <a asp-controller="Users" asp-action="Index" asp-route-id="@comment.User.Id" id="comment-user-name"
+                                data-testid="@comment.User.FirstName"
+                                class="text-md font-semibold text-gray-800 hover:text-teal-600">@comment.User.FirstName
+                                @comment.User.LastName
+                            </a>
 
                             <!-- Like button -->
                             <form action="@Url.Action()" method="post">
