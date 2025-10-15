@@ -206,7 +206,10 @@
           </p>
           @if (@post.PostPicturePath != null)
           {
-            <img id="post-picture" src="@post.PostPicturePath" alt="Post Picture" class="w-52 h-52 mx-auto" />
+            <div class="w-full text-center">
+              <img id="post-picture" src="@post.PostPicturePath" alt="Post Picture"
+              class="max-w-[65%] h-auto inline-block object-contain rounded-md" />
+              </div>
           }
 
           <div class="flex justify-end mt-2">
