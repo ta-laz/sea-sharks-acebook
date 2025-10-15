@@ -19,6 +19,11 @@ public class SessionsController : Controller
   [HttpGet]
   public IActionResult New()
   {
+    int? id = HttpContext.Session.GetInt32("user_id");
+    if (id != null)
+    {
+        return Redirect("/posts");
+    }
     return View();
   }
 
