@@ -27,8 +27,8 @@ namespace Acebook.Tests
             // Wait for form to load
             await Page.WaitForSelectorAsync("#signin-submit", new() { State = WaitForSelectorState.Visible });
             // Fill and submit
-            await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
-            await Page.Locator("#password").FillAsync("password123");
+            await Page.GetByTestId("email").FillAsync("finn.white@sharkmail.ocean");
+            await Page.GetByTestId("password").FillAsync("password123");
             await Task.WhenAll(
                 Page.WaitForURLAsync($"{BaseUrl}/posts"),
                 Page.GetByTestId("signin-submit").ClickAsync()
@@ -45,10 +45,10 @@ namespace Acebook.Tests
         public async Task CreatePost_PostsIndexPage_DisplaysPostOnSamePage()
         {
             // Create post
-            await Page.Locator("#post-content").FillAsync("Test content");
+            await Page.GetByTestId("post-content-input").FillAsync("Test content");
             // Wait for post submission + redirect
             await Task.WhenAll(
-                Page.Locator("#post-submit").ClickAsync(),
+                Page.GetByTestId("post-submit").ClickAsync(),
                 Page.WaitForURLAsync($"{BaseUrl}/posts")
             );
             await Expect(Page.GetByText("Test content")).ToBeVisibleAsync();
@@ -60,7 +60,7 @@ namespace Acebook.Tests
             // NOTE: [SetUp] signs in with user Finn then goes to the aquarium
             // Click friends to redirect to friends page
             await Task.WhenAll(
-                Page.Locator("#redirect-friends").First.ClickAsync(),
+                Page.GetByTestId("redirect-friends").ClickAsync(),
                 Page.WaitForURLAsync($"{BaseUrl}/friends")
             );
         }

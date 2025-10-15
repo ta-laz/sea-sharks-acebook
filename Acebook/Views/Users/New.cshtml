@@ -56,14 +56,14 @@
 
       <div>
         <label for="email" class="mb-1 block text-sm text-gray-700">Email</label>
-        <input asp-for="Email" id="email" class="w-full border border-gray-400 rounded-lg p-2" placeholder="Email" />
+        <input asp-for="Email" data-testid="email" id="email" class="w-full border border-gray-400 rounded-lg p-2" placeholder="Email" />
         <span asp-validation-for="Email" class="text-teal-600 text-sm font-bold" id="email-error"></span>
       </div>
       <!-- password block with validation -->
 
       <div>
         <label for="password" class="mb-1 block text-sm text-gray-700">Password</label>
-        <input asp-for="Password" id="password" type="password" class="w-full border border-gray-400 rounded-lg p-2"
+        <input asp-for="Password" data-testid="password" id="password" type="password" class="w-full border border-gray-400 rounded-lg p-2"
           placeholder="Password" />
         <span asp-validation-for="Password" class="text-teal-600 text-sm font-bold" id="password-error"></span>
       </div>

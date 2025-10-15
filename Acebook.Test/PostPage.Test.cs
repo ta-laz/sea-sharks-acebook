@@ -131,7 +131,7 @@ namespace Acebook.Tests
         public async Task NewPostWithNoComments_DisplaysNoCommentsMessage()
         {
             // Create post
-            await Page.Locator("#post-content").FillAsync("Test content");
+            await Page.GetByTestId("post-content-input").FillAsync("Test content");
             // Wait for post submission + redirect
             await Task.WhenAll(
                 Page.Locator("#post-submit").ClickAsync(),
