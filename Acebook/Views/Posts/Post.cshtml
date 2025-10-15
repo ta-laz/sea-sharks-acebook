@@ -71,7 +71,7 @@
             <p class="text-xs text-gray-400 mt-4">Created on: @Model.FormattedCreatedOn</p>
             @if (Model.UserId == Context.Session.GetInt32("user_id"))
             {
-                <button id="edit-post-button" data-testid="edit-post-button" class="bg-white text-grey-600 text-xs font-medium px-3 py-1 rounded-md hover:bg-gray-100 border border-gray-200 shadow-md h-[25px] leading-none">
+                <button id="edit-post-button" data-testid="edit-post-button" class="bg-white text-grey-600 text-xs font-medium px-3 py-1 rounded-md hover:bg-gray-100 border border-gray-200 shadow-sm h-[25px] leading-none">
                     Edit Post
                 </button>
             }
