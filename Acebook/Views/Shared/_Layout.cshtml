@@ -5,16 +5,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - acebook</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/x-icon" href="~/images/light_grey.png">
-    <style>
-        .font-montserrat {
-            font-family: 'Montserrat', sans-serif;
-        }
-    </style>
 
-    
 </head>
 
 <body class="flex flex-col min-h-screen">
@@ -44,7 +37,7 @@
         }
     }
     <header>
-            <nav class="fixed top-0 py-2 left-0 w-full bg-teal-600 z-50 overflow-hidden">
+            <nav class="fixed top-0 py-2 left-0 w-full bg-teal-600 z-50">
                 <div id="navbar" class="mx-auto max-w px-2 sm:px-6 lg:px-8 relative flex h-16 justify-between">
                         <div class="flex flex-1 items-center justify-center sm:justify-start">
                             <div class="flex shrink-0 items-center">
@@ -56,12 +49,6 @@
                                 
                                 </a>
                             </div>
-
-                            <div class="absolute left-1/2 transform -translate-x-1/2 bottom-0 translate-y-[35%] flex items-end">
-                                <span class="font-montserrat text-white text-7xl font-semibold tracking-wide select-none tracking-wide drop-shadow-md">SeaShark</span>
-                                  <img src="/images/shark_head.png" alt="Shark Head Logo" class="h-8 w-auto ml-1 drop-shadow-md translate-y-[2px]" />
-                            </div>
-
                         
                         <!--  If statement for different views if user is/isn't signed in  -->
                             @if (userId != null)
@@ -99,7 +86,7 @@
                                         </div>
 
                                         <!-- Search input (use placeholder, not SearchString=) -->
-                                        <div class="relative w-[20rem]">
+                                        <div class="relative w-full">
                                             <input type="search"
                                                 id="search-input"
                                                 name="SearchString"
