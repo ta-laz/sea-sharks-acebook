@@ -79,5 +79,23 @@ namespace Acebook.Tests
             await Expect(Page.GetByTestId("Coral")).ToBeVisibleAsync();
         }
 
+        [Test]
+        public async Task LeftSideBar_TheAquarium_ShowsLoggedInUsersName()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to the aquarium
+            // Expect Finn White to be visible in the sidebar
+            await Expect(Page.GetByTestId("sidebar-username")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("sidebar-username")).ToHaveTextAsync("Finn White");
+        }
+
+        [Test]
+        public async Task LeftSideBar_TheAquarium_UsersNameRedirectsToProfile()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to the aquarium
+            await Page.GetByTestId("sidebar-username").ClickAsync();
+            // redirects to Finn's profile page
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");
+        }
+
     }
 }
