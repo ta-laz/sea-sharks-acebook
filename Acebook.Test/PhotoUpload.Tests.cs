@@ -98,12 +98,12 @@ namespace Acebook.Tests
             await Page.GotoAsync("/posts");
 
 
-            await Page.Locator("#post-submit").ClickAsync();
+           await Page.Locator("#post-submit").ClickAsync();
 
-            var isValid = await Page.GetByTestId("create-post-input").EvaluateAsync<bool>("el => el.checkValidity()");
+            var isValid = await Page.Locator("#post-content").EvaluateAsync<bool>("el => el.checkValidity()");
             Assert.That(isValid, Is.False, "Expected the textarea to be invalid due to 'required' attribute");
 
-            var validationMessage = await Page.GetByTestId("create-post-input").EvaluateAsync<string>("el => el.validationMessage");
+            var validationMessage = await Page.Locator("#post-content").EvaluateAsync<string>("el => el.validationMessage");
             Console.WriteLine(validationMessage);
             Assert.That(validationMessage, Does.Contain("Please fill out this field."));
         }
@@ -132,10 +132,10 @@ namespace Acebook.Tests
             
             await Page.Locator("#post-submit").ClickAsync();
 
-            var isValid = await Page.Locator("#post-content").EvaluateAsync<bool>("el => el.checkValidity()");
+            var isValid = await Page.GetByTestId("create-post-input").EvaluateAsync<bool>("el => el.checkValidity()");
             Assert.That(isValid, Is.False, "Expected the textarea to be invalid due to 'required' attribute");
 
-            var validationMessage = await Page.Locator("#post-content").EvaluateAsync<string>("el => el.validationMessage");
+            var validationMessage = await Page.GetByTestId("create-post-input").EvaluateAsync<string>("el => el.validationMessage");
             Console.WriteLine(validationMessage);
             Assert.That(validationMessage, Does.Contain("Please fill out this field."));
         }
