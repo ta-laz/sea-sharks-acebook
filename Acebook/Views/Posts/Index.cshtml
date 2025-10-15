@@ -261,7 +261,7 @@
           @if (@post.PostPicturePath != null) 
           {
             <div class="w-full text-center">
-            <img id="post-picture" src="@post.PostPicturePath" alt="Post Picture" class="max-w-[65%] h-auto inline-block object-contain rounded-md"/>
+            <img id="post-picture-@post.Id" src="@post.PostPicturePath" alt="Post Picture" class="post-picture max-w-[65%] h-auto inline-block object-contain rounded-md"/>
             </div>
           }
           <div class="flex justify-end mt-2">
@@ -334,22 +334,26 @@
 
 <script>
   // 🟩 Post picture enlarge logic
-  const postPic = document.getElementById("post-picture");
-  const overlay = document.getElementById("image-overlay");
-  const overlayImage = document.getElementById("overlay-image");
+  document.addEventListener('DOMContentLoaded', () => {
+    const pics = document.querySelectorAll('.post-picture');
+    const overlay = document.getElementById('image-overlay');
+    const overlayImage = document.getElementById('overlay-image');
 
-  if (postPic && overlay && overlayImage) {
-    postPic.addEventListener("click", () => {
-      overlay.classList.remove("hidden");
-      overlayImage.src = postPic.src;
+    pics.forEach(img => {
+      img.addEventListener('click', () => {
+        overlayImage.src = img.src;
+        overlay.classList.remove('hidden');
+      });
     });
 
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay || e.target === overlayImage) {
-        overlay.classList.add("hidden");
-      }
+    // Close on outside click or ESC
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.add('hidden');
     });
-  }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') overlay.classList.add('hidden');
+    });
+  });
 </script>
 
 <script>

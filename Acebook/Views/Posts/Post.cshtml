@@ -11,10 +11,24 @@
         <h1 id="splash-heading" class="mt-2 pb-2 font-bold text-center text-teal-700 text-xl">@Model.User.FirstName's
             Splash</h1>
     </div>
+
+    @{
+            string profilePictureImagePath;
+
+            if (!string.IsNullOrEmpty(Model.User.ProfilePicturePath))
+            {
+                profilePictureImagePath = Model.User.ProfilePicturePath;
+            }
+            else
+            {
+                profilePictureImagePath = "/images/Placeholder.png";
+            }
+        }
+
     <div class="bg-white mt-10 rounded-t-lg w-2/3 p-4 shadow-[0_0_15px_rgba(15,118,110,0.3)] z-30">
         <div class="flex justify-between items-center">
             <h3 class="text-md font-semibold text-gray-800">@Model.User.FirstName @Model.User.LastName</h3>
-            <img src="/images/Placeholder.png" class="w-12 h-12 rounded-full object-cover border border-gray-400">
+            <img src="@profilePictureImagePath" class="w-12 h-12 rounded-full object-cover border border-gray-400">
         </div>
 
         @{
@@ -32,8 +46,8 @@
 
         <p class="text-gray-700 mt-2 leading-relaxed">@Model.Content</p>
         <div class="w-full text-center">
-            <img id="post-picture" src="@Model.PostPicturePath" alt="Post Picture"
-                class="max-w-[65%] h-auto inline-block object-contain rounded-md" />
+            <img id="post-picture-@Model.Id" src="@Model.PostPicturePath" alt="Post Picture"
+                class="post-picture max-w-[65%] h-auto inline-block object-contain rounded-md" />
         </div>
 
         <p class="text-xs text-gray-400 mt-4">Created on: @Model.FormattedCreatedOn</p>
@@ -143,6 +157,12 @@
         </div>
     </div>
 
+    <!-- Fullscreen overlay for enlarged image -->
+    <div id="image-overlay" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
+        <img id="overlay-image" src="/images/Placeholder.png" alt="Enlarged Profile Picture"
+            class="max-w-3xl w-11/12 md:w-auto rounded-lg shadow-lg cursor-pointer transition-transform duration-300 transform scale-100 hover:scale-105" />
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -236,4 +256,28 @@
             });
 
         });
+    </script>
+
+    <script>
+    // 🟩 Post picture enlarge logic
+    document.addEventListener('DOMContentLoaded', () => {
+        const pics = document.querySelectorAll('.post-picture');
+        const overlay = document.getElementById('image-overlay');
+        const overlayImage = document.getElementById('overlay-image');
+
+        pics.forEach(img => {
+        img.addEventListener('click', () => {
+            overlayImage.src = img.src;
+            overlay.classList.remove('hidden');
+        });
+        });
+
+        // Close on outside click or ESC
+        overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.classList.add('hidden');
+        });
+        document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') overlay.classList.add('hidden');
+        });
+    });
     </script>
