@@ -1,3 +1,6 @@
+using acebook.Hubs;
+
+
 var configBuilder = new ConfigurationBuilder();
 configBuilder.AddEnvironmentVariables();
 
@@ -5,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Adding the whole SignalR thing here which allowsd for real-time notifications
+builder.Services.AddSignalR();
 
 builder.Services.AddDistributedMemoryCache();
 
@@ -37,5 +43,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// set up a connection to the hub (needed by SignalR I believe to set up a clear like session for the user?)
+app.MapHub<NotificationHub>("/hubs/notifications");
 
 app.Run();
