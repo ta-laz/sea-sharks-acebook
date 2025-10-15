@@ -198,7 +198,7 @@
       <div class="bg-white rounded-lg w-full p-4 shadow-md hidden md:block">
         <h2 class="text-lg font-bold mb-3">Create a Post</h2>
         <form action="@Url.Action("Create", "Posts")" method="post" enctype="multipart/form-data">
-          <textarea id="post-content"
+          <textarea id="post-content" required
             class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
             name="content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)">
           </textarea>
