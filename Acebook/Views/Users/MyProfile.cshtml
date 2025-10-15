@@ -194,14 +194,19 @@
           </div>
 
           <p class="text-gray-700 mt-2 leading-relaxed">
-            @if (post.CheckLength())
+          @if(!string.IsNullOrEmpty(post.Content)){
+            @if (@post.CheckLength())
             {
-              @post.Content
+            @post.Content
             }
             else
             {
-
-              @post.FormatPostContent()
+            @post.FormatPostContent()
+            }
+            }
+            else
+            {
+            @post.Content;
             }
           </p>
           @if (@post.PostPicturePath != null)
