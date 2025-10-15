@@ -120,7 +120,7 @@
 
 
       <!-- Create Post Form -->
-      <div class="flex-1 bg-white rounded-lg overflow-y-auto px-4 py-4 p-4 shadow-md transition hover:shadow-xl">
+      <div class="flex-1 bg-white rounded-lg overflow-y-auto px-4 py-4 p-4 shadow-md transition hover:shadow-xl space-x-3">
         <h2 class="text-lg text-teal-700 font-bold mb-3">Create a Post</h2>
         <form action="@Url.Action("Create", "Posts")" method="post">
           <textarea id="create-post-input"
@@ -170,7 +170,7 @@
                     <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-400" />
                   </div>
 
-                  <p class="text-gray-700 mt-2 leading-relaxed">
+                  <p class="text-gray-700 mt-2 leading-relaxed break-all">
                     @if (post.CheckLength())
                     {
                       @post.Content
