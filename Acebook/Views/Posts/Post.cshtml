@@ -134,8 +134,19 @@
 
             @foreach (Comment comment in ViewBag.comments)
             {
+
+                string commentsImagePath;
+                if (!string.IsNullOrEmpty(comment.User.ProfilePicturePath))
+                {
+                    commentsImagePath = comment.User.ProfilePicturePath;
+                }
+                else
+                {
+                    commentsImagePath = "/images/Placeholder.png";
+                }
+
                 <div class="bg-white rounded w-full p-2 mt-2 shadow-md hidden md:flex items-start relative">
-                    <img src="/images/Placeholder.png"
+                    <img src="@commentsImagePath"
                         class="w-8 h-8 rounded-full object-cover border border-gray-400 mr-3">
 
                     <div class="flex-1">
