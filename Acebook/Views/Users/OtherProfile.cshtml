@@ -190,7 +190,7 @@
                     @if (@post.PostPicturePath != null)
                     {
                         <div class="w-full text-center">
-                        <img id="post-picture-@post.Id" src="@post.PostPicturePath" alt="Post Picture"
+                        <img id="post-picture-@post.Id" data-testid="post-picture-@post.Id" src="@post.PostPicturePath" alt="Post Picture"
                         class="post-picture max-w-[65%] h-auto inline-block object-contain rounded-md" />
                         </div>
                     }
