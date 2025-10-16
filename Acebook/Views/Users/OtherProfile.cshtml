@@ -173,13 +173,24 @@
             <!-- Posts Section -->
             <div class="flex flex-col w-full rounded-lg space-y-4 relative">
                 <!-- Sticky Header -->
-                <div class="sticky top-32 z-20 py-1 px-2 rounded-md">
+                <div class="sticky top-32 z-20 py-1 px-4 rounded-md">
+                <div class="flex items-center justify-between">
                     <h1 class="text-3xl font-bold text-teal-700 ">@Model.FirstName's Tank</h1>
+                <!-- Right: Back to Top -->
+                <button id="back-to-top"
+                    class="bg-teal-600 text-white p-3 rounded-full shadow-lg hover:bg-teal-500
+                          transition-opacity duration-200 opacity-0 pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+                </svg>
+                </button>
+                </div>
                 </div>
 
                 <!-- Scrollable Post List with Clipping -->
                 <div class="relative overflow-hidden">
-                    <div class="overflow-y-auto max-h-[70vh] pb-10 space-y-6"
+                    <div id="posts-container" class="overflow-y-auto max-h-[70vh] pb-10 space-y-6"
                         style="mask-image: linear-gradient(to bottom, transparent 0%, black 10%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 1%);">
 
                         @if (ViewBag.Posts == null || !((List<Post>)ViewBag.Posts).Any())
@@ -295,22 +306,22 @@
                     class="max-w-3xl w-11/12 md:w-auto rounded-lg shadow-lg cursor-pointer transition-transform duration-300 transform scale-100 hover:scale-105" />
             </div>
 
-            <script>
-                const profilePic = document.getElementById("profile-pic");
-                const overlay = document.getElementById("image-overlay");
-                const overlayImage = document.getElementById("overlay-image");
+<script>
+    const profilePic = document.getElementById("profile-pic");
+    const overlay = document.getElementById("image-overlay");
+    const overlayImage = document.getElementById("overlay-image");
 
-                profilePic.addEventListener("click", () => {
-                    overlay.classList.remove("hidden");
-                    overlayImage.src = profilePic.src; // Use the same image
-                });
-
-                // Hide overlay when user clicks outside or on the image
-                overlay.addEventListener("click", (e) => {
-                    if (e.target === overlay || e.target === overlayImage) {
-                        overlay.classList.add("hidden");
-        }
+    profilePic.addEventListener("click", () => {
+        overlay.classList.remove("hidden");
+        overlayImage.src = profilePic.src; // Use the same image
     });
+
+    // Hide overlay when user clicks outside or on the image
+    overlay.addEventListener("click", (e) => {
+        if (e.target === overlay || e.target === overlayImage) {
+            overlay.classList.add("hidden");
+}
+});
 </script>
 
 <script>
@@ -397,6 +408,31 @@
           });
       });
             </script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('posts-container');
+    const backToTop = document.getElementById('back-to-top');
+    if (!container || !backToTop) return; // guard
+
+    const toggleBtn = () => {
+      if (container.scrollTop > 100) {
+        backToTop.classList.remove('opacity-0', 'pointer-events-none');
+        backToTop.classList.add('opacity-100');
+      } else {
+        backToTop.classList.add('opacity-0', 'pointer-events-none');
+        backToTop.classList.remove('opacity-100');
+      }
+    };
+
+    container.addEventListener('scroll', toggleBtn, { passive: true });
+    toggleBtn(); // initialise state
+
+    backToTop.addEventListener('click', () => {
+      container.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
 
 <script>
   const fileInput = document.getElementById("file-upload");
