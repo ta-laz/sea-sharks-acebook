@@ -83,7 +83,7 @@
                         <form asp-action="Remove" asp-controller="Friends" method="post"
                             onsubmit="return confirm('Are you sure you want to cancel your request?');" class="ml-auto">
                             @Html.AntiForgeryToken()
-                            <input type="hidden" name="friendId" value="@request.Id" />
+                            <input type="hidden" name="friendId" value="@receiver.Id" />
                             <button type="submit"
                                 class="bg-red-500 hover:bg-red-600 text-white text-s font-medium py-1 px-2 rounded">
                                 Cancel
