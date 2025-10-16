@@ -53,7 +53,7 @@
                         <form asp-action="Remove" asp-controller="Friends" method="post"
                             onsubmit="return confirm('Are you sure you do not want to be friends?');">
                             @Html.AntiForgeryToken()
-                            <input type="hidden" name="friendId" value="@request.Id" />
+                            <input type="hidden" name="friendId" value="@sender.Id" />
                             <button type="submit"
                                 class="bg-gray-400 hover:bg-gray-500 text-white text-s font-medium py-1 px-2 rounded">
                                 Decline
@@ -83,7 +83,7 @@
                         <form asp-action="Remove" asp-controller="Friends" method="post"
                             onsubmit="return confirm('Are you sure you want to cancel your request?');" class="ml-auto">
                             @Html.AntiForgeryToken()
-                            <input type="hidden" name="friendId" value="@request.Id" />
+                            <input type="hidden" name="friendId" value="@receiver.Id" />
                             <button type="submit"
                                 class="bg-red-500 hover:bg-red-600 text-white text-s font-medium py-1 px-2 rounded">
                                 Cancel
@@ -142,7 +142,7 @@
                     {
                         imagePath = "/images/Placeholder.png";
                     }
-
+                
                 <div class="flex items-center justify-between gap-3 mb-2 p-2 rounded-lg hover:bg-gray-100 transition">
                     <div class="flex items-center gap-3 mb-2">
                         <img src="@imagePath"
@@ -154,7 +154,7 @@
                     <form asp-action="Remove" asp-controller="Friends" method="post"
                         onsubmit="return confirm('Are you sure you want to unfriend this person?');">
                         @Html.AntiForgeryToken()
-                        <input type="hidden" name='friendId' value="@friend.Id" />
+                        <input type="hidden" name='friendId' value="@other.Id" />
                         <button type="submit"
                             class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-1 px-3 rounded">Unfriend</button>
                     </form>
