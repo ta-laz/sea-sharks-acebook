@@ -3,22 +3,22 @@
 <!-- Main Body -->
 <div class="min-h-screen flex flex-col items-center justify-start px-4 sm:px-6 py-6">
     <div class="flex flex-col items-center space-y-4 w-full max-w-screen-lg">
-        <h1 id="myFriendsPageTitle" data-testid="myFriendsPageTitle" class="text-3xl font-bold mb-3">My Friends</h1>
+        <h1 id="myFriendsPageTitle" data-testid="myFriendsPageTitle" class="text-4xl font-bold mb-3 text-teal-700 ">My Friends</h1>
         <!-- Filter buttons -->
         <div class="flex justify-center mt-4" role="group" aria-label="requests filters">
             <label id="received-label" for="received"
-                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md cursor-pointer hover:bg-gray-200 text-center transition-colors">
+                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md cursor-pointer hover:bg-gray-200 hover:text-gray-600 text-center transition-colors hover:shadow-md">
                 Friend Requests
             </label>
             <label id="sent-label" for="sent"
-                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md cursor-pointer hover:bg-gray-200 text-center transition-colors">
+                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md cursor-pointer hover:bg-gray-200 text-center transition-colors hover:shadow-md">
                 Sent Requests
             </label>
         </div>
 
 
         <!-- Requests Section -->
-        <div class="flex bg-gray-50 border rounded-lg w-full p-4 shadow-md md:block">
+        <div class="flex bg-gray-50 border rounded-lg w-full p-4 shadow-md md:block hover:shadow-xl">
             <input type="radio" id="received" name="request-toggle" class="hidden peer/received" checked>
             <input type="radio" id="sent" name="request-toggle" class="hidden peer/sent">
 
@@ -112,7 +112,7 @@
         </div>
 
         <!-- Friend List Section -->
-        <div class="bg-white rounded-lg w-full p-4 shadow-md md:block border">
+        <div class="bg-white rounded-lg w-full p-4 shadow-md md:block border hover:shadow-xl">
             <div id="search-form" class="flex justify-between mb-3">
                 <h2 class="text-xl font-bold mb-3" data-testid="friends-list-subheader">Friends</h2>
                 <form asp-action="Index" asp-controller="Friends" method="get" class="pr-2">
