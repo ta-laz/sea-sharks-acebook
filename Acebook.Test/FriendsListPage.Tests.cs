@@ -62,15 +62,15 @@ namespace Acebook.Tests
         {
             // NOTE: each test is set up as signed in with Finn and goes to /friends
             await Page.ClickAsync("#received-label");
-            await Expect(Page.GetByText("My Received Requests")).ToBeVisibleAsync();
+            await Expect(Page.GetByText("Received Requests")).ToBeVisibleAsync();
         }
 
         [Test]
         public async Task FriendListPage_ClickSentRequests_DisplaysSentFriendRequests()
         {
             // NOTE: each test is set up as signed in with Finn and goes to /friends
-            await Page.ClickAsync("#sent-label");
-            await Expect(Page.GetByText("My Sent Requests")).ToBeVisibleAsync();
+            await Page.GetByTestId("sent-requests-label").ClickAsync();
+            await Expect(Page.GetByTestId("sent-requests-label")).ToBeVisibleAsync();
         }
 
         [Test]

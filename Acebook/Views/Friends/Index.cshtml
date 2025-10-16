@@ -10,7 +10,7 @@
                 class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md cursor-pointer hover:bg-gray-200 hover:text-gray-600 text-center transition-colors hover:shadow-md">
                 Friend Requests
             </label>
-            <label id="sent-label" for="sent"
+            <label id="sent-label" data-testid="sent-requests-label" for="sent"
                 class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md cursor-pointer hover:bg-gray-200 text-center transition-colors hover:shadow-md">
                 Sent Requests
             </label>
@@ -172,9 +172,9 @@
         function updateUI() {
             // Change header text
             if (receivedRadio.checked) {
-                header.textContent = "My Received Requests";
+                header.textContent = "Received Requests";
             } else if (sentRadio.checked) {
-                header.textContent = "My Sent Requests";
+                header.textContent = "Sent Requests";
             } else {
                 header.textContent = "My Requests";
             }
@@ -185,6 +185,15 @@
             sentLabel.classList.toggle("bg-teal-500", sentRadio.checked);
             sentLabel.classList.toggle("text-white", sentRadio.checked);
         }
+
+        sentLabel.addEventListener("click", () => {
+            sentRadio.checked = true;
+            updateUI();
+        });
+        receivedLabel.addEventListener("click", () => {
+            receivedRadio.checked = true;
+            updateUI();
+        });
 
         // Run on load and whenever radios change
         updateUI();
