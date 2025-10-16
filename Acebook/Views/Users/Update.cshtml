@@ -7,7 +7,10 @@
 
     <!-- Title -->
     <h1 class="text-3xl font-bold text-teal-600 text-center">Update Your Profile</h1>
-
+        @if (TempData["Sneaky"] != null)
+            {
+                <div id="sneaky-error-message" class="text-red-600 mt-2 font-bold">@TempData["Sneaky"]</div>
+            }
     <!-- sign-up form container -->
     <div class="bg-white rounded-lg p-6 shadow-md w-full max-w-md">
         <form asp-action="Update" asp-controller="Users" method="post" class="flex flex-col space-y-4" novalidate>
