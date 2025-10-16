@@ -3,7 +3,7 @@
 <!-- Main Body -->
 <div class="min-h-screen flex flex-col items-center justify-start px-4 sm:px-6 py-6">
     <div class="flex flex-col items-center space-y-4 w-full max-w-screen-lg">
-        <h1 id="myFriendsPageTitle" data-testid="myFriendsPageTitle" class="text-3xl font-bold mb-3">My Friends</h1>
+        <h1 id="myFriendsPageTitle" data-testid="myFriendsPageTitle" class="text-3xl font-bold mb-3">My Friends (@ViewBag.Friends.Count)</h1>
         <!-- Filter buttons -->
         <!-- Filter buttons -->
         <div class="flex justify-center mt-4" role="group" aria-label="requests filters">
@@ -43,6 +43,7 @@
 
                         <form asp-action="Accept" asp-controller="Friends" method="post"
                             onsubmit="return confirm('Are you sure you want to be friends?');" class="ml-auto">
+                            @Html.AntiForgeryToken()
                             <input type="hidden" name="friendId" value="@request.Id" />
                             <button type="submit"
                                 class="bg-teal-600 hover:bg-teal-700 text-white text-s font-medium py-1 px-2 rounded">
@@ -52,6 +53,7 @@
 
                         <form asp-action="Remove" asp-controller="Friends" method="post"
                             onsubmit="return confirm('Are you sure you do not want to be friends?');">
+                            @Html.AntiForgeryToken()
                             <input type="hidden" name="friendId" value="@request.Id" />
                             <button type="submit"
                                 class="bg-gray-400 hover:bg-gray-500 text-white text-s font-medium py-1 px-2 rounded">
@@ -81,9 +83,10 @@
 
                         <form asp-action="Remove" asp-controller="Friends" method="post"
                             onsubmit="return confirm('Are you sure you want to cancel your request?');" class="ml-auto">
+                            @Html.AntiForgeryToken()
                             <input type="hidden" name="friendId" value="@request.Id" />
                             <button type="submit"
-                                class="bg-red-500 hover:bg-red-600 text-white text-xs font-medium py-1 px-2 rounded">
+                                class="bg-red-500 hover:bg-red-600 text-white text-s font-medium py-1 px-2 rounded">
                                 Cancel
                             </button>
                         </form>
@@ -151,6 +154,7 @@
 
                     <form asp-action="Remove" asp-controller="Friends" method="post"
                         onsubmit="return confirm('Are you sure you want to unfriend this person?');">
+                        @Html.AntiForgeryToken()
                         <input type="hidden" name='friendId' value="@friend.Id" />
                         <button type="submit"
                             class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-1 px-3 rounded">Unfriend</button>

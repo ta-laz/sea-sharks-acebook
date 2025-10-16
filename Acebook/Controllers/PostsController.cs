@@ -76,6 +76,7 @@ public class PostsController : Controller
   // CREATE a Post
   [Route("/posts/create")]
   [HttpPost]
+  [ValidateAntiForgeryToken]
   public IActionResult Create(Post post, string returnUrl, IFormFile? postPicture, int? WallId = null)
   {
     using var dbContext = new AcebookDbContext();
@@ -135,6 +136,7 @@ public class PostsController : Controller
   // UPDATE (Edit) a Post -> submit the editing form and update the db
   [Route("/posts/{id}/update")]
   [HttpPost]
+  [ValidateAntiForgeryToken]
   public IActionResult Update(int id, string content)
   {
     AcebookDbContext dbContext = new AcebookDbContext();
@@ -156,6 +158,7 @@ public class PostsController : Controller
   // DELETE a Post
   [Route("/posts/{id}/delete")]
   [HttpPost]
+  [ValidateAntiForgeryToken]
   public IActionResult Delete(int id)
   {
     AcebookDbContext dbContext = new AcebookDbContext();

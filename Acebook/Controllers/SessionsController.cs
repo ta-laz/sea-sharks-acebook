@@ -29,6 +29,7 @@ public class SessionsController : Controller
 
   [Route("/signin")]
   [HttpPost]
+  [ValidateAntiForgeryToken]
   public IActionResult Create(SignInViewModel sivm)
   {
     if (!ModelState.IsValid)
@@ -75,6 +76,7 @@ public class SessionsController : Controller
 
   [Route("/Signout")]
   [HttpPost]
+  [ValidateAntiForgeryToken]
   public IActionResult Signout()
   {
     HttpContext.Session.Clear();

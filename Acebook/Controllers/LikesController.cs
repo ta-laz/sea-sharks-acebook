@@ -19,6 +19,7 @@ public class LikesController : Controller
 
     [Route("/posts/{id}")] //Toggle like 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult ToggleLike(int id)
     {
         AcebookDbContext dbContext = new AcebookDbContext();
@@ -47,6 +48,7 @@ public class LikesController : Controller
 
     [Route("/comments/{id}/like")] // Toggle like on a comment
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult ToggleCommentLike(int id)
     {
         AcebookDbContext dbContext = new AcebookDbContext();
