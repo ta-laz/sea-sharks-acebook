@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Identity;
 internal static class TestDataSeeder
 {
 
+	private static readonly PasswordHasher<User> Hasher = new();
+	private static readonly string PwHash = Hasher.HashPassword(new User(), "password123");
+	
 	public static async Task EnsureDbReadyAsync(AcebookDbContext db)
 	{
 		// If you use migrations in the app, prefer Migrate() over EnsureCreated()
@@ -23,7 +26,7 @@ internal static class TestDataSeeder
     """);
 
 		var createdAt = new DateTime(2025, 1, 1, 8, 0, 0, DateTimeKind.Utc);
-		var hasher = new PasswordHasher<User>(); //we will use this to hash+salt password for all users using password123
+
 		// var pwHash = "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f";
 
 		// ---------- USERS (50) ----------
@@ -47,7 +50,7 @@ internal static class TestDataSeeder
 				FirstName = f,
 				LastName = l,
 				Email = $"{f.ToLower()}.{l.ToLower()}@sharkmail.ocean",
-				Password = hasher.HashPassword(new User(), "password123"),
+				Password = PwHash,
 				ProfilePicturePath = profilePics[i]
 				// If your model has CreatedAt, uncomment:
 				// CreatedAt = createdAt.AddMinutes(i * 7)
