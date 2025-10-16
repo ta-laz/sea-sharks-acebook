@@ -178,53 +178,6 @@
     <script src="~/js/site.js" asp-append-version="true"></script> *@
     <script src="https://unpkg.com/flowbite@2.5.1/dist/flowbite.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
-
-
-    <button id="back-to-top"
-        class="fixed bottom-6 right-6 bg-teal-600 text-white p-3 rounded-full shadow-2xl hover:bg-teal-500 mb-10 transition transition-opacity duration-200 opacity-0 pointer-events-none">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
-</svg>
-
-    </button>
-
-
-    <script>
-document.addEventListener('DOMContentLoaded', () => {
-  // Fade in on load
-  document.body.classList.add('loaded');
-
-  // Optional: fade out before navigating away (for internal links)
-  document.querySelectorAll('a[href]').forEach(link => {
-    const href = link.getAttribute('href');
-    if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('javascript:')) return;
-    if (link.hostname === window.location.hostname) {
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        const targetUrl = link.href;
-
-        // Fade out smoothly
-        document.body.classList.remove('loaded');
-        setTimeout(() => {
-          window.location.href = targetUrl;
-        }, 250); // match CSS transition duration
-      });
-    }
-  });
-});
-</script>
-
-<style>
-/* Smooth page fade-in / fade-out */
-body {
-  opacity: 0;
-  transition: opacity 0.25s ease-in-out;
-}
-body.loaded {
-  opacity: 1;
-}
-</style>
 </body>
 
 </html>
