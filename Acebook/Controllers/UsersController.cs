@@ -219,6 +219,89 @@ public class UsersController : Controller
         return new RedirectResult($"/users/{id}");
     }
 
+
+    [ServiceFilter(typeof(AuthenticationFilter))]
+    [Route("/users/{id}/update-account")]
+    [HttpGet]
+    public IActionResult UpdateAccount(int id)
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+
+        int? userId = HttpContext.Session.GetInt32("user_id");
+        if (userId != id)
+        {
+            var realUser = dbContext.Users
+                  .FirstOrDefault(u => u.Id == userId);
+            TempData["Sneaky"] = "You can only edit your own account you sneaky shark!";
+            return RedirectToAction("UpdateAccount", "Users", new { id = userId });
+        }
+        
+        var user = dbContext.Users
+                  .FirstOrDefault(u => u.Id == id);
+
+        if (user == null)
+            return NotFound();
+
+        return View(user);
+    }
+
+    [ServiceFilter(typeof(AuthenticationFilter))]
+    [Route("/users/{id}/update-account-name")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult UpdateAccountName(int id, string firstName , string lastName, string password)
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+        var user = dbContext.Users.Find(id);
+
+        if (user == null)
+            return NotFound();
+
+        string hashed = HashPassword(password); 
+        if (hashed != user.Password)
+        {
+            ViewBag.NameError = "Password incorrect";
+            return View("UpdateAccount",user);
+        }
+
+        user.FirstName = firstName;
+        user.LastName = lastName;
+        dbContext.SaveChanges();
+
+        return new RedirectResult($"/users/{id}");
+    }
+
+    [ServiceFilter(typeof(AuthenticationFilter))]
+    [Route("/users/{id}/update-account-password")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult UpdateAccountPassword(int id, ChangePasswordViewModel cpvm)
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+        var user = dbContext.Users.Find(id);
+
+        if (!ModelState.IsValid)
+        {
+            return View("UpdateAccount", user);
+        }
+        if (user == null)
+            return NotFound();
+
+        string hashed = HashPassword(cpvm.CurrentPassword);
+        if (hashed != user.Password)
+        {
+            ModelState.AddModelError("", "Incorrect password");
+            return View("UpdateAccount", user);
+        }
+
+        string newHashed = HashPassword(cpvm.NewPassword);
+
+        user.Password = newHashed;
+        dbContext.SaveChanges();
+
+        return new RedirectResult($"/users/{id}");
+    }
+
     [ServiceFilter(typeof(AuthenticationFilter))]
     [Route("/users/upload-profile-picture")]
     [HttpPost]
@@ -243,4 +326,48 @@ public class UsersController : Controller
 
         return Redirect($"/users/{currentUserId}");
     }
+
+
+    [ServiceFilter(typeof(AuthenticationFilter))]
+    [Route("/users/delete-account")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Delete(string confirmDeletePassword)
+    {
+
+        var currentUserId = HttpContext.Session.GetInt32("user_id");
+
+        if (currentUserId is null)
+        {
+            return RedirectToAction("SignIn", "Sessions");
+        }
+
+        AcebookDbContext dbContext = new AcebookDbContext();
+        var user = dbContext.Users.Find(currentUserId);
+
+        if (user == null)
+            return NotFound();
+
+        string hashed = HashPassword(confirmDeletePassword);
+        if (hashed != user.Password)
+        {
+            TempData["DeleteError"] = "Password incorrect";
+            return RedirectToAction("UpdateAccount", "Users", new { id = currentUserId });
+        }
+            using var tx = dbContext.Database.BeginTransaction();
+
+        var friendListEntries = dbContext.Friends
+            .Where(f => f.RequesterId == currentUserId || f.AccepterId == currentUserId)
+            .ToList();
+            dbContext.Friends.RemoveRange(friendListEntries);
+        
+        dbContext.Users.Remove(user);
+        dbContext.SaveChanges();
+        tx.Commit();
+
+        HttpContext.Session.Clear();
+
+        return RedirectToAction("Index", "Home");
+    }
+    
 }
