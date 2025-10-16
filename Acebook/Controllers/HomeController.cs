@@ -24,6 +24,16 @@ public class HomeController : Controller
         }
         return Redirect("/signin");
     }
+    [Route("/Coming_Soon")]
+    public IActionResult ComingSoon()
+    {
+        int? id = HttpContext.Session.GetInt32("user_id");
+        if (id != null)
+        {
+            return View();
+        }
+        return Redirect("/signin");
+    }
 
     [Route("/Privacy")]
     public IActionResult Privacy()
