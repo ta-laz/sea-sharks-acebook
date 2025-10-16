@@ -1,0 +1,193 @@
+@model User
+
+@{
+  int? userId = Context.Session.GetInt32("user_id");
+}
+<div class="min-h-screen flex flex-col items-center justify-start p-4">
+
+    <!-- Logo -->
+    <img src="@Url.Content("~/images/light_grey.png")" alt="SeaShark Logo" class="h-24 w-auto" />
+
+    <!-- Title -->
+    <h1 class="text-3xl font-bold text-teal-600 text-center mb-4">Update Your Account</h1>
+        @if (TempData["Sneaky"] != null)
+            {
+                <div id="sneaky-error-message" class="text-red-600 mt-2 font-bold">@TempData["Sneaky"]</div>
+            }
+
+    <!-- change nameform container -->
+    <div class="bg-white rounded-lg p-6 shadow-md w-full max-w-md mb-5">
+    <h2 class="text-xl font-bold text-teal-600 text-center pb-5">Change Name</h2>
+        <form asp-action="UpdateAccountName" asp-controller="Users" asp-route-id="@userId" method="post" class="flex flex-col space-y-4" onsubmit="return confirm('Are you sure you want to change your name?');">
+            @Html.AntiForgeryToken()
+
+            <!-- First Name block with validation -->
+            <div>
+                <label for="firstName" class="mb-1 block text-sm text-gray-700">First Name</label>
+                <input required asp-for="FirstName" name="firstName" id="firstName" class="w-full border border-gray-400 rounded-lg p-2"
+                    placeholder="First Name" />
+                @* <span asp-validation-for="Tagline" class="text-teal-600 text-sm font-bold" id="tagline-error"></span> *@
+            </div>
+
+            <!-- Last Name status block with validation -->
+            <div>
+                <label for="lastName" class="mb-1 block text-sm text-gray-700">Last Name</label>
+                <input required asp-for="LastName" name="lastName" id="lastName"
+                    class="w-full border border-gray-400 rounded-lg p-2" placeholder="Last Name" />
+                @* <span asp-validation-for="RelationshipStatus" class="text-teal-600 text-sm font-bold" *@
+                @* id="relationshipstatus-error"></span> *@
+            </div>
+
+            <!-- Password block with validation -->
+            <div>
+                <label for="password" class="mb-1 block text-sm text-gray-700">Current Password</label>
+                <input required type="password" id="password" name="password" class="w-full border border-gray-400 rounded-lg p-2"
+                    placeholder="Password" />
+                @* <span asp-validation-for="Pets" class="text-teal-600 text-sm font-bold" id="pets-error"></span> *@
+            </div>
+                        <!-- Errors  -->
+            @if (ViewBag.NameError != null)
+            {
+                <div id="name-error-message" class="text-red-600 mt-2">@ViewBag.NameError</div>
+            }
+            <div class="flex justify-end mt-4" role="group" aria-label="post filters">
+            <!-- Update Name submit form -->
+                <div class="flex justify-center">
+                    <button id="update-submit-name" type="submit"
+                        class="bg-teal-600 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-teal-400">Save
+                        Changes</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    
+    <div class="bg-white rounded-lg p-6 shadow-md w-full max-w-md mb-5">
+    <h2 class="text-xl font-bold text-teal-600 text-center pb-5">Change Password</h2>
+        <form asp-action="UpdateAccountPassword" asp-controller="Users" asp-route-id="@userId" method="post" class="flex flex-col space-y-4" onsubmit="return confirm('Are you sure you want to change your password?');">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="All" class="text-red-600 mb-2"></div>
+            <!-- Current Password block with validation -->
+            <div>
+                <label for="currentPassword" class="mb-1 block text-sm text-gray-700">Current Password</label>
+                <input type="password" id="currentPassword" name="currentPassword" class="w-full border border-gray-400 rounded-lg p-2"
+                    placeholder="Current Password" required/>
+                @* <span asp-validation-for="Pets" class="text-teal-600 text-sm font-bold" id="pets-error"></span> *@
+            </div>
+
+            <!-- New Password block with validation -->
+            <div>
+                <label for="newPassword" class="mb-1 block text-sm text-gray-700">New Password</label>
+                <input type="password" id="newPassword" name="newPassword" class="w-full border border-gray-400 rounded-lg p-2"
+                    placeholder="New Password" required/>
+                @* <span asp-validation-for="Pets" class="text-teal-600 text-sm font-bold" id="pets-error"></span> *@
+            </div>
+
+            <!-- Confirm New Password block with validation -->
+            <div>
+                <label for="confirmNewPassword" class="mb-1 block text-sm text-gray-700">Confirm New Password</label>
+                <input type="password" id="confirmNewPassword" name="confirmNewPassword" class="w-full border border-gray-400 rounded-lg p-2"
+                    placeholder="Confirm New Password" required/>
+                @* <span asp-validation-for="Pets" class="text-teal-600 text-sm font-bold" id="pets-error"></span> *@
+            </div>
+
+            <div class="flex items-center mt-2">
+                <input id="Show-Password" class="h-4 w-4" type="checkbox" onclick="togglePasswordVisibility()">
+                <label for="Show-Password" class="ml-2 text-md text-gray-700">Show Passwords</label>
+            </div>
+
+            <!-- Container for buttons -->
+            <div class="flex justify-end mt-4" role="group" aria-label="post filters">
+                
+                <!-- Update password submit form -->
+                <div class="flex justify-center">
+                    <button id="update-submit-password" type="submit"
+                        class="bg-teal-600 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-teal-400">Save
+                        Changes</button>
+                </div>
+                
+            </div>
+
+            <!-- Errors  -->
+            @* @if (ViewBag.Error != null)
+            {
+                <div id="error-message" class="text-teal-600 mt-2">@ViewBag.Error</div>
+            } *@
+
+        </form>
+    </div>
+
+            <!-- Container for buttons and Delete form -->
+            <div class=" flex-col items-center mt-4" role="group" aria-label="delete account">
+                <!-- Cancel button -->
+                <div class=" w-[450px] mb-5">
+                    <a href="javascript:history.back()" id="cancel"
+                        class="bg-teal-600 flex items-center justify-center text-white text-sm font-medium w-full px-4 py-2 mr-4 rounded-md hover:bg-teal-400">Cancel</a>
+                </div>
+
+                <a id="delete-account"
+                    class="bg-red-500 flex items-center justify-center text-sm font-medium w-full px-4 py-2 mr-4 rounded-md hover:bg-red-700 hover:text-white">Delete Account
+                </a>
+
+                <!-- Delete profile submit form -->
+                <form asp-action="Delete" asp-controller="Users" method="post" class="flex-1 hidden mt-4" id="delete-account-form" onsubmit="return confirm('Are you sure you want to delete your account?');">
+                @Html.AntiForgeryToken()
+                    <div class=" w-[450px] mb-5">
+                        <input type="password" id="confirmDeletePassword" name="confirmDeletePassword" class="w-full border border-gray-400 rounded-lg p-2"
+                            placeholder="Password" required/>
+                    </div>
+                    <div class="flex justify-center mt-4">
+                        <button id="cancel-delete"
+                            class="bg-teal-600 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-teal-400">Cancel</button>
+                    </div>
+
+                    <div class="flex justify-center mt-4">
+                        <button id="confirm-delete" type="submit"
+                            class="bg-red-500 text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-red-700 hover:text-white">Confirm</button>
+                    </div>
+                    
+                </form>
+                
+            </div>    
+            
+</div>
+
+<script>
+  function togglePasswordVisibility() {
+    var currentPass = document.getElementById("currentPassword");
+    var newPass = document.getElementById("newPassword");
+    var confirmNewPass = document.getElementById("confirmNewPassword");
+    if (currentPass.type === "password") {
+      currentPass.type = "text";
+      newPass.type = "text";
+      confirmNewPass.type = "text";
+    } else {
+      currentPass.type = "password";
+      newPass.type = "password";
+      confirmNewPass.type = "password";
+    }
+  }
+
+
+  // 🟩 Tagline editing logic
+          const deleteButton = document.getElementById('delete-account');
+          const confirmButton = document.getElementById('confirm-delete');
+          const form = document.getElementById('delete-account-form');
+          const cancelButton = document.getElementById("cancel-delete");
+
+          if (deleteButton && confirmButton && form && cancelButton) {
+            deleteButton.addEventListener('click', () => {
+              form.classList.remove('hidden');
+              confirmButton.classList.remove('hidden');
+              cancelButton.classList.remove('hidden');
+            });
+
+            cancelButton.addEventListener('click', () => {
+              form.classList.add('hidden');
+              confirmButton.classList.add('hidden');
+              cancelButton.classList.add('hidden');
+            });
+          }
+</script>
