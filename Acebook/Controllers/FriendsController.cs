@@ -182,6 +182,7 @@ public class FriendsController : Controller
     [HttpPost]
     public async Task<IActionResult> Accept(int friendId)
     {
+        int? currentUserId = HttpContext.Session.GetInt32("user_id");
         using var dbContext = new AcebookDbContext();
 
         var friend = await dbContext.Friends
@@ -211,6 +212,7 @@ public class FriendsController : Controller
             dbContext.Notifications.Add(new Notification
             {
                 ReceiverId = requester.Id,
+                SenderId = currentUserId,
                 Title = title,
                 Message = message,
                 Url = $"/users/{accepter.Id}"
@@ -260,6 +262,7 @@ public class FriendsController : Controller
             dbContext.Notifications.Add(new Notification
             {
                 ReceiverId = receiverId,
+                SenderId = currentUserId,
                 Title = title,
                 Message = message,
                 Url = "/friends"

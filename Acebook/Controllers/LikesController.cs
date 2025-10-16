@@ -54,6 +54,7 @@ public class LikesController : Controller
                 dbContext.Notifications.Add(new Notification
                 {
                     ReceiverId = post.UserId,
+                    SenderId = currentUserId,
                     Title = title,
                     Message = message,
                     Url = url
@@ -106,6 +107,7 @@ public class LikesController : Controller
                 dbContext.Notifications.Add(new Notification
                 {
                     ReceiverId = comment.UserId,
+                    SenderId = currentUserId,
                     Title = title,
                     Message = message,
                     Url = url

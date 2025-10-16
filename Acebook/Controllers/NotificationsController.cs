@@ -27,6 +27,7 @@ namespace acebook.Controllers
 
             var notifications = dbContext.Notifications
                 .Where(n => n.ReceiverId == userId)
+                .Include(n => n.Sender)
                 .OrderByDescending(n => n.CreatedOn)
                 .Take(10)
                 .ToList();
@@ -47,6 +48,7 @@ namespace acebook.Controllers
 
             var notifications = await dbContext.Notifications
                 .Where(n => n.ReceiverId == userId && !n.IsRead)
+                .Include(n => n.Sender)
                 .OrderByDescending(n => n.CreatedOn)
                 .ToListAsync();
 
@@ -79,12 +81,14 @@ namespace acebook.Controllers
         [HttpPost("/notifications/send")]
         public async Task<IActionResult> SendNotification(int receiverId, string title, string message)
         {
+            int? senderId = HttpContext.Session.GetInt32("user_id");
             using var dbContext = new AcebookDbContext();
 
             // 1. Save it to the database
             var notification = new Notification
             {
                 ReceiverId = receiverId,
+                SenderId = senderId,
                 Title = title,
                 Message = message
             };
@@ -112,7 +116,8 @@ namespace acebook.Controllers
             await userNotifications.ForEachAsync(n => n.IsRead = true);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return RedirectToAction("Index");
+
         }
     }
 }

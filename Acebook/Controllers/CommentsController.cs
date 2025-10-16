@@ -110,6 +110,7 @@ public class CommentsController : Controller
                 dbContext.Notifications.Add(new Notification
                 {
                     ReceiverId = commenterId,
+                    SenderId = currentUserId,
                     Title = title,
                     Message = message,
                     Url = url

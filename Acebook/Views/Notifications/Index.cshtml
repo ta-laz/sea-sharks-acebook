@@ -22,16 +22,28 @@
             @foreach (var notif in notifications)
             {
                 <div class="flex items-start bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition relative">
-                    <!-- Placeholder image (for now) -->
-                    <img src="/images/Placeholder.png"
+
+                    <!-- Sender image (uses sender profile pic if available) -->
+                    <img src="@(notif.Sender?.ProfilePicturePath ?? "/images/Placeholder.png")"
                          class="w-12 h-12 rounded-full object-cover border border-gray-300 mr-4" />
 
                     <div class="flex-1">
                         <div class="flex justify-between items-center">
                             <div>
+                                <!-- Notification title -->
                                 <h2 class="font-semibold text-gray-800">@notif.Title</h2>
-                                <p class="text-gray-700 text-sm mt-1">@notif.Message</p>
+
+                                <!-- Message (with sender name if available) -->
+                                <p class="text-gray-700 text-sm mt-1">
+                                    @if (notif.Sender != null)
+                                    {
+                                        <strong>@notif.Sender.FirstName</strong>
+                                        @: 
+                                    }
+                                    @notif.Message
+                                </p>
                             </div>
+
                             <p class="text-xs text-gray-400 ml-2 whitespace-nowrap">
                                 @notif.CreatedOn.ToLocalTime().ToString("dd MMM yyyy, HH:mm")
                             </p>

@@ -99,6 +99,7 @@ public class PostsController : Controller
         dbContext.Notifications.Add(new Notification
         {
           ReceiverId = wallOwner.Id,
+          SenderId = currentUserId,
           Title = title,
           Message = message,
           Url = url
