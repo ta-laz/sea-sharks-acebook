@@ -109,6 +109,17 @@ if (bell && dropdown) {
     });
 }
 
+// Close dropdown if clicking outside it
+document.addEventListener("click", (e) => {
+    // if dropdown or bell don't exist, skip
+    if (!dropdown || !bell) return;
+
+    // check if click was outside both the dropdown and the bell
+    if (!dropdown.classList.contains("hidden") && !dropdown.contains(e.target) && !bell.contains(e.target)) {
+        dropdown.classList.add("hidden");
+    }
+});
+
 // Card renderer
 function renderNotifCard(n) {
     const div = document.createElement("div");
