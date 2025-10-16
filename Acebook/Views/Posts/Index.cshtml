@@ -238,17 +238,15 @@
       </div>
 
       <!-- Filter buttons -->
-      <div class="flex justify-center mt-4 sticky top-20 z-20 py-1 px-2 rounded-md" role="group"
-        aria-label="post filters">
-        <button
-          class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md hover:bg-gray-200">
-          All Posts
-        </button>
-        <button
-          class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md hover:bg-gray-200">
-          Friends' Posts
-        </button>
-      </div>
+        <div class="flex justify-center mt-4 sticky top-20 z-20 py-1 px-2 rounded-md" role="group" aria-label="post filters">
+          <a href="@Url.Action("Index", "Posts", new { filter = "all" })"
+            class="w-40 px-4 py-2 text-sm font-medium border border-gray-300 rounded-l-md text-center
+                    @(ViewBag.Filter == "all" ? "bg-teal-600 text-white" : "bg-white text-gray-600 hover:bg-gray-200")">All Posts</a>
+          <a href="@Url.Action("Index", "Posts", new { filter = "friends" })"
+            class="w-40 px-4 py-2 text-sm font-medium border border-gray-300 border-l-0 rounded-r-md text-center
+                    @(ViewBag.Filter == "friends" ? "bg-teal-600 text-white" : "bg-white text-gray-600 hover:bg-gray-200")">Friends' Posts</a>
+        </div>
+
 
       <!-- Scrollable Post List with Clipping -->
       <div class="overflow-y-auto max-h-[70vh] pb-10 space-y-6"

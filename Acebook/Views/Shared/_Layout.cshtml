@@ -11,6 +11,8 @@
     <title>@ViewData["Title"] - acebook</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <meta name="request-verification-token" content="@tokens.RequestToken" />
+    <link rel="icon" type="image/x-icon" href="~/images/light_grey.png">
+
 </head>
 
 <body class="flex flex-col min-h-screen">
@@ -47,7 +49,7 @@
                                 
                                 <!-- SeaShark Logo -->
                                 <a asp-action="Index" asp-controller="Home" method ="get">
-                                    <img src="@Url.Content("~/images/light_grey.png")"
+                                    <img src="@Url.Content(contentPath: "~/images/light_grey.png")"
                                     alt="SeaShark Logo" class="h-14 w-auto"  />
                                 
                                 </a>
