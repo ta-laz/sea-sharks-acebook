@@ -71,7 +71,7 @@ namespace Acebook.Tests
             // NOTE: each test is set up as signed in with Finn and goes to /friends
             await Page.GetByTestId("sent-requests-label").ClickAsync();
             await Expect(Page.GetByTestId("sent-requests-label")).ToBeVisibleAsync();
-b        }
+        }
 
         [Test]
         public async Task FriendListPage_SearchForShelly_DisplaysShelly()
