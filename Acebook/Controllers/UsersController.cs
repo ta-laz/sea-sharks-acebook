@@ -129,6 +129,7 @@ public class UsersController : Controller
 
     [Route("/users")]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Create(SignUpViewModel suvm)
     {
         if (!ModelState.IsValid)
@@ -200,6 +201,7 @@ public class UsersController : Controller
     [ServiceFilter(typeof(AuthenticationFilter))]
     [Route("/users/{id}/update")]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Update(int id, string tagline, string relationshipStatus, string pets, string job)
     {
         AcebookDbContext dbContext = new AcebookDbContext();
@@ -220,6 +222,7 @@ public class UsersController : Controller
     [ServiceFilter(typeof(AuthenticationFilter))]
     [Route("/users/upload-profile-picture")]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> UploadProfilePicture(IFormFile profilePicture)
     {
         var currentUserId = HttpContext.Session.GetInt32("user_id");
