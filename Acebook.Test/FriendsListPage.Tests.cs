@@ -38,10 +38,10 @@ namespace Acebook.Tests
         }
 
         public override BrowserNewContextOptions ContextOptions()
-          => new BrowserNewContextOptions
-          {
-              BaseURL = BaseUrl
-          };
+            => new BrowserNewContextOptions
+            {
+                BaseURL = BaseUrl
+            };
 
         // 1. Check if the page loads - go to the URL /friends and check if My Friends can be found and see if friend list is visibile  - DONE
         // 2. If friend requests clicked, are my friend requests visibile - DONE

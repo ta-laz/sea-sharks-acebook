@@ -166,7 +166,7 @@ public class PostsController : Controller
     if (sessionUserId == null)
         return Unauthorized(); // Checks user is logged in
     Post post = dbContext.Posts.Include(p => p.Comments).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
-    if (post.UserId != sessionUserId) // Server-side security (only authors can delete comments)
+    if (post.UserId != sessionUserId || post.WallId != sessionUserId) // Server-side security (only authors or wall owners can delete comments)
     {
       return Forbid();
     }
