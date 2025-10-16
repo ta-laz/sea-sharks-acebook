@@ -108,6 +108,7 @@
                 {
                     <form asp-action="Remove" asp-controller="Friends" method="post"
                         onsubmit="return confirm('Are you sure you want to unfriend this person?');">
+                        @Html.AntiForgeryToken()
                     <button disabled data-testid="already-friends"
                         class="bg-gray-300 text-gray-700 text-sm font-medium py-1 px-3 rounded hover:bg-gray-200">
                         Friends
@@ -132,6 +133,7 @@
                 {
                     <form asp-action="AddFriend" asp-controller="Friends" method="post"
                         onsubmit="return confirm('Are you sure you want to add this person?');">
+                        @Html.AntiForgeryToken()
                         <input type="hidden" name="receiverId" value="@Model.Id" />
                         <button data-testid="add-friend" type="submit"
                             class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium py-1 px-3 rounded">
@@ -147,6 +149,7 @@
                 <div class="flex-1 bg-white rounded-lg overflow-y-auto px-4 py-4 p-4 shadow-md transition hover:shadow-xl space-x-3 hover:-translate-y-1">
                     <h2 class="text-lg text-teal-700 font-bold mb-3 px-3">Add to their tank</h2>
                     <form action="@Url.Action("Create", "Posts")" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
                         <textarea required id="post-input" data-testid="create-post-input"
                         class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
                         name="content" maxlength="2000"
@@ -335,22 +338,11 @@
 </script>
 
 <script>
-  const fileInput = document.getElementById("file-upload");
-  const fileNameDisplay = document.getElementById("file-name");
-  fileInput.addEventListener("change", function () {
-    // If at least one file is chosen
-    if (fileInput.files.length > 0) {
-      fileNameDisplay.textContent = fileInput.files[0].name;
-      fileNameDisplay.classList.remove("text-gray-500", "italic");
-      fileNameDisplay.classList.add("text-teal-700", "font-medium");
-    } else {
-      // Reset text if no file is chosen
-      fileNameDisplay.textContent = "No file chosen";
-      fileNameDisplay.classList.add("text-gray-500", "italic");
-                }
-                });
+    const csrf = document
+    .querySelector('meta[name="request-verification-token"]')
+    ?.getAttribute('content');
 
-                // 🟩 like button logic
+    // 🟩 like button logic
         document.addEventListener('DOMContentLoaded', () => {
           const likeButtons = document.querySelectorAll('button[data-post-id]');
 
@@ -376,7 +368,8 @@
               try {
                 const response = await fetch(`/posts/${postId}`, {
                   method: 'POST',
-                  headers: { 'Content-Type': 'application/json' }
+                  headers: { 'Content-Type': 'application/json',
+                  'RequestVerificationToken': csrf }
                 });
 
                 if (!response.ok) throw new Error('Network response was not ok');
@@ -404,3 +397,20 @@
           });
       });
             </script>
+
+<script>
+  const fileInput = document.getElementById("file-upload");
+  const fileNameDisplay = document.getElementById("file-name");
+  fileInput.addEventListener("change", function () {
+    // If at least one file is chosen
+    if (fileInput.files.length > 0) {
+      fileNameDisplay.textContent = fileInput.files[0].name;
+      fileNameDisplay.classList.remove("text-gray-500", "italic");
+      fileNameDisplay.classList.add("text-teal-700", "font-medium");
+    } else {
+      // Reset text if no file is chosen
+      fileNameDisplay.textContent = "No file chosen";
+      fileNameDisplay.classList.add("text-gray-500", "italic");
+    }
+  });
+</script>

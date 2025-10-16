@@ -26,7 +26,7 @@ public class Post
                     : (day % 10 == 2 && day != 12) ? "nd"
                     : (day % 10 == 3 && day != 13) ? "rd"
                     : "th";
-      return CreatedOn.ToString($"dddd d'{suffix}' MMMM yyyy");
+      return CreatedOn.ToString($"dddd d'{suffix}' MMMM yyyy, h:mm tt");
     }
   }
 

@@ -1,11 +1,18 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    var tokens = Antiforgery.GetAndStoreTokens(Context); // sets cookie if missing
+}
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - acebook</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="request-verification-token" content="@tokens.RequestToken" />
+    <link rel="icon" type="image/x-icon" href="~/images/light_grey.png">
+
 </head>
 
 <body class="flex flex-col min-h-screen">
@@ -126,6 +133,7 @@
                                         </li>
                                         <li>
                                             <form asp-controller="Sessions" asp-action="Signout" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
                                             <button type="submit" data-testid="signout" id="signout" class="block w-full text-left px-4 py-2 appearance-none hover:bg-gray-100">Sign Out</button>
                                             </form>
                                         </li>

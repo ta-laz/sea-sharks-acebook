@@ -34,6 +34,7 @@ public class CommentsController : Controller
     // CREATE a comment
     [Route("post/create")]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Create(int postId, Comment comment)
     {
         int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
@@ -50,6 +51,7 @@ public class CommentsController : Controller
     // UPDATE (Edit) a Comment -> submit the editing form and update the db
     [Route("/posts/{postId}/{commentId}/update")]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Update(int postId, int commentId, string comment_content)
     {
         AcebookDbContext dbContext = new AcebookDbContext();
@@ -75,6 +77,7 @@ public class CommentsController : Controller
     // DELETE a Comment
     [Route("/posts/{postId}/{commentId}/delete-comment")]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Delete(int postId, int commentId)
     {
         AcebookDbContext dbContext = new AcebookDbContext();

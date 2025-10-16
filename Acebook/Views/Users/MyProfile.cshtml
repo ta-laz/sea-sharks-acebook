@@ -29,6 +29,7 @@
         <div
           class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
           <form asp-action="UploadProfilePicture" asp-controller="Users" method="post" enctype="multipart/form-data">
+          @Html.AntiForgeryToken()
             <label class="cursor-pointer text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md z-100 pointer-events-auto">
               Change Picture
               <input type="file" name="profilePicture" accept="image/*" class="hidden" onchange="this.form.submit();" />
@@ -125,6 +126,7 @@
         <!-- Tagline and edit tagline -->
         <form asp-action="Update" asp-controller="Users" asp-route-id="@userId" method="post" id="tagline-form"
           data-testid="tagline-form" label="update tagline form" class="hidden">
+          @Html.AntiForgeryToken()
           <input type="text" name="tagline" label="update tagline box" id="tagline-input" data-testid="tagline-input"
             class="border border-gray-300 rounded-md p-2 w-full" asp-for="ProfileBio.Tagline" />
           <input type="hidden" asp-for="ProfileBio.RelationshipStatus" name="relationshipStatus"
@@ -151,6 +153,7 @@
       <div class="flex-1 bg-white rounded-lg overflow-y-auto px-4 py-4 p-4 shadow-md transition hover:shadow-xl space-x-3 hover:-translate-y-1">
         <h2 class="text-lg text-teal-700 font-bold px-3 mb-3">Start a feeding frenzy</h2>
         <form action="@Url.Action("Create", "Posts")" method="post" enctype="multipart/form-data" >
+        @Html.AntiForgeryToken()
           <textarea required id="create-post-input" data-testid="create-post-input"
             class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
             name="content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)"></textarea>
@@ -295,6 +298,9 @@
       </div>
 
       <script>
+        const csrf = document
+        .querySelector('meta[name="request-verification-token"]')
+        ?.getAttribute('content');
         document.addEventListener("DOMContentLoaded", function () {
           // 🟩 Tagline editing logic
           const button = document.getElementById('update-tagline');
@@ -361,7 +367,8 @@
               try {
                 const response = await fetch(`/posts/${postId}`, {
                   method: 'POST',
-                  headers: { 'Content-Type': 'application/json' }
+                  headers: { 'Content-Type': 'application/json',
+                  'RequestVerificationToken': csrf }
                 });
 
                 if (!response.ok) throw new Error('Network response was not ok');
