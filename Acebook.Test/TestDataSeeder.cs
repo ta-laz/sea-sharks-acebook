@@ -2,6 +2,7 @@ namespace Acebook.Test;
 
 using Microsoft.EntityFrameworkCore;
 using acebook.Models;
+using Microsoft.AspNetCore.Identity;
 
 internal static class TestDataSeeder
 {
@@ -22,7 +23,8 @@ internal static class TestDataSeeder
     """);
 
 		var createdAt = new DateTime(2025, 1, 1, 8, 0, 0, DateTimeKind.Utc);
-		var pwHash = "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f"; // password123
+		var hasher = new PasswordHasher<User>(); //we will use this to hash+salt password for all users using password123
+		// var pwHash = "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f";
 
 		// ---------- USERS (50) ----------
 		// deterministic pools we cycle through
@@ -45,7 +47,7 @@ internal static class TestDataSeeder
 				FirstName = f,
 				LastName = l,
 				Email = $"{f.ToLower()}.{l.ToLower()}@sharkmail.ocean",
-				Password = pwHash,
+				Password = hasher.HashPassword(new User(), "password123"),
 				ProfilePicturePath = profilePics[i]
 				// If your model has CreatedAt, uncomment:
 				// CreatedAt = createdAt.AddMinutes(i * 7)
