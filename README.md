@@ -99,595 +99,311 @@ To rollback the second, you again use `dotnet ef database update` but this time 
 ```shell
 ; dotnet ef database update CreatePostsAndUsers
 ```
-##### Project OverVeiw:
+# 🦈 SeaShark (Acebook)
 
-This app allows one to sign themselves up to a aquatic ecosystem where they can make post their thoughts into the tank where they are subjected to being liked and commented on by other finned swimmers. You can add these fun fishies as your friends and swim together in the Aquarium and even post on eachothers walls or unfriend them if your swimming on a different direction. This application exists purely as a successful effort of Sea Sharks team effort, brilliant planning and love for tests!
+---
 
--Tech Stack:
+## 📘 Project Overview
 
-ASP.NET Core MVC (.NET 9)
+This app allows users to sign themselves up to an aquatic ecosystem where they can post their thoughts into the tank — where they are subject to being liked and commented on by other finned swimmers. 🐠  
 
-Entity Framework Core
+You can add these fun fishies as your friends and swim together in the Aquarium — even post on each other’s walls or unfriend them if you’re swimming in a different direction.  
 
-Razor Views (HTML + Tailwind CSS)
+This application exists purely as a successful effort of the **Sea Sharks** team: teamwork, brilliant planning, and a love for tests! ❤️  
 
-SQLite / PostgreSQL / SQL Server (whichever DB you used)
+---
 
-xUnit / NUnit / Playwright (for testing)
+## ⚙️ Tech Stack
 
--Project Structure: Quick list of major folders and their purpose:
+- **ASP.NET Core MVC (.NET 9)**
+- **Entity Framework Core**
+- **Razor Views (HTML + Tailwind CSS)**
+- **SQLite / PostgreSQL / SQL Server** (depending on environment)
+- **xUnit / NUnit / Playwright** (for testing)
 
-/Controllers – request handling logic
+---
 
-/Models – database and data transfer objects
+## 📁 Project Structure
 
-/Views – Razor pages for rendering UI
+| Folder | Description |
+|--------|--------------|
+| `/Controllers` | Request handling logic |
+| `/Models` | Database entities and data transfer objects |
+| `/Views` | Razor pages for rendering UI |
+| `/wwwroot` | Static files (CSS, JS, images) |
+| `/Data` | Database context and EF migrations |
 
-/wwwroot – static files (CSS, images)
+---
 
-/Data – database context, migrations
+## 🧩 Architecture & Design
 
+### 2.1 Overview
+SeaShark follows the **Model–View–Controller (MVC)** architectural pattern using ASP.NET Core MVC.  
+This separation of concerns improves **maintainability**, **testability**, and **scalability**.
 
-##### Architecture & Design:
-2.1 Overview
+- **Model** – Represents data and business logic via EF Core models (e.g., `User`, `Post`, `Comment`).
+- **View** – Displays information through Razor `.cshtml` templates styled with Tailwind CSS & Flowbite.
+- **Controller** – Handles HTTP requests, interacts with models, and renders appropriate views.
 
-SeaShark follows the Model–View–Controller (MVC) architectural pattern using ASP.NET Core MVC.
-This separation of concerns improves maintainability, testability, and scalability of the application.
+All requests pass through controllers, which fetch or manipulate data using `AcebookDbContext` before returning a view.
 
-Model – Represents the data and business logic. Entity Framework Core models such as User, Post, and Comment define the database schema and relationships.
-
-View – Responsible for displaying information to the user through Razor .cshtml templates, styled with Tailwind CSS and Flowbite components.
-
-Controller – Handles incoming HTTP requests, interacts with the Model, and selects which View to render.
-
-All requests pass through controllers, which fetch or manipulate data using the AcebookDbContext before returning an appropriate view.
-
-2.2 MVC Request Flow
+### 2.2 MVC Request Flow
+```
 [Browser] → [Controller] → [Model / DbContext] → [Controller] → [View] → [Browser]
+```
 
+**Example:**
+- User visits `/search?SearchString=shark`
+- Routed to `SearchBarController.Index()`
+- Controller queries via `AcebookDbContext` filtering users, posts, and comments
+- Results passed through `ViewBag`
+- Razor view `/Views/SearchBar/Index.cshtml` renders HTML
+- Browser displays filtered results
 
-Example:
+### 2.3 Application Layers
 
-A user visits /search?SearchString=shark.
+| Layer | Purpose | Example Files |
+|-------|----------|---------------|
+| **Model** | Defines entities, validation, and logic | `User.cs`, `Post.cs`, `Comment.cs`, `AcebookDbContext.cs` |
+| **View** | Presents data using Razor and Tailwind | `_Layout.cshtml`, `Views/SearchBar/Index.cshtml` |
+| **Controller** | Handles HTTP requests and responses | `UsersController.cs`, `PostsController.cs`, `SearchBarController.cs` |
+| **Database Context** | Bridge between EF Core models and DB | `AcebookDbContext.cs` |
 
-The request is routed to SearchBarController.Index().
+### 2.4 Design Decisions
+- **Entity Framework Core:** Simplifies ORM, migrations, and LINQ querying  
+- **Razor + TailwindCSS:** Lightweight, utility-first design system  
+- **Session-based Authentication:** Simple and secure for prototype scale  
+- **Search Filtering System:** One controller (`SearchBarController`) queries Users, Posts, and Comments using `SearchFilter`
 
-The controller queries the database via AcebookDbContext, filtering users, posts, and comments.
+---
 
-The results are packaged into ViewBag objects.
+## 🐬 Database Design
 
-Razor view /Views/SearchBar/Index.cshtml renders the HTML.
+### 3.1 Overview
+SeaShark uses **Entity Framework Core (EF Core)** for ORM and relational database management.  
+`AcebookDbContext.cs` defines all tables (DbSets), enabling LINQ queries and schema generation.
 
-The browser displays the filtered results.
+### 3.2 Entity Summary
 
-2.3 Application Layers
-Layer	Purpose	Example Classes / Files
-Model	Defines entities and relationships. Manages business logic and validation.	User.cs, Post.cs, Comment.cs, AcebookDbContext.cs
-View	Presents data to users via Razor pages with Tailwind CSS for styling.	_Layout.cshtml, Views/Users/Index.cshtml, Views/SearchBar/Index.cshtml
-Controller	Handles HTTP requests and responses, invoking models and selecting views.	UsersController.cs, PostsController.cs, SearchBarController.cs
-Database Context	Provides a bridge between models and the underlying database using EF Core.	AcebookDbContext.cs
-2.4 Design Decisions
+| Entity | Description |
+|--------|--------------|
+| **User** | Represents a registered account. Can create posts, comments, likes, and friendships. |
+| **Post** | Represents a user’s post on their wall or another’s. Supports comments and likes. |
+| **Comment** | Represents replies to posts. Can be liked. |
+| **Like** | Represents user reactions to posts/comments. |
+| **Friend** | Manages friend relationships and requests. |
+| **ProfileBio** | Stores biography, profile image, and cover photo. |
 
-Entity Framework Core:
-Chosen for its integration with ASP.NET Core, allowing easy database migrations and LINQ-based querying.
+### 3.3 Relationships
 
-Razor Views with TailwindCSS:
-Offers a fast, utility-first design workflow that keeps styles consistent and compact across the app.
+| Relationship | Type | Description |
+|--------------|------|-------------|
+| User → Post | One-to-Many | A user authors many posts |
+| User → Comment | One-to-Many | A user can make many comments |
+| User → Like | One-to-Many | A user can like many posts/comments |
+| Post → Comment | One-to-Many | A post can have many comments |
+| Post → Like | One-to-Many | A post can have many likes |
+| Comment → Like | One-to-Many | A comment can have many likes |
+| User ↔ Friend | Many-to-Many | Friendship managed through `Friend` |
+| User → ProfileBio | One-to-One | Each user has one profile bio |
 
-Session-based Authentication:
-Used instead of JWT for simplicity; session stores user_id and user_name for persistent sign-in.
-
-Search Filtering System:
-A single SearchBarController manages queries for Users, Posts, and Comments.
-The controller accepts a SearchString and an optional SearchFilter parameter to determine which entities to query.
-
-###### Database Design: 
-
-3.1 Overview
-
-SeaShark uses Entity Framework Core (EF Core) as its Object–Relational Mapper (ORM) to manage all database interactions.
-The data model follows a relational design where users, posts, comments, likes, and friendships are interconnected through primary–foreign key relationships.
-
-The database context is defined in AcebookDbContext.cs, which exposes DbSet properties for each entity, enabling LINQ-based querying and automatic schema generation through EF migrations.
-
-3.2 Entity Summary
-Entity	Description
-User	Represents a registered account in the system. Each user can create posts, comments, likes, and manage friendships.
-Post	Represents a user’s post on their own or another user’s wall. Can have many comments and likes.
-Comment	Represents user replies to posts. Comments can also be liked.
-Like	Represents a like action on a post or comment. Each like is tied to a user and either a post or comment.
-Friend	Manages relationships between two users, supporting friend requests and accepted connections.
-ProfileBio	Stores extended profile information for a user, such as biography and profile picture path.
-3.3 Relationships Between Entities
-Relationship	Type	Description
-User → Post	One-to-Many	A user can author multiple posts (User.Posts).
-User → Comment	One-to-Many	A user can write multiple comments (User.Comments).
-User → Like	One-to-Many	A user can like many posts or comments (User.Likes).
-Post → Comment	One-to-Many	A post can have multiple comments (Post.Comments).
-Post → Like	One-to-Many	A post can have multiple likes (Post.Likes).
-Comment → Like	One-to-Many	A comment can be liked by many users.
-User ↔ Friend	Many-to-Many (self-referencing)	A user can have many friends through the Friend entity.
-User → ProfileBio	One-to-One	Each user has one corresponding profile bio.
-3.4 Entity Diagrams
-User:
-User
-│ Id : int (PK)
-│ FirstName : string
-│ LastName : string
-│ Email : string
-│ Password : string
-│ DOB : DateTime
-│ CreatedOn : DateTime
-│
-├── ICollection<Post> Posts
-├── ICollection<Comment> Comments
-├── ICollection<Like> Likes
-├── ICollection<Friend> Friends
-└── ProfileBio ProfileBio
-
-Post:
-Post
-│ Id : int (PK)
-│ Content : string
-│ UserId : int (FK → User)
-│ WallId : int
-│ CreatedOn : DateTime
-│ PostPicturePath : string?
-│
-├── ICollection<Comment> Comments
-└── ICollection<Like> Likes
-
-Comment:
-Comment
-│ Id : int (PK)
-│ Content : string
-│ UserId : int (FK → User)
-│ PostId : int (FK → Post)
-│ CreatedOn : DateTime
-│
-└── ICollection<Like> Likes
-
-Like:
-Like
-│ Id : int (PK)
-│ UserId : int (FK → User)
-│ PostId : int? (FK → Post)
-│ CommentId : int? (FK → Comment)
-│
-├── Post? Post
-├── Comment? Comment
-└── User User
-
-Friend:
-Friend
-│ Id : int (PK)
-│ SenderId : int (FK → User)
-│ ReceiverId : int (FK → User)
-│ Status : string (e.g., "Pending", "Accepted")
-│ CreatedAt : DateTime
-
-ProfileBio:
-ProfileBio
-│ Id : int (PK)
-│ UserId : int (FK → User)
-│ Biography : string
-│ ProfilePicturePath : string?
-│ CoverPicturePath : string?
-
-3.5 Entity Relationships Diagram (ERD)
+### 3.4 Entity Relationship Diagram
+```mermaid
 erDiagram
-    User ||--o{ Post : "creates"
-    User ||--o{ Comment : "writes"
-    User ||--o{ Like : "reacts"
-    User ||--o{ Friend : "connects"
-    User ||--|| ProfileBio : "has"
+  User ||--o{ Post : "creates"
+  User ||--o{ Comment : "writes"
+  User ||--o{ Like : "reacts"
+  User ||--o{ Friend : "connects"
+  User ||--|| ProfileBio : "has"
+
+  Post ||--o{ Comment : "receives"
+  Post ||--o{ Like : "receives"
+  Comment ||--o{ Like : "receives"
+
+  Friend }o--|| User : "receiver"
+```
+
+---
+
+## Core Features
+
+- 🧍‍♂️ User authentication and sessions  
+- 🗣️ Posting and commenting system  
+- 💙 Likes on posts and comments  
+- 🧑‍🤝‍🧑 Friend requests and mutual friendships  
+- 🔍 Search bar with category filters (People / Posts / Comments)  
+- 📸 Profile bio, images, and cover photo management  
+
+---
+
+## 🖥️ Frontend / Views
 
-    Post ||--o{ Comment : "receives"
-    Post ||--o{ Like : "receives"
-    Comment ||--o{ Like : "receives"
+### 4.1 Overview
+Built with **Razor Views**, **Tailwind CSS**, and **Flowbite**, the frontend is fully responsive and consistent.
 
-    Friend }o--|| User : "receiver"
+**Shared Layouts:**
+- `_Layout.cshtml`: Global layout with navigation, search bar, and footer  
+- `_Layout.cshtml.css`: Custom layout styling  
+- `_ValidationScriptsPartial.cshtml`: Validation for forms  
+- `Error.cshtml`: Friendly error page  
 
-#### Controllers:
+### 4.2 Page Views
 
-#### Core Features:
+| View | Description |
+|------|--------------|
+| **Home/Index.cshtml** | Landing page displaying post feed |
+| **Users/MyProfile.cshtml** | Displays user’s own profile and posts |
+| **Users/OtherProfile.cshtml** | Public profile of another user |
+| **Posts/Post.cshtml** | Detailed post view with comments & likes |
+| **Comments/Index.cshtml** | Displays comments under a post |
+| **Users/ViewUserFriends.cshtml** | Shows friend list and requests |
+| **Users/New.cshtml** | User registration form |
+| **Users/Update.cshtml** | Edit user bio or upload photos |
+| **SearchBar/Index.cshtml** | Renders search results by category |
+| **Home/Privacy.cshtml** | App privacy policy |
+
+### 4.4 Frontend Technologies
+
+| Tech | Purpose |
+|------|----------|
+| Razor (.cshtml) | Dynamic C# + HTML templating |
+| Tailwind CSS | Utility-first responsive design |
+| Flowbite | Prebuilt Tailwind components |
+| JavaScript | Dropdowns, filters, and search logic |
+| Razor Layout System | Shared navigation, theme, and footer |
+
+---
+## 🎮 Controllers
 
-##### Frontend/ Views:
-6.1 Overview
-
-SeaShark’s front-end presentation layer is built using Razor Views (.cshtml) combined with Tailwind CSS and Flowbite for modern, responsive styling.
-The application adopts a modular view structure, where shared layout files define common UI components (navigation bar, footer, scripts), and page-specific Razor views render dynamic content.
-
-Each view interacts with its respective controller to display data from the database through ViewData, ViewBag, or strongly typed models (@model).
-
-6.2 Layout & Shared Components
-File	Purpose
-_Layout.cshtml	The global layout template wrapping all pages. Contains navigation bar, search bar, user dropdown, and footer. Defines consistent structure across the site.
-_Layout.cshtml.css	Custom stylesheet providing styling for navigation, footer, and layout spacing. Works alongside Tailwind for additional layout control
-
-_Layout.cshtml
-
-
-_ValidationScriptsPartial.cshtml	Partial view used for validation scripts across user forms (e.g. registration, login, profile update).
-Error.cshtml	Displays application errors or invalid requests gracefully, showing a message with debugging information when enabled.
-Key Features
-
-Dynamic Navbar: Shows different links and buttons depending on whether a user is signed in (based on Session variables).
-
-Integrated Search Bar: The top navigation includes an interactive search system with category filtering (All, People, Posts, Comments).
-
-Responsive Design: Tailwind’s grid and utility classes ensure consistent styling across mobile, tablet, and desktop screens.
-
-Reusable Footer: Shared footer with privacy and policy links included in _Layout.cshtml.
-
-6.3 Page Views
-Views/Home/Index.cshtml
-
-Serves as the landing page of SeaShark.
-
-Provides quick access to posts or user feeds after login.
-
-Pulls data from HomeController to populate the feed.
-
-Views/Users/MyProfile.cshtml
-
-Displays the currently logged-in user’s profile information.
-
-Shows profile bio (ProfileBio model), post history, and edit options.
-
-Integrates Update.cshtml partial for in-page profile updates.
-
-Accesses data via UsersController.Index() or similar routes.
-
-Views/Users/OtherProfile.cshtml
-
-Used to display another user’s public profile when visited from a search or post interaction.
-
-Fetches posts authored by the selected user and friendship status (via Friend model).
-
-Views/Posts/Post.cshtml
-
-Displays a single post in detail view, including all comments and likes.
-
-Uses Razor conditionals to check if the post exceeds a certain character length and formats accordingly (@post.CheckLength() and @post.FormatPostContent() methods).
-
-Contains interactive “Like” and “Comment” buttons styled with Flowbite and Tailwind hover effects.
-
-Views/Comments/Index.cshtml
-
-Shows all comments for a specific post.
-
-Renders user names, timestamps, and like counts dynamically.
-
-Uses partial post rendering for consistency.
-
-Views/Users/ViewUserFriends.cshtml
-
-Displays the user’s friends list and pending friend requests.
-
-Loops through Friend entities, showing both Sender and Receiver names and statuses.
-
-Implements conditional logic to differentiate between accepted, pending, or requested friendships.
-
-Views/Users/New.cshtml
-
-Renders the user registration page with data validation (integrated _ValidationScriptsPartial).
-
-Collects details like first name, last name, email, and password.
-
-Communicates with UsersController.New() for validation and database insertion.
-
-Views/Users/Update.cshtml
-
-Form for updating user or profile bio details.
-
-Accepts image uploads and text updates (Biography, Profile Picture).
-
-Posts form data back to the controller for persistence.
-
-🔍 Views/SearchBar/Index.cshtml
-
-Displays search results for users, posts, and comments.
-
-Uses ViewBag.UsersResults, ViewBag.PostsResults, and ViewBag.CommentsResults to render relevant sections conditionally.
-
-Integrates seamlessly with the navbar search form via query parameters SearchString and SearchFilter.
-
-🔒 Views/Home/Privacy.cshtml
-
-Displays privacy policy and app terms.
-
-Linked from the footer in _Layout.cshtml.
-
-6.4 Visual Flow
-graph LR
-A[_Layout.cshtml] --> B[Navigation / Search Bar]
-A --> C[Main Body via @RenderBody()]
-C --> D[Dynamic Views e.g. MyProfile, Post, SearchBar]
-D --> E[Controllers]
-E --> F[Models & DbContext]
-
-
-This structure ensures all pages inherit the same layout, and each feature-specific view communicates with its corresponding controller to retrieve and render data.
-
-6.5 Frontend Technologies
-Technology	Usage
-Razor (.cshtml)	Combines C# and HTML for dynamic page rendering.
-Tailwind CSS	Provides utility-first responsive design classes.
-Flowbite	Adds pre-styled components (buttons, dropdowns, modals).
-JavaScript (minimal)	Handles dropdown interaction and search filter logic.
-Razor Layout System	Ensures consistent navbar, footer, and theme across all views.
-
-#### Testing:
-
-7.1 Overview
-
-Testing within SeaShark (Acebook) ensures the reliability, consistency, and performance of both front-end and back-end features.
-The testing suite combines Playwright (for browser-based end-to-end tests) with NUnit (for unit and integration tests), ensuring full coverage of user flows such as authentication, posting, commenting, and friend interactions.
-
-7.2 Testing Frameworks
-Framework	Description
-NUnit	Core test framework for unit and integration testing.
-Playwright for .NET	Provides headless browser automation to simulate real user interactions (login, posting, navigation).
-TestDataSeeder	Seeds the database before each test to maintain consistency and reproducibility.
-AcebookDbContext	Used across tests to interact with a clean database instance for each test cycle.
-7.3 Browser-Based End-to-End Tests
-FriendsListPage.Tests.cs
-
-Verifies that the friends list displays correctly for logged-in users.
-
-Confirms filtering between My Friends, Received Requests, and Sent Requests.
-
-Tests friend request acceptance, search functionality, and redirection to a friend’s profile.
-
-Example:
-
-await Page.ClickAsync("#received-label");
-await Expect(Page.GetByText("My Received Requests")).ToBeVisibleAsync();
-
-OtherProfilePage.Tests.cs
-
-Ensures that when viewing another user’s profile:
-
-Taglines display correctly under the user’s name.
-
-“Write on Wall” input behaves correctly depending on friendship status.
-
-The Add Friend, Unfriend, and Friend Request Sent buttons update dynamically.
-
-“See All Friends” and “View Profile” buttons navigate correctly.
-
-Covers wall posts, comment button interactions, and redirect logic:
-
-await Page.GetByTestId("add-friend").ClickAsync();
-await Expect(Page.GetByTestId("friend-request-sent")).ToBeVisibleAsync();
-
-PhotoUpload.Tests.cs
-
-Tests photo upload functionality from the user’s profile or post creation area.
-
-Validates that uploaded photos are stored and rendered correctly in the UI.
-
-Confirms error handling for unsupported file types and sizes.
-
-Simulates file uploads using Playwright’s file chooser API:
-
-var fileChooser = await Page.RunAndWaitForFileChooserAsync(() => 
-    Page.ClickAsync("#upload-button"));
-await fileChooser.SetFilesAsync("test_image.jpg");
-
-7.4 Unit and Integration Tests
-Test File	Coverage
-UserModel.Test.cs	Tests model logic such as FormattedCreatedOn date formatting and CheckLength() helpers.
-UserManagement.Test.cs	Ensures user creation, login, and validation work as expected.
-PostPage.Test.cs	Verifies posting, commenting, and like functionality across views.
-SearchResults.Tests.cs	Tests filtering logic for users, posts, and comments.
-NavBar.Test.cs	Confirms visibility and functionality of navigation bar items depending on authentication state.
-LandingPage.Tests.cs	Verifies homepage rendering and route redirection for new and returning users.
-MyProfilePage.Tests.cs	Ensures personal profile information updates and visibility of user posts.
-
-#### Future Implementations:
-
--
--
--
--
--
--
--
-
-#### Acknowledgements:
-Below is a list of all external documentation sources, frameworks, and technologies referenced or used throughout the SeaShark (Acebook) project.
-Each entry includes a short explanation of its purpose and how it directly supports your implementation.
-
-- ASP.NET Core MVC Framework
-
-Docs: ASP.NET Core MVC Overview https://learn.microsoft.com/en-us/aspnet/core/mvc/overview?view=aspnetcore-9.0
-
-Purpose: Provides the Model-View-Controller architecture that powers SeaShark’s routing, controllers, and views.
-Relevance:
-
-Used for all controllers such as SearchBarController, PostsController, and UsersController.
-
-Enables ViewData, ViewBag, and IActionResult usage for rendering Razor views.
-
-- Entity Framework Core (EF Core)
-
-Docs: Entity Framework Core Documentation https://learn.microsoft.com/en-us/ef/core/
-
-Purpose: Object-relational mapper (ORM) handling all database queries and persistence.
-Relevance:
-
-Used in AcebookDbContext for defining DbSet<User>, DbSet<Post>, DbSet<Comment>, and DbSet<Friend>.
-
-Enables LINQ queries such as .Include(), .ThenInclude(), and .Where() across your models.
-
-- Razor View Engine
-
-Docs: Razor Syntax Reference https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
-
-Purpose: Defines the templating language for .cshtml views.
-Relevance:
-
-Used throughout your front-end (_Layout.cshtml, Index.cshtml, MyProfile.cshtml, OtherProfile.cshtml).
-
-Enables @model, @foreach, and conditionals to bind data to HTML.
-
--Tailwind CSS 
-
-Docs: Tailwind CSS Documentation https://tailwindcss.com/docs/installation/using-vite
-
-Purpose: Utility-first CSS framework used for responsive design and consistent styling.
-Relevance:
-
-Used across all views for component styling (bg-teal-600, rounded-lg, shadow-sm).
-
-Simplifies consistent design across user pages and the main navigation bar.
-
--Flowbite
-
-Docs: Flowbite Components https://flowbite.com/docs/getting-started/introduction/
-
-Purpose: Tailwind-based component library used for dropdowns, modals, and UI elements.
-Relevance:
-
-Implements the interactive “All Categories” dropdown and search bar functionality.
-
-Enhances navigation and dynamic user menus in _Layout.cshtml.
-
--ASP.NET Core Identity & Session
-
-Docs: ASP.NET Core Identity https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-9.0&tabs=visual-studio
-
-Purpose: Handles authentication, user sessions, and authorization logic.
-Relevance:
-
-Used in session management (Context.Session.GetInt32("user_id"), GetString("user_name")).
-
-Enables login persistence and secure logout (Signout in SessionsController).
-
--Dependency Injection (DI)
-
-Docs: ASP.NET Core Dependency Injection https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-9.0
-
-Purpose: Provides loose coupling and automatic service resolution in controllers.
-Relevance:
-
-Injects dependencies like ILogger<SearchBarController> and AcebookDbContext into controllers.
-
-Improves testability and separation of concerns.
-
--Testing Frameworks
--NUnit
-
-Docs: NUnit Documentation https://docs.nunit.org/articles/nunit/intro.html
-
-Purpose: Framework for unit testing and integration testing backend logic.
-Relevance:
-
-Used in tests such as UserModel.Test.cs, UserManagement.Test.cs, and SearchResults.Tests.cs.
-
--Playwright for .NET
-
-Docs: Playwright .NET Docs https://playwright.dev/dotnet/docs/intro
-
-Purpose: Enables automated browser-based testing for UI validation.
-Relevance:
-
-Used in FriendsListPage.Tests.cs, OtherProfilePage.Tests.cs, and PhotoUpload.Tests.cs to simulate real user interactions.
-
--.NET CLI
-
-Docs: .NET CLI Documentation https://learn.microsoft.com/en-us/dotnet/core/tools/
-
-Purpose: Provides command-line tools for building, testing, and managing .NET projects.
-Relevance:
-
-Used for commands like dotnet run, dotnet test, and dotnet ef database update.
-
-Enables running Playwright tests and installing browsers via PowerShell.
-
-- Language & Query Tools 
-LINQ (Language-Integrated Query)
-
-Docs: LINQ Overview https://learn.microsoft.com/en-us/dotnet/csharp/linq/
-
-Purpose: Provides concise query syntax to filter and project data within EF Core.
-Relevance:
-
-Used in queries such as:
-
-users.Where(u => 
-    u.Posts.Any(p => p.Content.Contains(SearchString)) ||
-    u.FirstName.Contains(SearchString) ||
-    u.LastName.Contains(SearchString)
-);
-
--C# Language Reference
-
-Docs: C# Reference (Microsoft) https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/
-
-Purpose: Authoritative reference for all C# syntax and features.
-Relevance:
-
-Applies to custom logic, data models, and controller flow (e.g., async/await, lambda expressions).
-
--Routing & HTTP Controllers 
-
-Docs: Controller Action Methods in ASP.NET Core https://learn.microsoft.com/en-us/aspnet/core/mvc/controllers/actions?view=aspnetcore-9.0
-
-Purpose: Explains controller patterns, attribute routing, and HTTP verbs.
-Relevance:
-
-Used throughout SeaShark’s controllers (e.g., [Route("/Search")], [HttpGet], [HttpPost]).
-
-Guides how the search filter and user interactions are handled in the backend.
-
-
--NuGet Package Manager 
-
-Docs: NuGet Documentation https://learn.microsoft.com/en-us/nuget/what-is-nuget
-
-Purpose: Manages external packages and libraries for .NET projects.
-Relevance:
-
-Used for installing Microsoft.Playwright, NUnit, and EntityFrameworkCore dependencies.
-
-Enables updating and maintaining consistent library versions across environments.
-
--Razor Layouts & Partials
-
-Docs: Razor Layouts in ASP.NET Core https://learn.microsoft.com/en-us/aspnet/core/mvc/views/layout?view=aspnetcore-9.0
-
-Purpose: Manages shared HTML structure and layout consistency across views.
-Relevance:
-
-Implemented in _Layout.cshtml to unify navigation, search, and footer across all pages.
-
-🧩 Summary of Key Documentation Areas
-Category	Documentation	Use Case
-Core Framework	ASP.NET Core MVC
-	Controllers, routing, views
-Database	Entity Framework Core
-	Data access & relationships
-Frontend	Tailwind CSS
- + Flowbite
-	Styling & components
-Authentication	ASP.NET Identity
-	Session & user auth
-Testing	NUnit
- + Playwright .NET
-	Backend & E2E tests
-Deployment	.NET CLI
- + GitHub Actions
-	Builds, automation & CI
-Language Tools	LINQ
- + C# Reference
-	Queries & syntax
-
-#### What did this project teach us?
-to work together 
-cant trust sarah
-sarah can do a trello really well
-tom can do exacildraw pefectly
-
+### 5.1 Overview
+SeaShark’s controllers act as the bridge between user interactions and backend logic.  
+Each controller manages a specific part of the system — from user authentication and friendships to posting, commenting, and liking.  
+Controllers follow the MVC pattern, ensuring a clean separation between **data (Models)**, **logic (Controllers)**, and **presentation (Views)**.
+
+### 5.2 Controller Summary
+
+| Controller | Description |
+|-------------|--------------|
+| **HomeController** | Handles default routes such as `/`, `/Privacy`, and `/Error`. Manages static pages and global view rendering. |
+| **UsersController** | Manages user sign-up (`/signup`), profile display (`/users/{id}`), and profile updates. Handles profile picture uploads and bio edits. Uses session-based authentication. |
+| **SessionsController** | Handles login (`/signin`) and logout (`/signout`) logic. Hashes passwords using SHA256 and manages session variables like `user_id` and `user_profile_picture`. |
+| **PostsController** | Handles creation, deletion, and retrieval of posts. Supports wall posting on self or friends’ profiles, includes like and comment data via eager loading (`Include`, `ThenInclude`). |
+| **CommentsController** | Manages comment creation and association with posts. Handles comment deletion and related like relationships. |
+| **LikesController** | Manages user “like” actions on posts and comments. Toggles like states, preventing duplicate entries and maintaining relational integrity. |
+| **FriendsController** | Manages friend requests, acceptances, and removals. Implements logic to show friend lists, pending requests, and sent requests, filtered per logged-in user. |
+| **SearchBarController** | Handles the `/Search` route. Accepts `SearchString` and `SearchFilter` parameters to query Users, Posts, and Comments dynamically. Returns results via `ViewBag` and Razor rendering. |
+
+### 5.3 Common Design Patterns
+
+- **Session-Based User Context:**  
+  Controllers rely on session variables (`user_id`, `user_name`, `user_profile_picture`) to identify the current user securely.
+
+- **Model Binding & Validation:**  
+  Uses `[HttpPost]` and `[ValidateAntiForgeryToken]` attributes to validate form submissions and prevent CSRF attacks.
+
+- **Service Filters:**  
+  `AuthenticationFilter` ensures protected routes like `/users/{id}` and `/users/{id}/update` can only be accessed by authenticated users.
+
+- **LINQ with EF Core:**  
+  Each controller uses `Include()`, `ThenInclude()`, and `Where()` to efficiently query relational data.
+
+- **Redirect Flow:**  
+  Successful actions (login, signup, upload) return `RedirectResult` or `RedirectToAction` to refresh data-driven views (e.g., `/posts`, `/users/{id}`).
+
+### 5.4 Example Request Flow
+
+**Scenario:** A user logs in and visits their friend’s profile.  
+
+1. **Login:**  
+   - `POST /signin` → `SessionsController.Create()` validates credentials and stores session data.  
+2. **Profile Access:**  
+   - `GET /users/{id}` → `UsersController.Index()` loads the requested user with posts, comments, and friendship data.  
+3. **Friendship Check:**  
+   - The controller queries `Friends` table for relationship status between current user and profile owner.  
+4. **View Rendered:**  
+   - Depending on context, Razor renders either `MyProfile.cshtml` or `OtherProfile.cshtml` with contextual ViewBag data.  
+
+### 5.5 Security & Validation
+
+- ✅ **Password Hashing:** SHA256 implemented before storing user credentials.  
+- ✅ **CSRF Protection:** `[ValidateAntiForgeryToken]` used across all POST routes.  
+- ✅ **Authorization Checks:** Routes protected via session checks and `AuthenticationFilter`.  
+- ✅ **Error Handling:** `ErrorViewModel` and `Error()` methods standardised for global exception handling.  
+
+---
+
+## 🧪 Testing
+
+### 5.1 Overview
+Testing ensures feature reliability using **NUnit** and **Playwright for .NET**.
+
+### 5.2 Testing Frameworks
+
+| Framework | Purpose |
+|------------|----------|
+| **NUnit** | Unit & integration testing |
+| **Playwright** | End-to-end browser testing |
+| **TestDataSeeder** | Seeds DB for consistent test data |
+
+### 5.3 Example Tests
+
+| File | Description |
+|------|--------------|
+| `FriendsListPage.Tests.cs` | Tests friend list rendering & filtering |
+| `OtherProfilePage.Tests.cs` | Validates friend button logic & wall posts |
+| `PhotoUpload.Tests.cs` | Simulates and validates file uploads |
+| `UserModel.Test.cs` | Tests helper logic and date formatting |
+| `SearchResults.Tests.cs` | Verifies search filtering by scope |
+| `NavBar.Test.cs` | Checks navbar behaviour when logged in/out |
+| `LandingPage.Tests.cs` | Ensures proper routing and page load |
+| `MyProfilePage.Tests.cs` | Validates profile updates and data loading |
+
+---
+
+## 🚀 Future Implementations
+
+- 📨 **Real-time notifications** for likes and comments  
+- 💬 **Direct messaging** between users  
+- 🧭 **Improved friend discovery** and suggestions  
+- 🐚 **Media gallery** for post images and videos  
+- 🔒 **Two-factor authentication**
+
+---
+
+## 🙏 Acknowledgements & Documentation
+
+| Technology | Documentation | Purpose |
+|-------------|----------------|----------|
+| ASP.NET Core MVC | [ASP.NET Core MVC Overview](https://learn.microsoft.com/en-us/aspnet/core/mvc/overview?view=aspnetcore-9.0) | Framework for controllers & routing |
+| Entity Framework Core | [EF Core Docs](https://learn.microsoft.com/en-us/ef/core/) | ORM for DB access |
+| Razor Views | [Razor Syntax Reference](https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0) | Template system |
+| Tailwind CSS | [Tailwind Docs](https://tailwindcss.com/docs/installation/using-vite) | CSS framework |
+| Flowbite | [Flowbite Docs](https://flowbite.com/docs/getting-started/introduction/) | UI components |
+| ASP.NET Identity & Session | [ASP.NET Identity Docs](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-9.0) | Authentication system |
+| Dependency Injection | [DI Docs](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-9.0) | Service injection pattern |
+| NUnit | [NUnit Docs](https://docs.nunit.org/articles/nunit/intro.html) | Testing framework |
+| Playwright for .NET | [Playwright Docs](https://playwright.dev/dotnet/docs/intro) | End-to-end testing |
+| .NET CLI | [.NET CLI Docs](https://learn.microsoft.com/en-us/dotnet/core/tools/) | Build & run tools |
+| LINQ | [LINQ Overview](https://learn.microsoft.com/en-us/dotnet/csharp/linq/) | Data querying |
+| C# Language | [C# Reference](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/) | Language reference |
+| Routing & Controllers | [Controller Actions Docs](https://learn.microsoft.com/en-us/aspnet/core/mvc/controllers/actions?view=aspnetcore-9.0) | Routing logic |
+| NuGet | [NuGet Docs](https://learn.microsoft.com/en-us/nuget/what-is-nuget) | Package management |
+| Razor Layouts | [Razor Layouts Docs](https://learn.microsoft.com/en-us/aspnet/core/mvc/views/layout?view=aspnetcore-9.0) | Shared layouts |
+
+---
+
+## 🧭 Summary of Documentation
+
+| Category | Documentation | Use Case |
+|-----------|----------------|----------|
+| Core Framework | ASP.NET Core MVC | Controllers, routing, views |
+| Database | Entity Framework Core | Data access & relationships |
+| Frontend | Tailwind + Flowbite | Styling & components |
+| Authentication | ASP.NET Identity | Session & user auth |
+| Testing | NUnit + Playwright | Backend & E2E tests |
+| Deployment | .NET CLI | Build & automation |
+| Language | LINQ, C# Reference | Queries & syntax |
+
+---
+
+🐚 **SeaShark — Dive deep, connect freely, and make a splash in your digital ocean.**
