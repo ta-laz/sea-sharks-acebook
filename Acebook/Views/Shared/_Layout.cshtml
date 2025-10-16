@@ -43,8 +43,7 @@
                                 <!-- SeaShark Logo -->
                                 <a asp-action="Index" asp-controller="Home" method ="get">
                                     <img src="@Url.Content("~/images/light_grey.png")"
-                                    alt="SeaShark Logo" class="h-14 w-auto"  />
-                                
+                                    alt="SeaShark Logo" class="h-14 w-auto transition hover:brightness-200 hover:saturate-150 hover:scale-105"  />
                                 </a>
                             </div>
                         
@@ -117,7 +116,7 @@
                                     </button>
 
                                     <!-- Dropdown menu -->
-                                    <div id="dropdown1" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 ">
+                                    <div id="dropdown1" class="z-12 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 hover:shadow-xl">
                                         <ul class="py-2 text-sm text-gray-700 " aria-labelledby="dropdownDefaultButton">
                                         <li>
                                             <a asp-controller="Users" asp-action="Index" asp-route-id="@userId" method="get" class="block px-4 py-2 hover:bg-gray-100" id="MyProfile">My Profile</a>
