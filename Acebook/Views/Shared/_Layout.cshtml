@@ -178,6 +178,42 @@
     <script src="~/js/site.js" asp-append-version="true"></script> *@
     <script src="https://unpkg.com/flowbite@2.5.1/dist/flowbite.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Fade in on load
+  document.body.classList.add('loaded');
+
+  // Optional: fade out before navigating away (for internal links)
+  document.querySelectorAll('a[href]').forEach(link => {
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('javascript:')) return;
+    if (link.hostname === window.location.hostname) {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const targetUrl = link.href;
+
+        // Fade out smoothly
+        document.body.classList.remove('loaded');
+        setTimeout(() => {
+          window.location.href = targetUrl;
+        }, 250); // match CSS transition duration
+      });
+    }
+  });
+});
+</script>
+
+<style>
+/* Smooth page fade-in / fade-out */
+body {
+  opacity: 0;
+  transition: opacity 0.25s ease-in-out;
+}
+body.loaded {
+  opacity: 1;
+}
+</style>
 </body>
 
 </html>
@@ -219,6 +255,11 @@
                     </li>
                 }
             </ul> *@
+
+
+
+
+
 
 
 <script>
