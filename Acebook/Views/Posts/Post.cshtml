@@ -60,7 +60,7 @@
                 data-testid="update-post-form" label="update post form" class="hidden">
                 @Html.AntiForgeryToken()
                 <textarea required name="content" label="update post box" id="update-post-input" data-testid="update-post-input"
-                    class="border border-gray-300 rounded-md p-2 w-full mt-2" maxlength="2000">@Model.Content</textarea>
+                    class="resize-none border border-gray-300 rounded-md p-2 w-full mt-2" maxlength="2000">@Model.Content</textarea>
                 
                 <div class="flex justify-end space-x-2">
                     <button type="button" id="cancel-edit-post"
@@ -196,7 +196,7 @@
                                 data-testid="update-comment-form-@comment.Id" label="update commnent form" class="hidden">
                                 @Html.AntiForgeryToken()
                                 <textarea required name="comment_content" label="update comment box" id="update-comment-input-@comment.Id" data-testid="update-comment-input-@comment.Id"
-                                    class="border border-gray-300 rounded-md p-2 w-full mt-2" maxlength="2000">@comment.Content</textarea>
+                                    class="resize-none border border-gray-300 rounded-md p-2 w-full mt-2" maxlength="2000">@comment.Content</textarea>
                                 
                                 <div class="flex justify-end space-x-2 mb-2">
                                     <button type="button" id="cancel-edit-comment-@comment.Id"
