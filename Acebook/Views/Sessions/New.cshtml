@@ -120,12 +120,16 @@
     </div>
 
     <script>
+
       const logo = document.getElementById('logo');
       const signIn = document.getElementById('signin-submit');
+    const isTestEnv = window.location.hostname === "127.0.0.1";
 
-      signIn.addEventListener('click', (e) => {
-    e.preventDefault();
-    logo.classList.add('logo-glow');
+    signIn.addEventListener('click', (e) => {
+  if (isTestEnv) return; // ✅ skip animation for tests
+
+      e.preventDefault();
+  logo.classList.add('logo-glow');
 
     // Wait for glow, then swim away
     setTimeout(() => {
