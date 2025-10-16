@@ -183,6 +183,16 @@ public class UsersController : Controller
     public IActionResult Update(int id)
     {
         AcebookDbContext dbContext = new AcebookDbContext();
+
+        int? userId = HttpContext.Session.GetInt32("user_id");
+        if (userId != id)
+        {
+            var realUser = dbContext.Users
+                  .FirstOrDefault(u => u.Id == userId);
+            TempData["Sneaky"] = "You can only edit your own bio you sneaky shark!";
+            return RedirectToAction("Update", "Users", new { id = userId });
+        }
+
         var user = dbContext.Users
                   .Include(u => u.ProfileBio)
                   .Include(u => u.Posts)
@@ -361,7 +371,7 @@ public class UsersController : Controller
             TempData["DeleteError"] = "Password incorrect";
             return RedirectToAction("UpdateAccount", "Users", new { id = currentUserId });
         }
-        
+
         using var tx = dbContext.Database.BeginTransaction();
 
         var friendListEntries = dbContext.Friends
