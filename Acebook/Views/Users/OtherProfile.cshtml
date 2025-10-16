@@ -433,3 +433,20 @@
     });
   });
 </script>
+
+<script>
+  const fileInput = document.getElementById("file-upload");
+  const fileNameDisplay = document.getElementById("file-name");
+  fileInput.addEventListener("change", function () {
+    // If at least one file is chosen
+    if (fileInput.files.length > 0) {
+      fileNameDisplay.textContent = fileInput.files[0].name;
+      fileNameDisplay.classList.remove("text-gray-500", "italic");
+      fileNameDisplay.classList.add("text-teal-700", "font-medium");
+    } else {
+      // Reset text if no file is chosen
+      fileNameDisplay.textContent = "No file chosen";
+      fileNameDisplay.classList.add("text-gray-500", "italic");
+    }
+  });
+</script>
