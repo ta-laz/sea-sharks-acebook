@@ -1,16 +1,26 @@
-
 // Log to confirm file is running
 console.log("notifications.js loaded");
 
-// Build the connection to your SignalR hub
+// ---------------------------
+// Element references (defined FIRST so they're available everywhere)
+// ---------------------------
+const bell = document.getElementById("notifBell");
+const dropdown = document.getElementById("notifDropdown");
+const badge = document.getElementById("notifBadge");
+const list = document.getElementById("notifList");
+const markAllBtn = document.getElementById("markAllRead");
+
+// ---------------------------
+// Build SignalR connection
+// ---------------------------
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("/hubs/notifications")   // must match Program.cs route
+    .withUrl("/hubs/notifications")
     .withAutomaticReconnect()
     .build();
 
-
-
-// Load stored notifications when the user logs in
+// ---------------------------
+// Load stored notifications on login
+// ---------------------------
 async function loadStoredNotifications() {
     try {
         const res = await fetch("/notifications/unread");
@@ -28,59 +38,67 @@ async function loadStoredNotifications() {
             list.innerHTML = "";
             notifs.forEach(n => renderNotifCard(n));
         }
-
     } catch (err) {
         console.error("Could not load notifications:", err);
     }
 }
 
-// Call it right away once the connection is ready
+// ---------------------------
+// Start connection
+// ---------------------------
 connection.start()
     .then(() => {
         console.log("Connected to notification hub");
         const userId = document.body.dataset.userid;
         if (userId) connection.invoke("RegisterUserGroup", userId);
-        loadStoredNotifications(); //new line that pulls stored notifications
+        loadStoredNotifications();
     })
     .catch(err => console.error("SignalR connection failed:", err));
 
+// ---------------------------
+// Single unified listener
+// ---------------------------
+connection.on("ReceiveNotification", (title, message, url) => {
+    console.log("Notification received:", title, message, url);
 
-// Listen for notifications
-connection.on("ReceiveNotification", (title, message) => {
-    console.log("Notification:", title, message);
-    showToast(title, message);
+    showToast(title, message, url); // popup
+    bumpBadge();                    // red badge increment
+    if (list) renderNotifCard({ title, message, url, createdOn: new Date() }); // dropdown
 });
 
-// Display a simple toast
-function showToast(title, message) {
+// ---------------------------
+// UI functions
+// ---------------------------
+
+// Toast popup
+function showToast(title, message, url) {
     const toast = document.createElement("div");
     toast.className =
-        "fixed bottom-6 right-6 bg-teal-600 text-white px-4 py-2 rounded-lg shadow-lg opacity-100 transition-opacity duration-500";
+        "fixed bottom-6 right-6 bg-teal-600 text-white px-4 py-2 rounded-lg shadow-lg opacity-100 transition-opacity duration-500 cursor-pointer";
     toast.innerHTML = `<strong>${title}</strong><br>${message}`;
     document.body.appendChild(toast);
+
+    if (url) {
+        toast.addEventListener("click", () => (window.location.href = url));
+    }
 
     setTimeout(() => {
         toast.style.opacity = "0";
         setTimeout(() => toast.remove(), 500);
     }, 5000);
 }
-// ---------------------------
-// Dropdown + badge behaviour
-// ---------------------------
-const bell = document.getElementById("notifBell");
-const dropdown = document.getElementById("notifDropdown");
-const badge = document.getElementById("notifBadge");
-const list = document.getElementById("notifList");
-const markAllBtn = document.getElementById("markAllRead");
 
+// Dropdown and badge
 if (bell && dropdown) {
     bell.addEventListener("click", () => {
         dropdown.classList.toggle("hidden");
-        // Reset badge count when opened
+
+        // Reset badge when opened
         if (!dropdown.classList.contains("hidden")) {
             badge.classList.add("hidden");
             badge.textContent = "0";
-            // Load stored notifications from server
+
+            // Reload latest notifications
             fetch("/notifications/unread")
                 .then(res => res.json())
                 .then(notifs => {
@@ -91,25 +109,29 @@ if (bell && dropdown) {
     });
 }
 
-// When the server sends a live notification
-connection.on("ReceiveNotification", (title, message) => {
-    showToast(title, message);
-    bumpBadge();
-    // Add to dropdown if open
-    if (list) renderNotifCard({ title, message, createdOn: new Date() });
-});
-
-// Create small card for dropdown
+// Card renderer
 function renderNotifCard(n) {
     const div = document.createElement("div");
-    div.className = "border border-gray-200 rounded-lg p-2";
+    div.className =
+        "border border-gray-200 rounded-lg p-2 hover:bg-gray-50 cursor-pointer";
     div.innerHTML = `
     <div class="font-semibold text-gray-800">${n.title}</div>
     <div class="text-sm text-gray-700">${n.message}</div>
-    <div class="text-xs text-gray-400">${new Date(n.createdOn).toLocaleString()}</div>`;
+    <div class="text-xs text-gray-400">${new Date(
+        n.createdOn
+    ).toLocaleString()}</div>
+  `;
+
+    if (n.url) {
+        div.addEventListener("click", () => {
+            window.location.href = n.url;
+        });
+    }
+
     list.prepend(div);
 }
 
+// Red badge counter
 function bumpBadge() {
     if (!badge) return;
     const n = parseInt(badge.textContent || "0", 10) + 1;
@@ -120,10 +142,9 @@ function bumpBadge() {
 // Mark all as read
 if (markAllBtn) {
     markAllBtn.addEventListener("click", () => {
-        fetch("/notifications/read-all", { method: "POST" })
-            .then(() => {
-                list.innerHTML = "";
-                badge.classList.add("hidden");
-            });
+        fetch("/notifications/read-all", { method: "POST" }).then(() => {
+            list.innerHTML = "";
+            badge.classList.add("hidden");
+        });
     });
 }

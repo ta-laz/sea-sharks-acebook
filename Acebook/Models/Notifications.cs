@@ -11,5 +11,6 @@ namespace acebook.Models
         public string Message { get; set; } = "";
         public bool IsRead { get; set; } = false;
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+        public string? Url { get; set; }
     }
 }

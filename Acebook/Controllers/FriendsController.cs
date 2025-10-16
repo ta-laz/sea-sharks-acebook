@@ -212,12 +212,13 @@ public class FriendsController : Controller
             {
                 ReceiverId = requester.Id,
                 Title = title,
-                Message = message
+                Message = message,
+                Url = $"/users/{accepter.Id}"
             });
             await dbContext.SaveChangesAsync();
 
             await _hub.Clients.Group($"user-{requester.Id}")
-                .SendAsync("ReceiveNotification", title, message);
+                .SendAsync("ReceiveNotification", title, message, $"/users/{accepter.Id}");
         }
         else
         {
@@ -260,12 +261,14 @@ public class FriendsController : Controller
             {
                 ReceiverId = receiverId,
                 Title = title,
-                Message = message
+                Message = message,
+                Url = "/friends"
+
             });
             dbContext.SaveChanges();
 
             _hub.Clients.Group($"user-{receiverId}")
-                .SendAsync("ReceiveNotification", title, message);
+                .SendAsync("ReceiveNotification", title, message, "/friends");
         }
         // this is used to pull information from the headers to redirect you to where you just were
         return Redirect(Request.Headers["Referer"].ToString());
