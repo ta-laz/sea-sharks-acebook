@@ -1,14 +1,3 @@
-// transition.js
-
-// Disable transitions for tests or automated runs
-// const isTestEnv =
-//     window.location.hostname === "127.0.0.1" ||
-//     window.location.hostname === "localhost" ||
-//     window.location.href.includes("test");
-
-// if (isTestEnv) {
-//     console.log("Test environment detected — skipping bubble transitions.");
-// }
 
 function playBubbleTransition(callback) {
     const overlay = document.getElementById("bubble-transition");
@@ -56,73 +45,44 @@ function playBubbleTransition(callback) {
     }, 2500);
 }
 
-// document.addEventListener("DOMContentLoaded", () => {
-//     const loginForm = document.querySelector("form#login-form");
-//     if (loginForm) {
-//         loginForm.addEventListener("submit", (e) => {
-//             e.preventDefault();
-//             const form = e.target;
-
-//             playBubbleTransition(() => {
-//                 form.submit(); // continue form submit after animation
-//             });
-//         });
-//     }
-
-//     const signInButton = document.querySelector("#sign-in-btn");
-//     if (signInButton) {
-//         signInButton.addEventListener("click", (e) => {
-//             e.preventDefault();
-//             playBubbleTransition(() => {
-//                 window.location.href = "/Home/NewsFeed";
-//             });
-//         });
-//     }
-
-document.addEventListener("DOMContentLoaded", () => {
+function initSignupForm() {
     const signUpForm = document.getElementById("signup-form");    
+    if (!signUpForm) return;
 
-    if (signUpForm) {
-        signUpForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
+    signUpForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-            const formData = new FormData(signUpForm);
+        const formData = new FormData(signUpForm);
 
-            // Play the bubble animation first
-            playBubbleTransition(async () => {
-                try {
-                    const response = await fetch(signUpForm.action, {
-                        method: "POST",
-                        body: formData,
-                        headers: {
-                            "RequestVerificationToken": document.querySelector('input[name="__RequestVerificationToken"]').value
-                        }
-                    });
-
-                    // Check if redirect
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    } else {
-                        // If server returns validation errors, reload the HTML
-                        const html = await response.text();
-                        document.body.innerHTML = html;
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert("An error occurred while signing up.");
+        try {
+            const response = await fetch(signUpForm.action, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "RequestVerificationToken": document.querySelector('input[name="__RequestVerificationToken"]').value
                 }
             });
-        });
-    }
-});
 
+            if (response.redirected) {
+                playBubbleTransition(() => {
+                    window.location.href = response.url;
+                });
+            } else {
+                const html = await response.text();
+                document.body.innerHTML = html;
 
-    // // On feed page, add fade-in effect
-    // if (document.body.classList.contains("feed-fade")) {
-    //     setTimeout(() => {
-    //         document.body.classList.add("visible");
-    //     }, 300); // small delay so the fade looks natural
-    // }
-// });
+                // ✅ Reinitialize the form JS after replacing HTML
+                initSignupForm();
+            }
+        } catch (err) {
+            console.error(err);
+            alert("An error occurred while signing up.");
+        }
+    });
+}
+
+// Initialize on first page load
+document.addEventListener("DOMContentLoaded", initSignupForm);
+
 
 
