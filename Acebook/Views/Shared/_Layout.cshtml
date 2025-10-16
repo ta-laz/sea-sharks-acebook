@@ -12,7 +12,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <meta name="request-verification-token" content="@tokens.RequestToken" />
     <link rel="icon" type="image/x-icon" href="~/images/light_grey.png">
-
+    <link rel="stylesheet" href="~/css/transition.css" />
 </head>
 
 <body class="flex flex-col min-h-screen">
@@ -178,6 +178,12 @@
     <script src="~/js/site.js" asp-append-version="true"></script> *@
     <script src="https://unpkg.com/flowbite@2.5.1/dist/flowbite.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- Bubble transition overlay -->
+    <div id="bubble-transition"></div>
+
+    <script src="~/js/transition.js"></script>
+    
 </body>
 
 </html>
