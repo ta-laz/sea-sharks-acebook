@@ -9,7 +9,7 @@
   <div class="flex justify-between w-full max-w-7xl space-x-8 relative">
 
     <!-- 🦈 Left Sidebar -->
-    <div class="hidden lg:block sticky top-20 self-start w-52">
+    <div class="hidden lg:block sticky top-32 self-start w-52">
       <div class="bg-white rounded-xl p-4 shadow-md transition hover:shadow-xl border-l-2 border-r-2 border-teal-500 hover:-translate-y-1">
 
         <!-- Example sidebar item -->
@@ -217,7 +217,7 @@
       <!-- Create post box -->
       <div
         class="bg-white rounded-xl overflow-y-auto px-4 py-4 p-4 shadow-md transition hover:shadow-xl hover:-translate-y-1 border-l-2 border-r-2 border-teal-500 space-x-3">
-        <h2 class="text-lg text-teal-700 font-bold mb-3">Create a Post</h2>
+        <h2 class="text-lg text-teal-700 font-bold mb-3 px-3">Start a feeding frenzy</h2>
         <form action="@Url.Action("Create", "Posts")" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
           <textarea data-testid="post-content-input" id="post-content-input" required
@@ -235,10 +235,10 @@
             </button>
           </div>
         </form>
-      </div>
+    </div>
 
       <!-- Filter buttons -->
-        <div class="flex justify-center mt-4 sticky top-20 z-20 py-1 px-2 rounded-md" role="group" aria-label="post filters">
+      <div class="flex justify-center mt-4 sticky top-20 z-20 py-1 px-2 rounded-md" role="group" aria-label="post filters">
           <a href="@Url.Action("Index", "Posts", new { filter = "all" })"
             class="w-40 px-4 py-2 text-sm font-medium border border-gray-300 rounded-l-md text-center
                     @(ViewBag.Filter == "all" ? "bg-teal-600 text-white" : "bg-white text-gray-600 hover:bg-gray-200")">All Posts</a>
@@ -271,9 +271,7 @@
               <img src="@imagePath" class="w-12 h-12 rounded-full object-cover border border-gray-400">
             </div>
 
-
-
-            <p class="text-gray-700 mt-2 line-clamp-3 leading-relaxed break-all leading-relaxed">
+            <p class="text-gray-700 mt-2 leading-relaxed overflow-hidden break-words [overflow-wrap:anywhere] line-clamp-3">
             @if(!string.IsNullOrEmpty(post.Content)){
             @if (@post.CheckLength())
               {
@@ -347,7 +345,7 @@
     </div>
 
     <!-- 🪧 Advert -->
-    <div class="hidden lg:block sticky top-20 self-start w-64 rounded-xl transition hover:shadow-xl border-l-2 border-r-2 border-teal-500 hover:-translate-y-1">
+    <div class="hidden lg:block sticky top-32 self-start w-64 rounded-xl transition hover:shadow-xl border-l-2 border-r-2 border-teal-500 hover:-translate-y-1">
       <div class="bg-white rounded-xl p-4 shadow-md">
         <h2 class="text-md mb-3 text-gray-400 font-semibold">Sponsored</h2>
         <img src="/images/temp_imgs/ad.png"     

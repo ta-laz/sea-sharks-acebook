@@ -3,23 +3,22 @@
 <!-- Main Body -->
 <div class="min-h-screen flex flex-col items-center justify-start px-4 sm:px-6 py-6">
     <div class="flex flex-col items-center space-y-4 w-full max-w-screen-lg">
-        <h1 id="myFriendsPageTitle" data-testid="myFriendsPageTitle" class="text-3xl font-bold mb-3">My Friends (@ViewBag.Friends.Count)</h1>
-        <!-- Filter buttons -->
+        <h1 id="myFriendsPageTitle" data-testid="myFriendsPageTitle" class="text-4xl font-bold mb-3 text-teal-700 ">My Friends (@ViewBag.Friends.Count)</h1>
         <!-- Filter buttons -->
         <div class="flex justify-center mt-4" role="group" aria-label="requests filters">
             <label id="received-label" for="received"
-                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md cursor-pointer hover:bg-gray-200 text-center transition-colors">
+                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md cursor-pointer hover:bg-gray-200 hover:text-gray-600 text-center transition-colors hover:shadow-md">
                 Friend Requests
             </label>
-            <label id="sent-label" for="sent"
-                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md cursor-pointer hover:bg-gray-200 text-center transition-colors">
+            <label id="sent-label" data-testid="sent-requests-label" for="sent"
+                class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md cursor-pointer hover:bg-gray-200 text-center transition-colors hover:shadow-md">
                 Sent Requests
             </label>
         </div>
 
 
         <!-- Requests Section -->
-        <div class="flex bg-gray-50 border rounded-lg w-full p-4 shadow-md md:block">
+        <div class="flex bg-gray-50 border rounded-lg w-full p-4 shadow-md md:block hover:shadow-xl">
             <input type="radio" id="received" name="request-toggle" class="hidden peer/received" checked>
             <input type="radio" id="sent" name="request-toggle" class="hidden peer/sent">
 
@@ -36,10 +35,10 @@
                         imagePath = "/images/Placeholder.png";
                     }
 
-                    <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex flex-wrap items-center gap-3 ">
                         <img src="@imagePath"
                             class="w-12 h-12 rounded-full object-cover border border-gray-400" />
-                        <span class="font-medium text-gray-800">@sender.FirstName @sender.LastName</span>
+                        <a asp-controller="Users" asp-action="Index" asp-route-id="@sender.Id" id="friend-name" data-testid="@sender.FirstName" class="font-medium text-gray-800 hover:text-teal-600 cursor-pointer">@sender.FirstName @sender.LastName</a>
 
                         <form asp-action="Accept" asp-controller="Friends" method="post"
                             onsubmit="return confirm('Are you sure you want to be friends?');" class="ml-auto">
@@ -79,7 +78,7 @@
                     <div class="flex items-center gap-3">
                         <img src="@imagePath"
                             class="w-12 h-12 rounded-full object-cover border border-gray-400" />
-                        <span class="font-medium text-gray-800">@receiver.FirstName @receiver.LastName</span>
+                        <a asp-controller="Users" asp-action="Index" asp-route-id="@receiver.Id" id="friend-name" data-testid="@receiver.FirstName" class="font-medium text-gray-800 hover:text-teal-600 cursor-pointer">@receiver.FirstName @receiver.LastName</a>
 
                         <form asp-action="Remove" asp-controller="Friends" method="post"
                             onsubmit="return confirm('Are you sure you want to cancel your request?');" class="ml-auto">
@@ -116,7 +115,7 @@
         </div>
 
         <!-- Friend List Section -->
-        <div class="bg-white rounded-lg w-full p-4 shadow-md md:block border">
+        <div class="bg-white rounded-lg w-full p-4 shadow-md md:block border hover:shadow-xl">
             <div id="search-form" class="flex justify-between mb-3">
                 <h2 class="text-xl font-bold mb-3" data-testid="friends-list-subheader">Friends</h2>
                 <form asp-action="Index" asp-controller="Friends" method="get" class="pr-2">
@@ -148,7 +147,7 @@
                     <div class="flex items-center gap-3 mb-2">
                         <img src="@imagePath"
                             class="w-12 h-12 rounded-full object-cover border border-gray-400">
-                        <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name" data-testid="@other.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600">@other.FirstName @other.LastName</a>
+                        <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name" data-testid="@other.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600 ">@other.FirstName @other.LastName</a>
                         
                     </div>
 
@@ -177,9 +176,9 @@
         function updateUI() {
             // Change header text
             if (receivedRadio.checked) {
-                header.textContent = "My Received Requests";
+                header.textContent = "Received Requests";
             } else if (sentRadio.checked) {
-                header.textContent = "My Sent Requests";
+                header.textContent = "Sent Requests";
             } else {
                 header.textContent = "My Requests";
             }
@@ -190,6 +189,15 @@
             sentLabel.classList.toggle("bg-teal-500", sentRadio.checked);
             sentLabel.classList.toggle("text-white", sentRadio.checked);
         }
+
+        sentLabel.addEventListener("click", () => {
+            sentRadio.checked = true;
+            updateUI();
+        });
+        receivedLabel.addEventListener("click", () => {
+            receivedRadio.checked = true;
+            updateUI();
+        });
 
         // Run on load and whenever radios change
         updateUI();

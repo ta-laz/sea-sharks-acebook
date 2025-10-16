@@ -162,7 +162,7 @@ namespace Acebook.Tests
         {
             // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
             // Click see all friends to redirect to friends page
-            await Expect(Page.GetByTestId("friends-header")).ToHaveTextAsync("Friends");
+            await Expect(Page.GetByTestId("friends-header")).ToHaveTextAsync("Fronds");
             // each friend get its own test id assigned dynamically by its first name
             await Expect(Page.GetByTestId("Friend-link Shelly")).ToBeVisibleAsync();
             await Expect(Page.GetByTestId("Friend-link Bruce")).ToBeVisibleAsync();
