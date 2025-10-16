@@ -11,6 +11,7 @@
     <!-- sign-up form container -->
     <div class="bg-white rounded-lg p-6 shadow-md w-full max-w-md">
         <form asp-action="Update" asp-controller="Users" method="post" class="flex flex-col space-y-4" novalidate>
+        @Html.AntiForgeryToken()
 
             @* <div asp-validation-summary="ModelOnly" class="text-teal-600 mb-2"></div> *@
 

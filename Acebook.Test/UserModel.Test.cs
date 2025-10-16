@@ -34,28 +34,28 @@ namespace Acebook.Tests
         public void FormattedCreatedOnReturnsSuffixSt()
         {
             Post post = new() { UserId = 1, WallId = 1, Content = "Just circled the reef with @Shelly Tiger — great current today!", CreatedOn = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) };
-            Assert.That(post.FormattedCreatedOn, Is.EqualTo("Wednesday 1st January 2025"));
+            Assert.That(post.FormattedCreatedOn, Is.EqualTo("Wednesday 1st January 2025, 12:00 AM"));
         }
 
         [Test]
         public void FormattedCreatedOnReturnsSuffixNd()
         {
             Post post = new() { UserId = 1, WallId = 1, Content = "Just circled the reef with @Shelly Tiger — great current today!", CreatedOn = new DateTime(2025, 1, 2, 0, 0, 0, DateTimeKind.Utc) };
-            Assert.That(post.FormattedCreatedOn, Is.EqualTo("Thursday 2nd January 2025"));
+            Assert.That(post.FormattedCreatedOn, Is.EqualTo("Thursday 2nd January 2025, 12:00 AM"));
         }
 
         [Test]
         public void FormattedCreatedOnReturnsSuffixRd()
         {
             Post post = new() { UserId = 1, WallId = 1, Content = "Just circled the reef with @Shelly Tiger — great current today!", CreatedOn = new DateTime(2025, 1, 3, 0, 0, 0, DateTimeKind.Utc) };
-            Assert.That(post.FormattedCreatedOn, Is.EqualTo("Friday 3rd January 2025"));
+            Assert.That(post.FormattedCreatedOn, Is.EqualTo("Friday 3rd January 2025, 12:00 AM"));
         }
 
         [Test]
         public void FormattedCreatedOnReturnsSuffixTh()
         {
             Post post = new() { UserId = 1, WallId = 1, Content = "Just circled the reef with @Shelly Tiger — great current today!", CreatedOn = new DateTime(2025, 1, 4, 0, 0, 0, DateTimeKind.Utc) };
-            Assert.That(post.FormattedCreatedOn, Is.EqualTo("Saturday 4th January 2025"));
+            Assert.That(post.FormattedCreatedOn, Is.EqualTo("Saturday 4th January 2025, 12:00 AM"));
         }
 
         [Test]

@@ -9,7 +9,7 @@
     <div class="flex flex-col lg:flex-row w-full max-w-7xl gap-8">
 
         <!-- 🧍 Left column: profile picture + bio + friends -->
-        <div class="flex flex-col top-20 self-start top-32 sticky items-center w-full lg:w-1/3 space-y-6">
+        <div class="flex flex-col sticky top-32 self-start items-center w-full lg:w-1/3 space-y-6">
 
             @{
             string imagePath; 
@@ -24,13 +24,13 @@
 
 
             <!-- Profile Picture  -->
-            <div class="relative flex justify-center">
+            <div class="relative group flex justify-center w-full hover:-translate-y-1">
                 <img id="profile-pic" src="@imagePath" alt="Profile Picture"
                     class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm cursor-pointer transition-transform duration-300 hover:opacity-80" />
             </div>
 
             <!-- Bio -->
-            <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl">
+            <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl hover:-translate-y-1">
                 <h2 data-testid="bio-name" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">
                     @Model.FirstName's Bio
                 </h2>
@@ -45,8 +45,8 @@
             </div>
 
             <!-- Friends -->
-            <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl">
-                <h2 data-testid="friends-header" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Friends
+            <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl hover:-translate-y-1">
+                <h2 data-testid="friends-header" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Fronds
                 </h2>
 
                 @foreach (var friend in ViewBag.Friends)
@@ -62,7 +62,7 @@
                     otherImagePath = "/images/Placeholder.png";
                 }
 
-                    <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-2 p-1 transition">
+                    <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-2 p-1 transform transition duration-200 hover:scale-105">
                         <div class="flex items-center space-x-3">
                             <img src="@otherImagePath"
                                 class="w-10 h-10 rounded-full object-cover border border-gray-300">
@@ -93,7 +93,7 @@
         <div class="flex flex-col w-full lg:w-2/3 space-y-6 bg-teal-700/10 shadow-[0_0_15px_rgba(15,118,110,0.3)]">
 
             <!-- Name + Tagline + Friend Button -->
-            <div class="bg-white rounded-lg p-6 shadow-md transition hover:shadow-xl">
+            <div class="bg-white rounded-lg p-6 shadow-md transition hover:shadow-xl hover:-translate-y-1">
                 <h1 class="text-4xl font-bold text-teal-700 mb-2">@Model.FirstName @Model.LastName</h1>
                 <p data-testid="under-name-tagline-text" class="italic text-gray-400 mb-4">
                     @(Model.ProfileBio.Tagline ?? "Just keep swimming!")
@@ -108,6 +108,7 @@
                 {
                     <form asp-action="Remove" asp-controller="Friends" method="post"
                         onsubmit="return confirm('Are you sure you want to unfriend this person?');">
+                        @Html.AntiForgeryToken()
                     <button disabled data-testid="already-friends"
                         class="bg-gray-300 text-gray-700 text-sm font-medium py-1 px-3 rounded hover:bg-gray-200">
                         Friends
@@ -132,6 +133,7 @@
                 {
                     <form asp-action="AddFriend" asp-controller="Friends" method="post"
                         onsubmit="return confirm('Are you sure you want to add this person?');">
+                        @Html.AntiForgeryToken()
                         <input type="hidden" name="receiverId" value="@Model.Id" />
                         <button data-testid="add-friend" type="submit"
                             class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium py-1 px-3 rounded">
@@ -144,9 +146,10 @@
             <!-- Write on Wall -->
 @if(ViewBag.Friendship)
 {
-                <div class="flex-1 bg-white rounded-lg overflow-y-auto px-4 py-4 p-4 shadow-md transition hover:shadow-xl space-x-3">
-                    <h2 class="text-lg text-teal-700 font-bold mb-3">Write on their wall</h2>
+                <div class="flex-1 bg-white rounded-lg overflow-y-auto px-4 py-4 p-4 shadow-md transition hover:shadow-xl space-x-3 hover:-translate-y-1">
+                    <h2 class="text-lg text-teal-700 font-bold mb-3 px-3">Add to their tank</h2>
                     <form action="@Url.Action("Create", "Posts")" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
                         <textarea required id="post-input" data-testid="create-post-input"
                         class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
                         name="content" maxlength="2000"
@@ -172,7 +175,7 @@
                 <!-- Sticky Header -->
                 <div class="sticky top-32 z-20 py-1 px-4 rounded-md">
                 <div class="flex items-center justify-between">
-                    <h1 class="text-3xl font-bold text-teal-700">@Model.FirstName's Wall</h1>
+                    <h1 class="text-3xl font-bold text-teal-700 ">@Model.FirstName's Tank</h1>
                 <!-- Right: Back to Top -->
                 <button id="back-to-top"
                     class="bg-teal-600 text-white p-3 rounded-full shadow-lg hover:bg-teal-500
@@ -208,7 +211,7 @@
                 {
                     profilePictureImagePath = "/images/Placeholder.png";
                 }
-                <div class="bg-white rounded-lg w-[98%] p-4 mx-auto shadow-md transition hover:shadow-xl">
+                <div class="bg-white rounded-lg w-[98%] p-4 mx-auto shadow-md transition hover:shadow-xl hover:-translate-y-1">
                                     <div class="flex justify-between items-center">
                                         <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id"
                                             data-testid="Post-link @post.User.FirstName"
@@ -219,7 +222,7 @@
                                             class="w-10 h-10 rounded-full object-cover border border-gray-400" />
                                     </div>
 
-                                    <p data-testid="post-content" class="text-gray-700 mt-2 leading-relaxed break-all">
+                                    <p data-testid="post-content" class="text-gray-700 mt-2 leading-relaxed break-words [overflow-wrap:anywhere] line-clamp-3">
                     @if(!string.IsNullOrEmpty(post.Content)){
                                         @if (@post.CheckLength())
                                         {
@@ -346,22 +349,11 @@
 </script>
 
 <script>
-  const fileInput = document.getElementById("file-upload");
-  const fileNameDisplay = document.getElementById("file-name");
-  fileInput.addEventListener("change", function () {
-    // If at least one file is chosen
-    if (fileInput.files.length > 0) {
-      fileNameDisplay.textContent = fileInput.files[0].name;
-      fileNameDisplay.classList.remove("text-gray-500", "italic");
-      fileNameDisplay.classList.add("text-teal-700", "font-medium");
-    } else {
-      // Reset text if no file is chosen
-      fileNameDisplay.textContent = "No file chosen";
-      fileNameDisplay.classList.add("text-gray-500", "italic");
-                }
-                });
+    const csrf = document
+    .querySelector('meta[name="request-verification-token"]')
+    ?.getAttribute('content');
 
-                // 🟩 like button logic
+    // 🟩 like button logic
         document.addEventListener('DOMContentLoaded', () => {
           const likeButtons = document.querySelectorAll('button[data-post-id]');
 
@@ -387,7 +379,8 @@
               try {
                 const response = await fetch(`/posts/${postId}`, {
                   method: 'POST',
-                  headers: { 'Content-Type': 'application/json' }
+                  headers: { 'Content-Type': 'application/json',
+                  'RequestVerificationToken': csrf }
                 });
 
                 if (!response.ok) throw new Error('Network response was not ok');

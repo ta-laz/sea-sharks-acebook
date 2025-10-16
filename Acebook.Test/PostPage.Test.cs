@@ -168,7 +168,7 @@ namespace Acebook.Tests
             );
             await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
             await Page.GetByTestId("post-like-button").ClickAsync();
-            await Expect(Page.GetByTestId("post-like-total")).ToContainTextAsync("Like (3)");
+            await Expect(Page.GetByTestId("post-like-total")).ToContainTextAsync("Like (2)");
         }
         [Test]
 

@@ -19,21 +19,42 @@ public class PostsController : Controller
 
   [Route("/posts")]
   [HttpGet]
-  public IActionResult Index()
+  public IActionResult Index(string? filter)
   {
     AcebookDbContext dbContext = new AcebookDbContext();
     int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
-
     var user = dbContext.Users
                   .FirstOrDefault(u => u.Id == currentUserId);
 
-    var posts = dbContext.Posts
+    var friendIds = dbContext.Friends //Logic to pull all of the Id's of the CURRENT users friends
+                                      .Where(f => (f.RequesterId == currentUserId || f.AccepterId == currentUserId) && f.Status == FriendStatus.Accepted)
+                                      .Select(f => f.RequesterId == currentUserId ? f.AccepterId : f.RequesterId)
+                                      .ToList();
+
+    List<Post> posts; 
+
+    if (filter == "friends") //button will trigger a friends search which will pull just the posts of friends that match the friendIds 
+    {
+      posts = dbContext.Posts
+                              .Where(p => friendIds.Contains(p.UserId) && p.UserId == p.WallId)
+                              .Include(p => p.User)
+                              .Include(p => p.Comments)
+                                .ThenInclude(c => c.Likes)
+                              .Include(p => p.Likes)
+                              .ToList();
+
+    }
+    else //otherwise generate all posts 
+    {
+      posts = dbContext.Posts
                                .Where(p => p.UserId == p.WallId)
                                .Include(p => p.User)
                                .Include(p => p.Comments)
                                   .ThenInclude(c => c.Likes)
                                .Include(p => p.Likes)
                                .ToList();
+    }
+
     foreach (var post in posts)
         {
       post.UserHasLiked = post.Likes.Any(l => l.UserId == currentUserId);
@@ -48,12 +69,14 @@ public class PostsController : Controller
 
     ViewBag.Posts = posts;
     ViewBag.Posts.Reverse();
+    ViewBag.Filter = filter ?? "all"; //So the index.html knows which one is currently active (all or friends) 
     return View(user);
   }
 
   // CREATE a Post
   [Route("/posts/create")]
   [HttpPost]
+  [ValidateAntiForgeryToken]
   public IActionResult Create(Post post, string returnUrl, IFormFile? postPicture, int? WallId = null)
   {
     using var dbContext = new AcebookDbContext();
@@ -113,6 +136,7 @@ public class PostsController : Controller
   // UPDATE (Edit) a Post -> submit the editing form and update the db
   [Route("/posts/{id}/update")]
   [HttpPost]
+  [ValidateAntiForgeryToken]
   public IActionResult Update(int id, string content)
   {
     AcebookDbContext dbContext = new AcebookDbContext();
@@ -134,6 +158,7 @@ public class PostsController : Controller
   // DELETE a Post
   [Route("/posts/{id}/delete")]
   [HttpPost]
+  [ValidateAntiForgeryToken]
   public IActionResult Delete(int id)
   {
     AcebookDbContext dbContext = new AcebookDbContext();
