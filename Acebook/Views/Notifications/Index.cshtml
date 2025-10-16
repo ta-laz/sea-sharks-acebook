@@ -1,0 +1,65 @@
+@{
+    ViewData["Title"] = "Notifications";
+    var notifications = ViewBag.Notifications as List<acebook.Models.Notification>;
+}
+
+<div class="max-w-3xl mx-auto mt-10 bg-teal-700/10 p-6 rounded-lg shadow-[0_0_15px_rgba(15,118,110,0.3)]">
+    <h1 class="text-4xl font-bold text-teal-700 mb-6 text-center">Notifications</h1>
+
+    @if (notifications == null || !notifications.Any())
+    {
+        <div class="text-center py-10">
+            <p class="text-gray-600 text-lg">You have no notifications right now.</p>
+            <a asp-controller="Home" asp-action="Index"
+               class="inline-block mt-6 bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
+                Back to Aquarium
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="space-y-4">
+            @foreach (var notif in notifications)
+            {
+                <div class="flex items-start bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition relative">
+                    <!-- Placeholder image (for now) -->
+                    <img src="/images/Placeholder.png"
+                         class="w-12 h-12 rounded-full object-cover border border-gray-300 mr-4" />
+
+                    <div class="flex-1">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h2 class="font-semibold text-gray-800">@notif.Title</h2>
+                                <p class="text-gray-700 text-sm mt-1">@notif.Message</p>
+                            </div>
+                            <p class="text-xs text-gray-400 ml-2 whitespace-nowrap">
+                                @notif.CreatedOn.ToLocalTime().ToString("dd MMM yyyy, HH:mm")
+                            </p>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(notif.Url))
+                        {
+                            <a href="@notif.Url"
+                               class="inline-block mt-2 text-sm text-teal-600 font-semibold hover:underline">
+                                View
+                            </a>
+                        }
+                    </div>
+
+                    @if (!notif.IsRead)
+                    {
+                        <span class="absolute top-3 right-3 bg-teal-600 w-3 h-3 rounded-full"></span>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    <!-- Button to mark all read -->
+    <form asp-controller="Notifications" asp-action="MarkAllAsRead" method="post" class="text-center mt-8">
+        <button type="submit"
+                class="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-6 py-2 rounded-lg transition">
+            Mark All as Read
+        </button>
+    </form>
+</div>

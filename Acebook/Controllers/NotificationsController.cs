@@ -15,6 +15,26 @@ namespace acebook.Controllers
             _hub = hub;
         }
 
+        [Route("/notifications")]
+        [HttpGet]
+        public IActionResult Index()
+        {
+            int? userId = HttpContext.Session.GetInt32("user_id");
+            if (userId == null)
+                return RedirectToAction("New", "Sessions");
+
+            using var dbContext = new AcebookDbContext();
+
+            var notifications = dbContext.Notifications
+                .Where(n => n.ReceiverId == userId)
+                .OrderByDescending(n => n.CreatedOn)
+                .Take(10)
+                .ToList();
+
+            ViewBag.Notifications = notifications;
+            return View("Index");
+        }
+
         // Get unread notifications for the current user
         [HttpGet("/notifications/unread")]
         public async Task<IActionResult> GetUnread()
