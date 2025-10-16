@@ -224,7 +224,7 @@ namespace Acebook.Tests
             );
             await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
         }
-        
+
         [Test]
         public async Task SeeMoreButton_MyProfilePage_NavigatesToPostPage()
         {
@@ -234,6 +234,18 @@ namespace Acebook.Tests
                 Page.GetByTestId("see-more-button").First.ClickAsync()
             );
             await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
+        }
+
+        [Test]
+        public async Task ViewingFriends_FriendProfilePage_ShowsTheirFirstPost()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
+            // Click friend's name
+            await Page.GetByTestId("Friend-link Shelly").ClickAsync();
+            // redirects to Shelly's profile page
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
+            await Expect(Page.GetByText("Sardine school shimmering like stars beneath the waves. swim fin swim fin deep blue reef hunt glide kelp wave tide current school")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("post-content").First).ToHaveTextAsync("Sardine school shimmering like stars beneath the waves. swim fin swim fin deep blue reef hunt glide kelp wave tide current school");
         }
     }
 }
