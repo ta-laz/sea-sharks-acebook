@@ -34,3 +34,15 @@
         opacity: 0;
     }
 }
+
+/* Feed page soft rise-in */
+body.feed-fade {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+}
+
+body.feed-fade.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
