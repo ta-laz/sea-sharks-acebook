@@ -31,7 +31,7 @@ namespace Acebook.Tests
             await Page.GetByTestId("email").FillAsync("finn.white@sharkmail.ocean");
             await Page.GetByTestId("password").FillAsync("password123");
             await Task.WhenAll(
-                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.WaitForURLAsync($"{BaseUrl}/posts", new() { Timeout = 4000 }), 
                 Page.GetByTestId("signin-submit").ClickAsync()
             );
             await Page.GotoAsync("/friends");

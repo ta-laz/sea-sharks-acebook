@@ -39,9 +39,10 @@ namespace Acebook.Tests
 
             await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
             await Page.Locator("#password").FillAsync("password123");
-            await Page.Locator("#signin-submit").ClickAsync();
-            await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts");
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts", new() { Timeout = 4000 }), 
+                Page.GetByTestId("signin-submit").ClickAsync()
+            );
             await Page.ClickAsync("#dropdownDefaultButton");
             await Expect(Page.Locator("#signout")).ToBeVisibleAsync(); // key wait
             await Page.ClickAsync("#signout");
@@ -54,8 +55,10 @@ namespace Acebook.Tests
             await Page.GotoAsync("/signin");
             await Page.Locator("#email").FillAsync("finn.white@sharkmail.ocean");
             await Page.Locator("#password").FillAsync("password123");
-            await Page.Locator("#signin-submit").ClickAsync();
-            await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts", new() { Timeout = 4000 }), 
+                Page.GetByTestId("signin-submit").ClickAsync()
+            );
             await Page.ClickAsync("#dropdownDefaultButton");
             await Page.ClickAsync("#MyProfile");
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/1");

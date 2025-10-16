@@ -16,7 +16,7 @@
 
 @if (!string.IsNullOrWhiteSpace(searchString) && hasResults)
 {
-    <h1 class="text-5xl font-bold mb-4 text-teal-600 pb-6 text-center">
+    <h1 class="text-5xl font-bold mb-4 text-teal-600 pb-6 break-words [overflow-wrap:anywhere] text-center">
         Search Results for: <strong>@searchString</strong>
     </h1>
 }
@@ -29,7 +29,7 @@
 @if (ViewBag.UsersResults != null && users.Count > 0)
 {
     <div class="bg-teal-700/10 p-2 mb-10 rounded-lg shadow-[0_0_15px_rgba(15,118,110,0.3)]">
-        <h2 data-testid="user-results" class="mb-4 text-teal-600 text-3xl font-bold p-2 ">User results</h2>
+        <h2 data-testid="user-results" class="mb-4 text-teal-600 text-3xl font-bold p-2 break-words [overflow-wrap:anywhere]">User results</h2>
         <br />
         @foreach (var user in users.Take(3))
         {
@@ -108,7 +108,7 @@
 
     <br />
     <div class="bg-teal-700/10 mb-10 p-2 rounded-lg shadow-[0_0_15px_rgba(15,118,110,0.3)] overflow-hidden">
-        <h2 data-testid="post-results" class="mb-4 text-teal-600 text-3xl font-bold pb-2">Post results</h2>
+        <h2 data-testid="post-results" class="mb-4 text-teal-600 text-3xl font-bold pb-2 ">Post results</h2>
         @foreach (Post post in posts.Take(3))
         {
             string imagePath; 
@@ -133,7 +133,7 @@
             </a>
         </div>
     </div>
-    <p class="text-gray-700 mt-4 leading-relaxed">@post.Content</p>
+    <p class="text-gray-700 mt-4 leading-relaxed break-words [overflow-wrap:anywhere]">@post.Content</p>
     <p class="text-xs text-gray-400 mt-2">Created on: @post.FormattedCreatedOn</p>
 </div>
 
@@ -211,7 +211,7 @@
                     <h3 data-testid="comment-search-@comment.Post.User.FirstName" class="text-md font-semibold text-gray-800">
                         @comment.Post.User.FirstName @comment.Post.User.LastName
                     </h3>
-                    <p class="text-gray-700 mt-1 leading-relaxed">@comment.Post.Content</p>
+                    <p class="text-gray-700 mt-1 leading-relaxed break-words [overflow-wrap:anywhere]">@comment.Post.Content</p>
                     <p class="text-xs text-gray-400 mt-2">Created on: @comment.Post.FormattedCreatedOn</p>
                 </div>
             </div>
