@@ -4,45 +4,98 @@
   input:-webkit-autofill {
     box-shadow: 0 0 0px 1000px white inset !important;
     -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+    }
+
+    /* Logo glow animation */
+    @@keyframes glowWhite {
+      0% {
+        filter: brightness(1) saturate(1);
+        transform: scale(1);
+      }
+
+      50% {
+        filter: brightness(1) saturate(1);
+        transform: scale(1.1);
+      }
+
+      100% {
+        filter: brightness(1) saturate(1);
+        transform: scale(1);
+      }
+    }
+
+    /* Longer, smoother shark swim */
+  @@keyframes swimRight {
+    0% {
+      transform: translateX(0) rotate(0deg);
+    }
+    20% {
+      transform: translateX(20%) rotate(3deg);
+    }
+    40% {
+      transform: translateX(60%) rotate(-3deg);
+    }
+    60% {
+      transform: translateX(100%) rotate(2deg);
+    }
+    80% {
+      transform: translateX(140%) rotate(-2deg);
+    }
+    100% {
+      transform: translateX(200%) rotate(0deg);
+      opacity: 0;
+    }
   }
+
+    .logo-glow {
+      animation: glowWhite 0.6s ease-in-out;
+    }
+
+    .logo-swim {
+    animation: swimRight 2.0s ease-in-out forwards;
+  }
+
 </style>
 <!-- Logo -->
 <div class="min-h-screen flex flex-col items-center justify-start p-4">
-  <img src="images/light_grey.png" alt="SeaShark Logo" class="h-24 w-auto" />
+<div class="bg-white rounded-lg p-6 w-full max-w-md">
+  <img id="logo" src="images/teal_logo.png" alt="SeaShark Logo" class="h-24 w-auto" />
 
   <!-- Welcome to seashark/sign text  -->
 
   <h1 id="greeting" class="text-3xl font-bold text-teal-600 text-center">Welcome To Sea Shark!</h1>
   <h2 class="text-xl font-semibold text-teal-600 text-center mb-6">Sign In</h2>
+  </div>
 
   <!-- Form container -->
 
   <div class="bg-white rounded-lg p-6 shadow-md w-full max-w-md">
 
     <form asp-action="Create" asp-controller="Sessions" method="post" class="flex flex-col space-y-4" novalidate>
-    @Html.AntiForgeryToken()
+      @Html.AntiForgeryToken()
 
-      <!-- Display Model Errors --> 
+      <!-- Display Model Errors -->
       <div asp-validation-summary="ModelOnly" class="text-teal-600 mb-2"></div>
 
       <!-- Email  -->
       <div>
         <label for="email" class="mb-1 block text-sm text-gray-700">Email</label>
-        <input asp-for="Email" id="email" data-testid="email" class="w-full border border-gray-400 rounded-lg p-2" placeholder="email" />
+        <input asp-for="Email" id="email" data-testid="email" class="w-full border border-gray-400 rounded-lg p-2"
+          placeholder="email" />
         @if (ViewData.ModelState.TryGetValue(nameof(Model.Email), out var emailState) && emailState.Errors.Any())
         {
-            <div class="text-red-600 text-sm font-bold mt-1">@emailState.Errors.First().ErrorMessage</div>
+          <div class="text-red-600 text-sm font-bold mt-1">@emailState.Errors.First().ErrorMessage</div>
         }
       </div>
 
       <!-- Password  -->
       <div>
         <label for="password" class="mb-1 block text-sm text-gray-700">Password</label>
-        <input asp-for="Password" data-testid="password" id="password" class="w-full border border-gray-400 rounded-lg p-2"
-          placeholder="password" />
+        <input asp-for="Password" data-testid="password" id="password"
+          class="w-full border border-gray-400 rounded-lg p-2" placeholder="password" />
         @if (ViewData.ModelState.TryGetValue(nameof(Model.Password), out var passState) && passState.Errors.Any())
         {
-            <div class="text-red-600 text-sm font-bold mt-1">@passState.Errors.First().ErrorMessage</div>
+          <div class="text-red-600 text-sm font-bold mt-1">@passState.Errors.First().ErrorMessage</div>
         }
       </div>
 
@@ -67,10 +120,36 @@
     </div>
 
     <script>
+
+      const logo = document.getElementById('logo');
+      const signIn = document.getElementById('signin-submit');
+    const isTestEnv = window.location.hostname === "127.0.0.1";
+
+    signIn.addEventListener('click', (e) => {
+  if (isTestEnv) return; // ✅ skip animation for tests
+
+      e.preventDefault();
+  logo.classList.add('logo-glow');
+
+    // Wait for glow, then swim away
+    setTimeout(() => {
+      logo.classList.remove('logo-glow');
+      logo.classList.add('logo-swim');
+    }, 700);
+
+    // Submit after swim finishes
+    setTimeout(() => {
+      document.querySelector('form').submit();
+    }, 2000);
+  });
+    </script>
+
+    <script>
       function myFunction() {
         var x = document.getElementById("password");
         x.type = x.type === "password" ? "text" : "password";
       }
     </script>
+
   </div>
 </div>

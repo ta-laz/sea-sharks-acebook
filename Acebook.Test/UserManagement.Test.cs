@@ -130,7 +130,7 @@ namespace Acebook.Tests
       await Page.Locator("#password").FillAsync("password123");
       await Page.Locator("#signin-submit").ClickAsync();
 
-      await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts");
+      await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts", new() { Timeout = 4000 });
     }
 
     [Test]
