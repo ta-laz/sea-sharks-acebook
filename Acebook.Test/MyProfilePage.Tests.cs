@@ -247,5 +247,38 @@ namespace Acebook.Tests
             await Expect(Page.GetByText("Sardine school shimmering like stars beneath the waves. swim fin swim fin deep blue reef hunt glide kelp wave tide current school")).ToBeVisibleAsync();
             await Expect(Page.GetByTestId("post-content").First).ToHaveTextAsync("Sardine school shimmering like stars beneath the waves. swim fin swim fin deep blue reef hunt glide kelp wave tide current school");
         }
+        [Test]
+        [Obsolete]
+        public async Task OnProfilePage_ChangeProfilePicture()
+        {
+            var avatar = Page.Locator("#profile-pic");
+            await Expect(avatar).ToBeVisibleAsync();
+            var oldSrc = await avatar.GetAttributeAsync("src");
+            await Page.GetByTestId("changing-profile-picture-testing").ClickAsync();
+            var filePath = Path.Combine(TestContext.CurrentContext.TestDirectory, "Assets", "testImage.jpg");
+            Console.WriteLine("File path: " + filePath);
+            Assert.That(File.Exists(filePath), "Test image not found!");
+            await Page.RunAndWaitForNavigationAsync(async () =>
+            {
+                await Page.SetInputFilesAsync("[data-testid='changing-profile-picture-testing']", filePath);
+            });
+            // 4) After navigation, the avatar should be updated
+            avatar = Page.Locator("#profile-pic");
+            await Expect(avatar).ToBeVisibleAsync();
+            var newSrc = await avatar.GetAttributeAsync("src");
+            Assert.That(newSrc, Is.Not.Null.And.Not.Empty, "Avatar src should not be empty after upload.");
+            const string placeholder = "/images/Placeholder.png";
+            if (oldSrc == placeholder)
+            {
+                // If we started with the placeholder, ensure it changed
+                Assert.That(newSrc, Is.Not.EqualTo(placeholder), "Avatar still points to the placeholder after upload.");
+            }
+            else
+            {
+                // Otherwise ensure the src actually changed (best if server adds cache-busting query string)
+                Assert.That(newSrc, Is.Not.EqualTo(oldSrc),
+                    "Avatar src did not change after upload. Consider adding a cache-busting query string server-side.");
+            }
+        }
     }
 }
