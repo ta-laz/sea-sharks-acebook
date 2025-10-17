@@ -34,10 +34,10 @@
                                 <h2 class="font-semibold text-gray-800">@notif.Title</h2>
 
                                 <!-- Message (with sender name if available) -->
-                                <p class="text-gray-700 text-sm mt-1">
-                                    @if (notif.Sender != null)
-                                    @notif.Message
-                                </p>
+                                @if (!string.IsNullOrEmpty(notif.Message))
+                                {
+                                    <p class="text-gray-700 text-sm mt-1">@notif.Message</p>
+                                }
                             </div>
 
                             <p class="text-xs text-gray-400 ml-2 whitespace-nowrap">
