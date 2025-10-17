@@ -6,16 +6,21 @@ using Acebook.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
 using acebook.ActionFilters;
+using acebook.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace acebook.Controllers;
 [ServiceFilter(typeof(AuthenticationFilter))]
 public class FriendsController : Controller
 {
     private readonly ILogger<FriendsController> _logger;
+    private readonly IHubContext<NotificationHub> _hub;
 
-    public FriendsController(ILogger<FriendsController> logger)
+
+    public FriendsController(ILogger<FriendsController> logger, IHubContext<NotificationHub> hub)
     {
         _logger = logger;
+        _hub = hub;
     }
 
     [Route("/friends")]
@@ -173,19 +178,60 @@ public class FriendsController : Controller
         // return RedirectToAction("Index"); // or redirect back to the profile page
     }
 
+
     [Route("/friends/accept")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Accept(int friendId)
+    public async Task<IActionResult> Accept(int friendId)
     {
-        AcebookDbContext dbContext = new AcebookDbContext();
+        int? currentUserId = HttpContext.Session.GetInt32("user_id");
+        using var dbContext = new AcebookDbContext();
 
-        var friend = dbContext.Friends.Find(friendId);
+        var friend = await dbContext.Friends
+            .Include(f => f.Requester)
+            .Include(f => f.Accepter)
+            .FirstOrDefaultAsync(f => f.Id == friendId);
+
+        if (friend == null)
+        {
+            // no matching friendship found
+            _logger.LogWarning("Tried to accept friendId {FriendId}, but no record found", friendId);
+            return RedirectToAction("Index");
+        }
+
         friend.Status = FriendStatus.Accepted;
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync();
+
+        // double-check navigation props
+        var accepter = friend.Accepter ?? await dbContext.Users.FindAsync(friend.AccepterId);
+        var requester = friend.Requester ?? await dbContext.Users.FindAsync(friend.RequesterId);
+
+        if (requester != null && accepter != null)
+        {
+            string title = "Friend Request Accepted";
+            string message = $"{accepter.FirstName} accepted your friend request.";
+
+            dbContext.Notifications.Add(new Notification
+            {
+                ReceiverId = requester.Id,
+                SenderId = currentUserId,
+                Title = title,
+                Message = message,
+                Url = $"/users/{accepter.Id}"
+            });
+            await dbContext.SaveChangesAsync();
+
+            await _hub.Clients.Group($"user-{requester.Id}")
+                .SendAsync("ReceiveNotification", title, message, $"/users/{accepter.Id}");
+        }
+        else
+        {
+            _logger.LogWarning("Requester or accepter user was null for friendId {FriendId}", friendId);
+        }
 
         return RedirectToAction("Index");
     }
+
 
     [Route("/friends/add")]
     [HttpPost]
@@ -210,6 +256,25 @@ public class FriendsController : Controller
 
             dbContext.Friends.Add(newRequest);
             dbContext.SaveChanges();
+
+            // sends notification that friend request was requested
+            var sender = dbContext.Users.Find(currentUserId);
+            string title = "New Friend Request";
+            string message = $"{sender.FirstName} sent you a friend request.";
+
+            dbContext.Notifications.Add(new Notification
+            {
+                ReceiverId = receiverId,
+                SenderId = currentUserId,
+                Title = title,
+                Message = message,
+                Url = "/friends"
+
+            });
+            dbContext.SaveChanges();
+
+            _hub.Clients.Group($"user-{receiverId}")
+                .SendAsync("ReceiveNotification", title, message, "/friends");
         }
         // this is used to pull information from the headers to redirect you to where you just were
         return Redirect(Request.Headers["Referer"].ToString());

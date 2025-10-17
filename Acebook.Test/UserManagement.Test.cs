@@ -44,11 +44,14 @@ namespace Acebook.Tests
       await Page.Locator("#email").FillAsync("francine@sharkmail.ocean");
       await Page.Locator("#password").FillAsync("Password123!");
       await Page.Locator("#confirmpassword").FillAsync("Password123!");
-      await Page.Locator("#submit").ClickAsync();
 
-      await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts");
+      await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts", new() { Timeout = 4000 }),
+                Page.Locator("#submit").ClickAsync()
+            );
+
     }
-
+    
     [Test]
     public async Task SignUp_AllBlank_Error()
     {
@@ -99,7 +102,7 @@ namespace Acebook.Tests
       //await Expect(Page.GetByTestId("error-message")).ToBeVisibleAsync();
       var confirmError = Page.Locator("span[data-valmsg-for='Password']");
       await Expect(confirmError).ToBeVisibleAsync();
-      await Expect(confirmError).ToHaveTextAsync("Password must be ≥ 8 chars and include an uppercase letter and a special character.");
+      await Expect(confirmError).ToHaveTextAsync("Password must be ≥ 8 characters and include an uppercase letter and a special character.");
     }
 
     [Test]

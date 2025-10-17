@@ -71,8 +71,8 @@
 
   <div class="bg-white rounded-lg p-6 shadow-md w-full max-w-md">
 
-    <form asp-action="Create" asp-controller="Sessions" method="post" class="flex flex-col space-y-4" novalidate>
-      @Html.AntiForgeryToken()
+    <form id="login-form" asp-action="Create" asp-controller="Sessions" method="post" class="flex flex-col space-y-4" novalidate>
+    @Html.AntiForgeryToken()
 
       <!-- Display Model Errors -->
       <div asp-validation-summary="ModelOnly" class="text-teal-600 mb-2"></div>

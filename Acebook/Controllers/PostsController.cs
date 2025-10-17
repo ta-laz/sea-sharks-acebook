@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using acebook.Models;
 using acebook.ActionFilters;
 using Microsoft.EntityFrameworkCore;
+using acebook.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace acebook.Controllers;
 
@@ -11,10 +13,12 @@ namespace acebook.Controllers;
 public class PostsController : Controller
 {
   private readonly ILogger<PostsController> _logger;
+  private readonly IHubContext<NotificationHub> _hub;
 
-  public PostsController(ILogger<PostsController> logger)
+  public PostsController(ILogger<PostsController> logger, IHubContext<NotificationHub> hub)
   {
     _logger = logger;
+    _hub = hub;
   }
 
   [Route("/posts")]
@@ -103,6 +107,36 @@ public class PostsController : Controller
     dbContext.Posts.Add(post);
     dbContext.SaveChanges();
 
+    // logic for the notifications is here
+    if (post.WallId != post.UserId)
+    {
+      var poster = dbContext.Users.Find(currentUserId);
+      var wallOwner = dbContext.Users.Find(post.WallId);
+
+      if (poster != null && wallOwner != null)
+      {
+        string title = "New Post on Your Wall";
+        string message = $"{poster.FirstName} posted on your wall.";
+        string url = $"/posts/{post.Id}";
+
+        dbContext.Notifications.Add(new Notification
+        {
+          ReceiverId = wallOwner.Id,
+          SenderId = currentUserId,
+          Title = title,
+          Message = message,
+          Url = url
+        });
+
+        dbContext.SaveChanges();
+
+        // Send live SignalR notification
+        _hub.Clients.Group($"user-{wallOwner.Id}")
+            .SendAsync("ReceiveNotification", title, message, url);
+      }
+    }
+
+
     // Redirect to where the form came from
     if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
       return Redirect(returnUrl);
@@ -118,15 +152,14 @@ public class PostsController : Controller
     AcebookDbContext dbContext = new AcebookDbContext();
     int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
     var post = dbContext.Posts.Include(p => p.Comments).ThenInclude(c => c.Likes).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
-    var comments = dbContext.Comments.Include(c => c.User).Where(c => c.PostId == id).ToList();
+    var comments = dbContext.Comments.Include(c => c.User).Where(c => c.PostId == id).OrderBy(c => c.CreatedOn).ToList();
     post.UserHasLiked = post.Likes.Any(l => l.UserId == currentUserId);
     foreach (var comment in post.Comments)
     {
       comment.UserHasLiked = comment.Likes.Any(l => l.UserId == currentUserId);
     }
     ViewBag.post = post;
-    ViewBag.comments = comments.ToList();
-    ViewBag.comments.Reverse();
+    ViewBag.comments = comments;
 
 
     return View(post);

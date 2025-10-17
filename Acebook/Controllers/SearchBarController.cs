@@ -51,7 +51,10 @@ public class SearchBarController : Controller
                 .AsNoTracking()
                 .Where(u =>
                     EF.Functions.Like(u.FirstName.ToLower(), like) ||
-                    EF.Functions.Like(u.LastName.ToLower(), like))
+                    EF.Functions.Like(u.LastName.ToLower(), like) ||
+                    EF.Functions.Like((u.FirstName + u.LastName).ToLower(), like) ||
+                    EF.Functions.Like((u.FirstName + " " + u.LastName).ToLower(), like))
+
                 .OrderBy(u => u.FirstName).ThenBy(u => u.LastName)
                 .Include(u => u.ProfileBio)
                 .ToListAsync();

@@ -12,10 +12,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <meta name="request-verification-token" content="@tokens.RequestToken" />
     <link rel="icon" type="image/x-icon" href="~/images/light_grey.png">
-
+    <link rel="stylesheet" href="~/css/transition.css" />
 </head>
 
-<body class="flex flex-col min-h-screen">
+@* added the session context here to be able to get it for the notification thing *@
+<body data-userid="@Context.Session.GetInt32("user_id")" class="flex flex-col min-h-screen">
     @using acebook.Models
     @using System.Linq
 
@@ -68,7 +69,7 @@
                                         <button id="dropdown-button"
                                                 data-dropdown-toggle="dropdown2"
                                                 type="button"
-                                                class="shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100">
+                                                class="shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 ">
                                             <span id="scope-label">@Label(currentScope)</span>
                                             <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
@@ -80,7 +81,7 @@
 
                                         <!-- Flowbite dropdown menu (positioned under the button) -->
                                         <div id="dropdown2"
-                                            class="z-10 hidden absolute top-full left-0 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44">
+                                            class="z-10 hidden absolute top-full left-0 bg-white divide-y divide-gray-100 rounded-lg shadow-xl w-44">
                                             <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdown-button">
                                             <li><button type="button" class="scope-option inline-flex w-full px-4 py-2 hover:bg-gray-100" data-scope="users" data-testid="user-test-button">People</button></li>
                                             <li><button type="button" class="scope-option inline-flex w-full px-4 py-2 hover:bg-gray-100"  data-scope="posts" data-testid="post-test-button">Posts</button></li>
@@ -112,34 +113,67 @@
                                     </div>
                                     </div>
                             <!-- Profile dropdown -->
-                                <div>
-                                    <button data-testid="dropdown1" id="dropdownDefaultButton" data-dropdown-toggle="dropdown1" class="absolute top-1/2 -translate-y-1/2 right-6 rounded-full ring-offset-0 focus:ring-4 focus:outline-none focus:ring-teal-900" type="button">
-                                        <img 
-                                            @* src="@Url.Content("@imagePath")"  *@
-                                            src = "@imagePath"
-                                            alt="User menu" 
-                                            class="h-12 w-12 rounded-full border-2 border-white"
-                                        />
-                                    </button>
+                                
+                        <!-- Notifications + Profile dropdown -->
+                        <div class="absolute top-1/2 -translate-y-1/2 right-6 flex items-center space-x-6">
+                            <!--Notification Bell -->
+                            <div class="relative">
+                                <button id="notifBell" class="relative text-white hover:text-gray-100 focus:outline-none">
+                                    <span class="material-icons text-3xl align-middle">notifications</span>
+                                    <span id="notifBadge"
+                                        class="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-1 hidden">0</span>
+                                </button>
+
+                                <!-- Dropdown -->
+                                <div id="notifDropdown"
+                                    class="hidden absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-xl shadow-lg p-2 z-50">
+                                    <h3 class="font-semibold text-gray-700 mb-1 px-2">Notifications</h3>
+                                    <div id="notifList" class="space-y-2 max-h-80 overflow-y-auto"></div>
+                                    <div class="border-t border-gray-200 mt-2 pt-2 text-center">
+                                        <a href="/notifications"
+                                            class="inline-block bg-teal-600 text-white rounded-md px-3 py-1 mt-2 hover:bg-teal-700">View all
+                                            notifications</a>
+                                    </div>
+                                    <button id="markAllRead"
+                                        class="block text-sm text-teal-700 mt-2 mx-auto hover:underline">Mark all as
+                                        read</button>
+                                </div>
+                            </div>
+
+                            <!-- Profile dropdown -->
+                            <div class="relative">
+                                <button data-testid="dropdown1" id="dropdownDefaultButton" data-dropdown-toggle="dropdown1"
+                                    class="rounded-full focus:ring-4 focus:outline-none focus:ring-teal-900" type="button">
+                                    <img src="@imagePath" alt="User menu"
+                                        class="h-12 w-12 rounded-full border-2 border-white" />
+                                </button>
 
                                     <!-- Dropdown menu -->
-                                    <div id="dropdown1" class="z-12 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 hover:shadow-xl">
+                                    <div id="dropdown1" class="z-12 hidden bg-white divide-y divide-gray-100 rounded-lg w-44 shadow-xl hover:shadow-xl">
                                         <ul class="py-2 text-sm text-gray-700 " aria-labelledby="dropdownDefaultButton">
                                         <li>
-                                            <a asp-controller="Users" asp-action="Index" asp-route-id="@userId" method="get" class="block px-4 py-2 hover:bg-gray-100" id="MyProfile">My Profile</a>
+                                            <a asp-controller="Users" asp-action="Index" asp-route-id="@userId" method="get"
+                                                class="block px-4 py-2 hover:bg-gray-100" id="MyProfile">My Profile</a>
                                         </li>
                                         <li>
-                                            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Account Settings</a>
+                                            <a asp-controller="Users" asp-action="UpdateAccount" asp-route-id="@userId" method="get" class="block px-4 py-2 hover:bg-gray-100">Account Settings</a>
                                         </li>
                                         <li>
-                                            <form asp-controller="Sessions" asp-action="Signout" method="post" class="d-inline">
+                                            <form asp-controller="Sessions" asp-action="Signout" method="post"
+                                                class="d-inline">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" data-testid="signout" id="signout" class="block w-full text-left px-4 py-2 appearance-none hover:bg-gray-100">Sign Out</button>
+                                                <button type="submit" data-testid="signout" id="signout"
+                                                    class="block w-full text-left px-4 py-2 appearance-none hover:bg-gray-100">Sign
+                                                    Out</button>
                                             </form>
                                         </li>
-                                        </ul>
-                                    </div>
+                                    </ul>
                                 </div>
+                            </div>
+                        </div>
+
+                        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
                             }
                             else
                             {<a>
@@ -178,22 +212,30 @@
     <script src="~/js/site.js" asp-append-version="true"></script> *@
     <script src="https://unpkg.com/flowbite@2.5.1/dist/flowbite.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+
+    <button id="back-to-top"
+        class="fixed bottom-6 right-6 bg-teal-600 text-white p-3 rounded-full shadow-2xl hover:bg-teal-500 mb-10 transition transition-opacity duration-200 opacity-0 pointer-events-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+</svg>
+
+    </button>
+
+
+    <!-- Bubble transition overlay -->
+    <div id="bubble-transition"></div>
+
+    <script src="~/js/transition.js"></script>
+    
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/notifications.js"></script>
 </body>
 
 </html>
 
-<!-- NOTIFICATION ICON -->
-                            @* <button type="button"
-                                class="relative rounded-full p-1 text-gray-400 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500">
-                                <span class="absolute -inset-1.5"></span>
-                                <span class="sr-only">View notifications</span>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                    data-slot="icon" aria-hidden="true" class="size-6">
-                                    <path
-                                        d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-                                        stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                            </button> *@
 
 <!-- Code to get name/id from session -->
   @* <ul class="navbar-nav ms-auto">
