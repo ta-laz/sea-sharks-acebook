@@ -102,7 +102,7 @@ namespace Acebook.Tests
       //await Expect(Page.GetByTestId("error-message")).ToBeVisibleAsync();
       var confirmError = Page.Locator("span[data-valmsg-for='Password']");
       await Expect(confirmError).ToBeVisibleAsync();
-      await Expect(confirmError).ToHaveTextAsync("Password must be ≥ 8 chars and include an uppercase letter and a special character.");
+      await Expect(confirmError).ToHaveTextAsync("Password must be ≥ 8 characters and include an uppercase letter and a special character.");
     }
 
     [Test]

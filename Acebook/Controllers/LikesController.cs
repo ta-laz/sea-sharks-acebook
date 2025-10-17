@@ -4,6 +4,9 @@ using acebook.Models;
 using acebook.ActionFilters;
 using Microsoft.EntityFrameworkCore;
 using Npgsql.PostgresTypes;
+using acebook.Hubs;
+using Microsoft.AspNetCore.SignalR;
+
 
 namespace acebook.Controllers;
 
@@ -11,10 +14,12 @@ namespace acebook.Controllers;
 public class LikesController : Controller
 {
     private readonly ILogger<PostsController> _logger;
+    private readonly IHubContext<NotificationHub> _hub;
 
-    public LikesController(ILogger<PostsController> logger)
+    public LikesController(ILogger<PostsController> logger, IHubContext<NotificationHub> hub)
     {
         _logger = logger;
+        _hub = hub;
     }
 
     [Route("/posts/{id}")] //Toggle like 
@@ -39,6 +44,27 @@ public class LikesController : Controller
         else
         {
             dbContext.Likes.Add(newLike);
+
+            if (post.UserId != currentUserId)
+            {
+                var liker = dbContext.Users.Find(currentUserId);
+                string title = "New Like on Your Post";
+                string message = $"{liker.FirstName} liked your post.";
+                string url = $"/posts/{post.Id}";
+
+                dbContext.Notifications.Add(new Notification
+                {
+                    ReceiverId = post.UserId,
+                    SenderId = currentUserId,
+                    Title = title,
+                    Message = message,
+                    Url = url
+                });
+                dbContext.SaveChanges();
+
+                _hub.Clients.Group($"user-{post.UserId}")
+                    .SendAsync("ReceiveNotification", title, message, url);
+            }
 
         }
         dbContext.SaveChanges();
@@ -71,6 +97,29 @@ public class LikesController : Controller
         }else
         {
             dbContext.Likes.Add(newLike);
+
+            // Notify the comment owner (but not if they liked their own comment)
+            if (comment.UserId != currentUserId)
+            {
+                var liker = dbContext.Users.Find(currentUserId);
+                string title = "New Like on Your Comment";
+                string message = $"{liker.FirstName} liked your comment.";
+                string url = $"/posts/{comment.PostId}";
+
+                dbContext.Notifications.Add(new Notification
+                {
+                    ReceiverId = comment.UserId,
+                    SenderId = currentUserId,
+                    Title = title,
+                    Message = message,
+                    Url = url
+                });
+                dbContext.SaveChanges();
+
+                _hub.Clients.Group($"user-{comment.UserId}")
+                    .SendAsync("ReceiveNotification", title, message, url);
+            }
+
         }
         dbContext.SaveChanges();
         var likeCount = dbContext.Likes.Count(l => l.CommentId == id);

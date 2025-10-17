@@ -22,7 +22,7 @@ public class SignUpViewModel : IValidatableObject
     [Required(ErrorMessage = "Password is required")]
     [DataType(DataType.Password)]
     [RegularExpression(@"^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$",
-        ErrorMessage = "Password must be ≥ 8 chars and include an uppercase letter and a special character.")]
+        ErrorMessage = "Password must be ≥ 8 characters and include an uppercase letter and a special character.")]
     public string Password { get; set; } = "";
 
     [Required(ErrorMessage = "Confirmation is required")]
