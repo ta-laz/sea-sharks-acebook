@@ -220,10 +220,10 @@ namespace Acebook.Tests
             // Click 'Delete Post' button:
             await Task.WhenAll(
                 Page.GetByTestId("delete-post-button").ClickAsync(),
-                Page.WaitForURLAsync($"{BaseUrl}/posts")
+                Page.WaitForURLAsync($"{BaseUrl}/users/1")
             );
 
-            // Confirm the post is no longer visible on Aquarium:
+            // Confirm the post is no longer visible on Own Profile:
             await Expect(Page.GetByText("Test delete post button works properly")).Not.ToBeVisibleAsync();
         }
 

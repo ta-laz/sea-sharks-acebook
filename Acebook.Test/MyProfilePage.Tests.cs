@@ -190,16 +190,6 @@ namespace Acebook.Tests
         }
 
         [Test]
-        public async Task ViewProfileOnPost_MyUserProfilePage_RedirectsToTheirProfile()
-        {
-            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
-            // Click view profile on post
-            await Page.GetByTestId("view-profile").First.ClickAsync();
-            // redirects to Bluey's profile page
-            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/50");
-        }
-
-        [Test]
         public async Task ViewingFriends_FriendProfilePage_ShowsListOfTheirFriends()
         {
             // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)

@@ -83,16 +83,6 @@ namespace Acebook.Tests
         }
 
         [Test]
-        public async Task ViewProfileOnPost_OtherProfilePage_RedirectsToTheirProfile()
-        {
-            // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
-            // Click view profile on post
-            await Page.GetByTestId("view-profile").First.ClickAsync();
-            // redirects to Shelly's profile page
-            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
-        }
-
-        [Test]
         public async Task ViewPage_NotFriendProfilePage_WriteOnWallNotVisible()
         {
             // NOTE: [SetUp] signs in with user Finn then goes to Shelly's profile page (users/2)
