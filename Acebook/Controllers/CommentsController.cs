@@ -67,6 +67,7 @@ public class CommentsController : Controller
                 dbContext.Notifications.Add(new Notification
                 {
                     ReceiverId = post.UserId,
+                    SenderId = currentUserId,
                     Title = title,
                     Message = message,
                     Url = url
@@ -85,6 +86,7 @@ public class CommentsController : Controller
                 dbContext.Notifications.Add(new Notification
                 {
                     ReceiverId = post.WallId,
+                    SenderId = currentUserId,
                     Title = title,
                     Message = message,
                     Url = $"/posts/{post.Id}"
