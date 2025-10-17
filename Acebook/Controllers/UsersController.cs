@@ -381,6 +381,11 @@ public class UsersController : Controller
 
         using var tx = dbContext.Database.BeginTransaction();
 
+        var sentNotes = dbContext.Notifications
+            .Where(n => n.SenderId == currentUserId)
+            .ToList();
+        dbContext.Notifications.RemoveRange(sentNotes);
+
         var friendListEntries = dbContext.Friends
             .Where(f => f.RequesterId == currentUserId || f.AccepterId == currentUserId)
             .ToList();
