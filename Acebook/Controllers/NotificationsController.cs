@@ -36,7 +36,6 @@ namespace acebook.Controllers
             return View("Index");
         }
 
-        // Get unread notifications for the current user
         [HttpGet("/notifications/unread")]
         public async Task<IActionResult> GetUnread()
         {
@@ -50,10 +49,25 @@ namespace acebook.Controllers
                 .Where(n => n.ReceiverId == userId && !n.IsRead)
                 .Include(n => n.Sender)
                 .OrderByDescending(n => n.CreatedOn)
+                .Select(n => new
+                {
+                    n.Id,
+                    n.Title,
+                    n.Message,
+                    n.Url,
+                    n.CreatedOn,
+                    Sender = n.Sender == null ? null : new
+                    {
+                        n.Sender.FirstName,
+                        n.Sender.LastName,
+                        n.Sender.ProfilePicturePath
+                    }
+                })
                 .ToListAsync();
 
             return Json(notifications);
         }
+
 
         // Mark a single notification as read
         [HttpPost("/notifications/read/{id}")]
@@ -79,7 +93,7 @@ namespace acebook.Controllers
 
         // Send a new notification (called from other controllers)
         [HttpPost("/notifications/send")]
-        public async Task<IActionResult> SendNotification(int receiverId, string title, string message)
+        public async Task<IActionResult> SendNotification(int receiverId, string title, string message, string? url)
         {
             int? senderId = HttpContext.Session.GetInt32("user_id");
             using var dbContext = new AcebookDbContext();
@@ -89,6 +103,7 @@ namespace acebook.Controllers
             {
                 ReceiverId = receiverId,
                 SenderId = senderId,
+                Url = url,
                 Title = title,
                 Message = message
             };
@@ -97,7 +112,7 @@ namespace acebook.Controllers
 
             // 2. Push it live via SignalR
             await _hub.Clients.Group($"user-{receiverId}")
-                .SendAsync("ReceiveNotification", title, message);
+                .SendAsync("ReceiveNotification", title, message, url);
 
             return Ok("Notification sent.");
         }
