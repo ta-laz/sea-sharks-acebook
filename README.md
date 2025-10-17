@@ -210,20 +210,21 @@ SeaShark uses **Entity Framework Core (EF Core)** for ORM and relational databas
 ### 3.4 Entity Relationship Diagram
 ```mermaid
 erDiagram
-  User ||--o{ Post : "creates"
-  User ||--o{ Notifications : "creates"
-  User ||--o{ Comment : "writes"
-  User ||--o{ Like : "reacts"
-  User ||--o{ Friend : "connects"
-  User ||--|| ProfileBio : "has"
+  USER ||--o{ POST : creates
+  USER ||--o{ COMMENT : writes
+  USER ||--o{ LIKE : reacts
 
-  Post ||--o{ Comment : "receives"
-  Post ||--o{ Like : "receives"
-  Notifications ||--o{ Friend : "receives"
-  Notifications ||--o{ User : "receives"
-  Comment ||--o{ Like : "receives"
+  %% Friend as a join entity with two roles
+  FRIEND }o--|| USER : requester
+  FRIEND }o--|| USER : accepter
 
-  Friend }o--|| User : "receiver"
+  %% Notification with sender/receiver roles
+  NOTIFICATION }o--|| USER : receiver
+  NOTIFICATION }o--|| USER : sender
+
+  POST ||--o{ COMMENT : receives
+  POST ||--o{ LIKE : receives
+  COMMENT ||--o{ LIKE : receives
 ```
 
 ---
