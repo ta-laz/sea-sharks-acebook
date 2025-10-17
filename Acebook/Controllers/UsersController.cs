@@ -248,6 +248,8 @@ public class UsersController : Controller
         if (user == null)
             return NotFound();
 
+        ViewBag.SuccessMessage = TempData["SuccessMessage"];
+
         return View(user);
     }
 
@@ -280,7 +282,9 @@ public class UsersController : Controller
         user.LastName = lastName;
         dbContext.SaveChanges();
 
-        return new RedirectResult($"/users/{id}");
+        TempData["SuccessMessage"] = $"Name successfully changed! <a class='underline text-teal-700' href='/users/{id}'>Go to your profile</a>";
+        return RedirectToAction("UpdateAccount", new { id });
+
     }
 
     [ServiceFilter(typeof(AuthenticationFilter))]
@@ -316,7 +320,9 @@ public class UsersController : Controller
         user.Password = _hasher.HashPassword(user, cpvm.NewPassword);
         dbContext.SaveChanges();
 
-        return new RedirectResult($"/users/{id}");
+        TempData["SuccessMessage"] = $"Password successfully changed! <a class='underline text-teal-700' href='/users/{id}'>Go to your profile</a>";
+
+        return RedirectToAction("UpdateAccount", new { id });
     }
 
     [ServiceFilter(typeof(AuthenticationFilter))]

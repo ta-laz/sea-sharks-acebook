@@ -14,7 +14,12 @@
             {
                 <div id="sneaky-error-message" class="text-red-600 mt-2 font-bold">@TempData["Sneaky"]</div>
             }
-
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="text-green-600 font-semibold mt-2">
+                @Html.Raw(ViewBag.SuccessMessage)
+            </div>
+        }
     <!-- change nameform container -->
     <div class="bg-white rounded-lg p-6 shadow-md w-full max-w-md mb-5">
     <h2 class="text-xl font-bold text-teal-600 text-center pb-5">Change Name</h2>
