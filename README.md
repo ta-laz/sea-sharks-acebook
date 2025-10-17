@@ -210,17 +210,21 @@ SeaShark uses **Entity Framework Core (EF Core)** for ORM and relational databas
 ### 3.4 Entity Relationship Diagram
 ```mermaid
 erDiagram
-  User ||--o{ Post : "creates"
-  User ||--o{ Comment : "writes"
-  User ||--o{ Like : "reacts"
-  User ||--o{ Friend : "connects"
-  User ||--|| ProfileBio : "has"
+  USER ||--o{ POST : creates
+  USER ||--o{ COMMENT : writes
+  USER ||--o{ LIKE : reacts
 
-  Post ||--o{ Comment : "receives"
-  Post ||--o{ Like : "receives"
-  Comment ||--o{ Like : "receives"
+  %% Friend as a join entity with two roles
+  FRIEND }o--|| USER : requester
+  FRIEND }o--|| USER : accepter
 
-  Friend }o--|| User : "receiver"
+  %% Notification with sender/receiver roles
+  NOTIFICATION }o--|| USER : receiver
+  NOTIFICATION }o--|| USER : sender
+
+  POST ||--o{ COMMENT : receives
+  POST ||--o{ LIKE : receives
+  COMMENT ||--o{ LIKE : receives
 ```
 
 ---
@@ -292,6 +296,7 @@ Controllers follow the MVC pattern, ensuring a clean separation between **data (
 | **LikesController** | Manages user “like” actions on posts and comments. Toggles like states, preventing duplicate entries and maintaining relational integrity. |
 | **FriendsController** | Manages friend requests, acceptances, and removals. Implements logic to show friend lists, pending requests, and sent requests, filtered per logged-in user. |
 | **SearchBarController** | Handles the `/Search` route. Accepts `SearchString` and `SearchFilter` parameters to query Users, Posts, and Comments dynamically. Returns results via `ViewBag` and Razor rendering. |
+| **NotificationsController** | Manages the `/notifications` route, handling real-time and stored alerts for users. Retrieves, sends, and marks notifications as `read` using `AcebookDbContext` and SignalR for live updates. Returns data through Razor views or JSON responses. |
 
 ### 5.3 Common Design Patterns
 
@@ -334,10 +339,10 @@ Controllers follow the MVC pattern, ensuring a clean separation between **data (
 
 ## 🧪 Testing
 
-### 5.1 Overview
+### 6.1 Overview
 Testing ensures feature reliability using **NUnit** and **Playwright for .NET**.
 
-### 5.2 Testing Frameworks
+### 6.2 Testing Frameworks
 
 | Framework | Purpose |
 |------------|----------|
@@ -345,7 +350,7 @@ Testing ensures feature reliability using **NUnit** and **Playwright for .NET**.
 | **Playwright** | End-to-end browser testing |
 | **TestDataSeeder** | Seeds DB for consistent test data |
 
-### 5.3 Example Tests
+### 6.3 Example Tests
 
 | File | Description |
 |------|--------------|
