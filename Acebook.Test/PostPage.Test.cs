@@ -142,7 +142,7 @@ namespace Acebook.Tests
             // Wait for the new post to appear on the posts page
             await Expect(Page.GetByText("Test content")).ToBeVisibleAsync();
 
-            // Click “See more” on the new post
+            // Click “Sea More” on the new post
             await Task.WhenAll(
                 Page.WaitForURLAsync(new Regex($"{BaseUrl}/posts/\\d+")), // Uses regex \\d+ to expect one or more digits, scalable when more posts are added 
                 Page.GetByTestId("see-more-button").First.ClickAsync() // Because we have just made the post, we can still click just on the first one 
@@ -205,7 +205,7 @@ namespace Acebook.Tests
             // Wait for the new post to appear on the posts page
             await Expect(Page.GetByText("Test delete post button works properly")).ToBeVisibleAsync();
 
-            // Click “See more” on the new post
+            // Click “Sea More” on the new post
             await Task.WhenAll(
                 Page.WaitForURLAsync(new Regex($"{BaseUrl}/posts/\\d+")), // Uses regex \\d+ to expect one or more digits, scalable when more posts are added 
                 Page.GetByTestId("see-more-button").First.ClickAsync() // Because we have just made the post, we can still click just on the first one 
@@ -260,7 +260,7 @@ namespace Acebook.Tests
                 Page.Locator("#signin-submit").ClickAsync()
             );
 
-            // Click “See more” on the top post (just made)
+            // Click “Sea More” on the top post (just made)
             await Page.GetByTestId("see-more-button").First.ClickAsync();
 
             // Confirm we are on an individual post page
@@ -276,7 +276,7 @@ namespace Acebook.Tests
         [Test]
         public async Task DeleteComment_CommentAuthor_CanDeleteComment()
         {
-            // Click “See more” on the top post
+            // Click “Sea More” on the top post
             await Page.GetByTestId("see-more-button").First.ClickAsync();
 
             // Confirm we are on an individual post page
@@ -319,7 +319,7 @@ namespace Acebook.Tests
         [Test]
         public async Task DeleteComment_CommentAuthor_CanDeleteRIGHTComment()
         {
-            // Click “See more” on the top post
+            // Click “Sea More” on the top post
             await Page.GetByTestId("see-more-button").First.ClickAsync();
 
             // Confirm we are on an individual post page
@@ -371,7 +371,7 @@ namespace Acebook.Tests
         [Test]
         public async Task DeleteComment_NOTCommentAuthor_CannotDeleteComment()
         {
-            // Click “See more” on the top post
+            // Click “Sea More” on the top post
             await Page.GetByTestId("see-more-button").First.ClickAsync();
 
             // Create comment
@@ -412,7 +412,7 @@ namespace Acebook.Tests
                 Page.Locator("#signin-submit").ClickAsync()
             );
 
-            // Click “See more” on the top post (just made)
+            // Click “Sea More” on the top post (just made)
             await Page.GetByTestId("see-more-button").First.ClickAsync();
 
             // Confirm the delete comment button is not visible
@@ -439,7 +439,7 @@ namespace Acebook.Tests
             // Wait for the new post to appear on the posts page
             await Expect(Page.GetByText("Test Edit post button works properly")).ToBeVisibleAsync();
 
-            // Click “See more” on the new post
+            // Click “Sea More” on the new post
             await Page.GetByTestId("see-more-button").First.ClickAsync();
 
             // Expect the Edit Post Button to be visible on the page:
@@ -476,7 +476,7 @@ namespace Acebook.Tests
             // Wait for the new post to appear on the posts page
             await Expect(Page.GetByText("Test Edit post button works properly")).ToBeVisibleAsync();
 
-            // Click “See more” on the first post
+            // Click “Sea More” on the first post
             await Page.GetByTestId("see-more-button").First.ClickAsync();
 
             // Signout:
@@ -496,7 +496,7 @@ namespace Acebook.Tests
                 Page.Locator("#signin-submit").ClickAsync()
             );
 
-            // Click “See more” on the top post (just made)
+            // Click “Sea More” on the top post (just made)
             await Page.GetByTestId("see-more-button").First.ClickAsync();
 
             // Confirm the update post button is not visible
@@ -506,7 +506,7 @@ namespace Acebook.Tests
         [Test]
         public async Task UpdateComment_CommentAuthor_CanUpdateComment()
         {
-            // Click “See more” on the first post
+            // Click “Sea More” on the first post
             await Page.GetByTestId("see-more-button").First.ClickAsync();
 
             // Create comment
@@ -556,7 +556,7 @@ namespace Acebook.Tests
         [Test]
         public async Task UpdateComment_NOTCommentAuthor_CannotUpdateComment()
         {
-            // Click “See more” on the first post
+            // Click “Sea More” on the first post
             await Page.GetByTestId("see-more-button").First.ClickAsync();
 
             // Create comment
@@ -597,7 +597,7 @@ namespace Acebook.Tests
                 Page.Locator("#signin-submit").ClickAsync()
             );
 
-            // Click “See more” on the top post (just made)
+            // Click “Sea More” on the top post (just made)
             await Page.GetByTestId("see-more-button").First.ClickAsync();
 
             // Confirm the update comment button is not visible
