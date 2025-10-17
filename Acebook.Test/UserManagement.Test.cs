@@ -44,11 +44,14 @@ namespace Acebook.Tests
       await Page.Locator("#email").FillAsync("francine@sharkmail.ocean");
       await Page.Locator("#password").FillAsync("Password123!");
       await Page.Locator("#confirmpassword").FillAsync("Password123!");
-      await Page.Locator("#submit").ClickAsync();
 
-      await Expect(Page).ToHaveURLAsync($"{BaseUrl}/posts");
+      await Task.WhenAll(
+                Page.WaitForURLAsync($"{BaseUrl}/posts", new() { Timeout = 4000 }),
+                Page.Locator("#submit").ClickAsync()
+            );
+
     }
-
+    
     [Test]
     public async Task SignUp_AllBlank_Error()
     {
