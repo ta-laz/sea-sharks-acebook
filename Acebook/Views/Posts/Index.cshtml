@@ -13,12 +13,21 @@
     <div class="hidden lg:block sticky top-32 self-start w-52">
       <div
         class="bg-white rounded-xl p-4 shadow-md transition hover:shadow-xl border-l-2 border-r-2 border-teal-500 hover:-translate-y-1">
-
+        
+        @{string sidebarImagePath; 
+        if (!string.IsNullOrEmpty(Context.Session.GetString("user_profile_picture")))
+        {
+            sidebarImagePath = Context.Session.GetString("user_profile_picture");
+        }
+        else
+        {
+            sidebarImagePath = "/images/Placeholder.png";
+        }}
         <!-- Example sidebar item -->
         <div
           class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-xl mb-1 transform transition duration-200 hover:scale-105">
           <div class="flex items-center space-x-3">
-            <img src="/images/Placeholder.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
+            <img src="@sidebarImagePath" class="w-10 h-10 rounded-full object-cover border border-gray-300">
             <a asp-controller="Users" asp-action="Index" asp-route-id="@Model.Id" data-testid="sidebar-username"
               class="text-xs font-medium text-gray-700 hover:text-teal-600">@Model.FirstName @Model.LastName</a>
           </div>

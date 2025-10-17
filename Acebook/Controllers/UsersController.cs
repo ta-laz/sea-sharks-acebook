@@ -345,6 +345,7 @@ public class UsersController : Controller
         var dbContext = new AcebookDbContext();
         var user = dbContext.Users.Find(currentUserId);
         user.ProfilePicturePath = $"/images/profile_pics/{fileName}";
+        HttpContext.Session.SetString("user_profile_picture", user.ProfilePicturePath ?? "");
         dbContext.SaveChanges();
 
         return Redirect($"/users/{currentUserId}");
