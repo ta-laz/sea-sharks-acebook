@@ -118,15 +118,14 @@ public class PostsController : Controller
     AcebookDbContext dbContext = new AcebookDbContext();
     int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
     var post = dbContext.Posts.Include(p => p.Comments).ThenInclude(c => c.Likes).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
-    var comments = dbContext.Comments.Include(c => c.User).Where(c => c.PostId == id).ToList();
+    var comments = dbContext.Comments.Include(c => c.User).Where(c => c.PostId == id).OrderBy(c => c.CreatedOn).ToList();
     post.UserHasLiked = post.Likes.Any(l => l.UserId == currentUserId);
     foreach (var comment in post.Comments)
     {
       comment.UserHasLiked = comment.Likes.Any(l => l.UserId == currentUserId);
     }
     ViewBag.post = post;
-    ViewBag.comments = comments.ToList();
-    ViewBag.comments.Reverse();
+    ViewBag.comments = comments;
 
 
     return View(post);
