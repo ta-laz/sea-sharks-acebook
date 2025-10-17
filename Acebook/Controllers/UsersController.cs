@@ -282,7 +282,7 @@ public class UsersController : Controller
         user.LastName = lastName;
         dbContext.SaveChanges();
 
-        TempData["SuccessMessage"] = $"Name successfully changed! <a class='underline text-teal-700' href='/users/{id}'>Go to your profile</a>";
+        TempData["SuccessMessage"] = $"Name successfully changed!<br> <a class='hover-underline text-teal-700 text-center' href='/users/{id}'>Go to your profile</a>";
         return RedirectToAction("UpdateAccount", new { id });
 
     }
