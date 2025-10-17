@@ -128,9 +128,10 @@ function renderNotifCard(n) {
     div.innerHTML = `
     <div class="font-semibold text-gray-800">${n.title}</div>
     <div class="text-sm text-gray-700">${n.message}</div>
-    <div class="text-xs text-gray-400">${new Date(
-        n.createdOn
-    ).toLocaleString()}</div>
+    <div class="flex items-center text-xs text-gray-400 mt-1">
+        ${n.isRead ? "" : `<span class="w-2 h-2 bg-teal-600 rounded-full mr-3"></span>`}
+        <span>${new Date(n.createdOn).toLocaleString()}</span>
+    </div>
   `;
 
     if (n.url) {
@@ -139,7 +140,7 @@ function renderNotifCard(n) {
         });
     }
 
-    list.prepend(div);
+    list.append(div);
 }
 
 // Red badge counter
