@@ -170,10 +170,10 @@ public class CommentsController : Controller
         }
         Comment comment = dbContext.Comments.Include(c => c.Post).FirstOrDefault(c => c.Id == commentId);
         
-        if (comment.UserId != sessionUserId && comment.Post.UserId != sessionUserId) // Server-side security, if the current user is neither the post or the comment author, they can't delete the comment
-        {
-            return Forbid();
-        }
+        // if (comment.UserId != sessionUserId || comment.Post.UserId != sessionUserId) // Server-side security, if the current user is neither the post or the comment author, they can't delete the comment
+        // {
+        //     return Forbid();
+        // }
         if (comment == null)
             return NotFound(); // If the comment doesn't exist
         

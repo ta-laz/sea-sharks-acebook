@@ -199,7 +199,7 @@ public class PostsController : Controller
     if (sessionUserId == null)
         return Unauthorized(); // Checks user is logged in
     Post post = dbContext.Posts.Include(p => p.Comments).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
-    if (post.UserId != sessionUserId || post.WallId != sessionUserId) // Server-side security (only authors or wall owners can delete comments)
+    if (post.UserId != sessionUserId && post.WallId != sessionUserId) // Server-side security (only authors or wall owners can delete comments)
     {
       return Forbid();
     }
@@ -207,8 +207,8 @@ public class PostsController : Controller
     dbContext.Posts.Remove(post);
     dbContext.SaveChanges();
 
-    // Redirect to aquarium
-    return RedirectToAction("Index", "Posts");
+    // Redirect to My Profile:
+    return Redirect($"/users/{sessionUserId}");
   }
   
 
