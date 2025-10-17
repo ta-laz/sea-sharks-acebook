@@ -34,8 +34,22 @@ public class AcebookDbContext : DbContext
     }
   }
 
-  protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-      => optionsBuilder.UseNpgsql(@"Host=localhost;Username=postgres;Password=1234;Database=" + GetDatabaseName());
+protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+{
+    // Check if a connection string is provided via environment variable
+    var connStr = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+
+    if (!string.IsNullOrEmpty(connStr))
+    {
+        optionsBuilder.UseNpgsql(connStr);
+    }
+    else
+    {
+        // Fallback to your current local logic
+        optionsBuilder.UseNpgsql(@"Host=localhost;Username=postgres;Password=1234;Database=" + GetDatabaseName());
+    }
+}
+
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
