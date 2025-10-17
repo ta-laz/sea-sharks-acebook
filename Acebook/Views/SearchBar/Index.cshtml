@@ -68,7 +68,8 @@
 
             <!-- Show "Fronds" label (disabled) -->
             <p data-testid="already-friends"
-   class="mt-1 flex justify-start text-gray-400 text-sm italic rounded">
+   class="mt-1 italic text-gray-400 text-sm font-medium rounded
+          break-words overflow-hidden text-ellipsis line-clamp-1 max-w-lg">
     <span class="font-bold not-italic">Fronds</span>
     <span class="mx-2">-</span>
     <span>@(user.ProfileBio.Tagline ?? "Just keep swimming!")</span>
@@ -79,7 +80,8 @@
                 (f.RequesterId == @user.Id && f.AccepterId == ViewBag.currentUserId)))
                 {
                     <p data-testid="friend-request-sent"
-                        class="mt-1 flex justify-start text-gray-400 text-sm italic rounded">
+                        class="mt-1 italic text-gray-400 text-sm font-medium rounded
+          break-words overflow-hidden text-ellipsis line-clamp-1 max-w-lg">
                         <span class="font-bold not-italic">Frond request pending</span>
     <span class="mx-2">-</span>
     <span>@(user.ProfileBio.Tagline ?? "Just keep swimming!")</span>
@@ -87,9 +89,11 @@
                 }
                 else
                 {
-                    <p data-testid="under-name-tagline-text" class="mt-1 flex justify-start italic text-gray-400 text-sm font-medium rounded">
-                    @(user.ProfileBio.Tagline ?? "Just keep swimming!")
-                </p>
+                    <p data-testid="under-name-tagline-text"
+   class="mt-1 italic text-gray-400 text-sm font-medium rounded
+          break-words overflow-hidden text-ellipsis line-clamp-1 max-w-lg">
+    @(user.ProfileBio.Tagline ?? "Just keep swimming!")
+</p>
                 }
 
                         </div>
@@ -178,7 +182,8 @@
 
             <!-- Show "Fronds" label (disabled) -->
             <p data-testid="already-friends"
-   class="mt-1 flex justify-start text-gray-400 text-sm italic rounded">
+   class="mt-1 italic text-gray-400 text-sm font-medium rounded
+          break-words overflow-hidden text-ellipsis line-clamp-1 max-w-lg">
     <span class="font-bold not-italic">Fronds</span>
     <span class="mx-2">-</span>
     <span>@(user.ProfileBio.Tagline ?? "Just keep swimming!")</span>
@@ -198,7 +203,8 @@
 
                 else
                 {
-                    <p data-testid="under-name-tagline-text" class="mt-1 flex justify-start italic text-gray-400 text-sm font-medium rounded">
+                    <p data-testid="under-name-tagline-text" class="mt-1 italic text-gray-400 text-sm font-medium rounded
+          break-words overflow-hidden text-ellipsis line-clamp-1 max-w-lg">
                     @(user.ProfileBio.Tagline ?? "Just keep swimming!")
                 </p>
                 }
@@ -294,7 +300,7 @@
             </a>
         </div>
     </div>
-    <p class="text-gray-700 mt-4 leading-relaxed break-words [overflow-wrap:anywhere]">@post.Content</p>
+    <p class="text-gray-700 mt-4 leading-relaxed break-words [overflow-wrap:anywhere] line-clamp-3">@post.Content</p>
     <p class="text-xs text-gray-400 mt-2">Created on: @post.FormattedCreatedOn</p>
 </div>
 
@@ -327,7 +333,7 @@
             </a>
         </div>
     </div>
-    <p data-testid='content-test-for-post' class="text-gray-700 mt-4 leading-relaxed">@post.Content</p>
+    <p data-testid='content-test-for-post' class="text-gray-700 mt-4 leading-relaxed break-words [overflow-wrap:anywhere] line-clamp-3">@post.Content</p>
     <p class="text-xs text-gray-400 mt-2">Created on: @post.FormattedCreatedOn</p>
 </div>
                 }
@@ -373,7 +379,7 @@
                     <a asp-controller="Users" asp-action="Index" asp-route-id="@comment.Post.User.Id" data-testid="comment-search-@comment.Post.User.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600">
                         @comment.Post.User.FirstName @comment.Post.User.LastName
                     </a>
-                    <p class="text-gray-700 mt-1 leading-relaxed break-words [overflow-wrap:anywhere]">@comment.Post.Content</p>
+                    <p class="text-gray-700 mt-1 leading-relaxed break-words [overflow-wrap:anywhere] line-clamp-3">@comment.Post.Content</p>
                     <p class="text-xs text-gray-400 mt-2">Created on: @comment.Post.FormattedCreatedOn</p>
                 </div>
             </div>
@@ -386,7 +392,7 @@
                         <a asp-controller="Users" asp-action="Index" asp-route-id="@comment.User.Id" class="text-sm font-semibold text-gray-800 hover:text-teal-600">
                             @comment.User.FirstName @comment.User.LastName
                         </a>
-                        <p class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
+                        <p class="text-gray-700 text-sm mt-1 leading-snug break-words [overflow-wrap:anywhere] line-clamp-3 max-w-6xl">@comment.Content</p>
                         <p class="text-xs text-gray-400 mt-2">Commented on: @comment.FormattedCreatedOn</p>
                     </div>
                 </div>
@@ -430,7 +436,7 @@
                     <a asp-controller="Users" asp-action="Index" asp-route-id="@comment.Post.User.Id" data-testid="comment-search-@comment.Post.User.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600">
                         @comment.Post.User.FirstName @comment.Post.User.LastName
                     </a>
-                    <p class="text-gray-700 mt-1 leading-relaxed" data-testid='comment-expanded-saw-more-comments'>@comment.Post.Content</p>
+                    <p class="text-gray-700 mt-1 leading-relaxed break-words [overflow-wrap:anywhere] line-clamp-3" data-testid='comment-expanded-saw-more-comments'>@comment.Post.Content</p>
                     <p class="text-xs text-gray-400 mt-2">Created on: @comment.Post.FormattedCreatedOn</p>
                 </div>
             </div>
@@ -443,7 +449,7 @@
                         <a asp-controller="Users" asp-action="Index" asp-route-id="@comment.User.Id" class="text-sm font-semibold text-gray-800 hover:text-teal-600">
                             @comment.User.FirstName @comment.User.LastName
                         </a>
-                        <p class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
+                        <p class="text-gray-700 text-sm mt-1 leading-snug break-words [overflow-wrap:anywhere] line-clamp-3 max-w-6xl">@comment.Content</p>
                         <p class="text-xs text-gray-400 mt-2">Commented on: @comment.FormattedCreatedOn</p>
                     </div>
                 </div>
