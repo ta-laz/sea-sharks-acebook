@@ -30,7 +30,7 @@ namespace Acebook.Tests
             await Page.GetByTestId("email").FillAsync("finn.white@sharkmail.ocean");
             await Page.GetByTestId("password").FillAsync("password123");
             await Task.WhenAll(
-                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.WaitForURLAsync($"{BaseUrl}/posts", new() { Timeout = 4000 }), 
                 Page.GetByTestId("signin-submit").ClickAsync()
             );
             // Open profile dropdown
@@ -162,7 +162,7 @@ namespace Acebook.Tests
         {
             // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
             // Click see all friends to redirect to friends page
-            await Expect(Page.GetByTestId("friends-header")).ToHaveTextAsync("Friends");
+            await Expect(Page.GetByTestId("friends-header")).ToHaveTextAsync("Fronds");
             // each friend get its own test id assigned dynamically by its first name
             await Expect(Page.GetByTestId("Friend-link Shelly")).ToBeVisibleAsync();
             await Expect(Page.GetByTestId("Friend-link Bruce")).ToBeVisibleAsync();
@@ -224,7 +224,7 @@ namespace Acebook.Tests
             );
             await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
         }
-        
+
         [Test]
         public async Task SeeMoreButton_MyProfilePage_NavigatesToPostPage()
         {
@@ -234,6 +234,51 @@ namespace Acebook.Tests
                 Page.GetByTestId("see-more-button").First.ClickAsync()
             );
             await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
+        }
+
+        [Test]
+        public async Task ViewingFriends_FriendProfilePage_ShowsTheirFirstPost()
+        {
+            // NOTE: [SetUp] signs in with user Finn then goes to their user profile page (users/1)
+            // Click friend's name
+            await Page.GetByTestId("Friend-link Shelly").ClickAsync();
+            // redirects to Shelly's profile page
+            await Expect(Page).ToHaveURLAsync($"{BaseUrl}/users/2");
+            await Expect(Page.GetByText("Sardine school shimmering like stars beneath the waves. swim fin swim fin deep blue reef hunt glide kelp wave tide current school")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("post-content").First).ToHaveTextAsync("Sardine school shimmering like stars beneath the waves. swim fin swim fin deep blue reef hunt glide kelp wave tide current school");
+        }
+        [Test]
+        [Obsolete]
+        public async Task OnProfilePage_ChangeProfilePicture()
+        {
+            var avatar = Page.Locator("#profile-pic");
+            await Expect(avatar).ToBeVisibleAsync();
+            var oldSrc = await avatar.GetAttributeAsync("src");
+            await Page.GetByTestId("changing-profile-picture-testing").ClickAsync();
+            var filePath = Path.Combine(TestContext.CurrentContext.TestDirectory, "Assets", "testImage.jpg");
+            Console.WriteLine("File path: " + filePath);
+            Assert.That(File.Exists(filePath), "Test image not found!");
+            await Page.RunAndWaitForNavigationAsync(async () =>
+            {
+                await Page.SetInputFilesAsync("[data-testid='changing-profile-picture-testing']", filePath);
+            });
+            // 4) After navigation, the avatar should be updated
+            avatar = Page.Locator("#profile-pic");
+            await Expect(avatar).ToBeVisibleAsync();
+            var newSrc = await avatar.GetAttributeAsync("src");
+            Assert.That(newSrc, Is.Not.Null.And.Not.Empty, "Avatar src should not be empty after upload.");
+            const string placeholder = "/images/Placeholder.png";
+            if (oldSrc == placeholder)
+            {
+                // If we started with the placeholder, ensure it changed
+                Assert.That(newSrc, Is.Not.EqualTo(placeholder), "Avatar still points to the placeholder after upload.");
+            }
+            else
+            {
+                // Otherwise ensure the src actually changed (best if server adds cache-busting query string)
+                Assert.That(newSrc, Is.Not.EqualTo(oldSrc),
+                    "Avatar src did not change after upload. Consider adding a cache-busting query string server-side.");
+            }
         }
     }
 }

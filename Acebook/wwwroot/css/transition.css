@@ -1,0 +1,48 @@
+#bubble-transition {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 9999;
+    background: radial-gradient(circle at bottom, rgba(13,148,136,0.3) 10%, rgba(15,118,110,0.6) 90%);
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+}
+
+#bubble-transition.active {
+    opacity: 1;
+}
+
+
+/* Make the bubbles softer, teal-tinted, and more numerous */
+.bubble {
+    position: absolute;
+    bottom: -60px;
+    background: rgba(13,148,136,0.45); /* teal tint */
+    border-radius: 50%;
+    animation: rise linear forwards;
+    filter: blur(0.5px);
+}
+
+@keyframes rise {
+    0% {
+        transform: translateY(0) scale(0.4);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-120vh) scale(1.4);
+        opacity: 0;
+    }
+}
+
+/* Feed page soft rise-in */
+body.feed-fade {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+}
+
+body.feed-fade.visible {
+    opacity: 1;
+    transform: translateY(0);
+}

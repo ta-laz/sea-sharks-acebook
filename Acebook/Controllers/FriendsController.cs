@@ -145,6 +145,7 @@ public class FriendsController : Controller
 
     [Route("/friends/remove")]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Remove(int friendId, string returnUrl)
     {
         int? currentUserId = HttpContext.Session.GetInt32("user_id");
@@ -180,6 +181,7 @@ public class FriendsController : Controller
 
     [Route("/friends/accept")]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Accept(int friendId)
     {
         int? currentUserId = HttpContext.Session.GetInt32("user_id");
@@ -233,6 +235,7 @@ public class FriendsController : Controller
 
     [Route("/friends/add")]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult AddFriend(int receiverId)
     {
         AcebookDbContext dbContext = new AcebookDbContext();

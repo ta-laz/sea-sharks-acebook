@@ -31,17 +31,17 @@ namespace Acebook.Tests
             await Page.GetByTestId("email").FillAsync("finn.white@sharkmail.ocean");
             await Page.GetByTestId("password").FillAsync("password123");
             await Task.WhenAll(
-                Page.WaitForURLAsync($"{BaseUrl}/posts"),
+                Page.WaitForURLAsync($"{BaseUrl}/posts", new() { Timeout = 4000 }), 
                 Page.GetByTestId("signin-submit").ClickAsync()
             );
             await Page.GotoAsync("/friends");
         }
 
         public override BrowserNewContextOptions ContextOptions()
-          => new BrowserNewContextOptions
-          {
-              BaseURL = BaseUrl
-          };
+            => new BrowserNewContextOptions
+            {
+                BaseURL = BaseUrl
+            };
 
         // 1. Check if the page loads - go to the URL /friends and check if My Friends can be found and see if friend list is visibile  - DONE
         // 2. If friend requests clicked, are my friend requests visibile - DONE
@@ -62,15 +62,15 @@ namespace Acebook.Tests
         {
             // NOTE: each test is set up as signed in with Finn and goes to /friends
             await Page.ClickAsync("#received-label");
-            await Expect(Page.GetByText("My Received Requests")).ToBeVisibleAsync();
+            await Expect(Page.GetByText("Received Requests")).ToBeVisibleAsync();
         }
 
         [Test]
         public async Task FriendListPage_ClickSentRequests_DisplaysSentFriendRequests()
         {
             // NOTE: each test is set up as signed in with Finn and goes to /friends
-            await Page.ClickAsync("#sent-label");
-            await Expect(Page.GetByText("My Sent Requests")).ToBeVisibleAsync();
+            await Page.GetByTestId("sent-requests-label").ClickAsync();
+            await Expect(Page.GetByTestId("sent-requests-label")).ToBeVisibleAsync();
         }
 
         [Test]

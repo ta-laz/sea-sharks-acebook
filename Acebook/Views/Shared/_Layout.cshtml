@@ -1,11 +1,18 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    var tokens = Antiforgery.GetAndStoreTokens(Context); // sets cookie if missing
+}
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - acebook</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="request-verification-token" content="@tokens.RequestToken" />
+    <link rel="icon" type="image/x-icon" href="~/images/light_grey.png">
+    <link rel="stylesheet" href="~/css/transition.css" />
 </head>
 
 @* added the session context here to be able to get it for the notification thing *@
@@ -44,8 +51,7 @@
                                 <!-- SeaShark Logo -->
                                 <a asp-action="Index" asp-controller="Home" method ="get">
                                     <img src="@Url.Content("~/images/light_grey.png")"
-                                    alt="SeaShark Logo" class="h-14 w-auto"  />
-                                
+                                    alt="SeaShark Logo" class="h-14 w-auto transition hover:brightness-200 hover:saturate-150 hover:scale-105"  />
                                 </a>
                             </div>
                         
@@ -63,7 +69,7 @@
                                         <button id="dropdown-button"
                                                 data-dropdown-toggle="dropdown2"
                                                 type="button"
-                                                class="shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100">
+                                                class="shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 ">
                                             <span id="scope-label">@Label(currentScope)</span>
                                             <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
@@ -75,7 +81,7 @@
 
                                         <!-- Flowbite dropdown menu (positioned under the button) -->
                                         <div id="dropdown2"
-                                            class="z-10 hidden absolute top-full left-0 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44">
+                                            class="z-10 hidden absolute top-full left-0 bg-white divide-y divide-gray-100 rounded-lg shadow-xl w-44">
                                             <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdown-button">
                                             <li><button type="button" class="scope-option inline-flex w-full px-4 py-2 hover:bg-gray-100" data-scope="users" data-testid="user-test-button">People</button></li>
                                             <li><button type="button" class="scope-option inline-flex w-full px-4 py-2 hover:bg-gray-100"  data-scope="posts" data-testid="post-test-button">Posts</button></li>
@@ -90,7 +96,7 @@
                                                 id="search-input"
                                                 name="SearchString"
                                                 class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:outline-none focus:ring-0 focus:border-teal-600 "
-                                                placeholder="@(ViewData["SearchPlaceholder"] ?? "Search everything...")"
+                                                placeholder="@(ViewData["SearchPlaceholder"] ?? "Search...")"
                                                 required />
 
                                             <button type="submit" data-testid="search-submit"
@@ -142,9 +148,9 @@
                                         class="h-12 w-12 rounded-full border-2 border-white" />
                                 </button>
 
-                                <div id="dropdown1"
-                                    class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44">
-                                    <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+                                    <!-- Dropdown menu -->
+                                    <div id="dropdown1" class="z-12 hidden bg-white divide-y divide-gray-100 rounded-lg w-44 shadow-xl hover:shadow-xl">
+                                        <ul class="py-2 text-sm text-gray-700 " aria-labelledby="dropdownDefaultButton">
                                         <li>
                                             <a asp-controller="Users" asp-action="Index" asp-route-id="@userId" method="get"
                                                 class="block px-4 py-2 hover:bg-gray-100" id="MyProfile">My Profile</a>
@@ -155,6 +161,7 @@
                                         <li>
                                             <form asp-controller="Sessions" asp-action="Signout" method="post"
                                                 class="d-inline">
+                                            @Html.AntiForgeryToken()
                                                 <button type="submit" data-testid="signout" id="signout"
                                                     class="block w-full text-left px-4 py-2 appearance-none hover:bg-gray-100">Sign
                                                     Out</button>
@@ -206,6 +213,23 @@
     <script src="https://unpkg.com/flowbite@2.5.1/dist/flowbite.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
+
+    <button id="back-to-top"
+        class="fixed bottom-6 right-6 bg-teal-600 text-white p-3 rounded-full shadow-2xl hover:bg-teal-500 mb-10 transition transition-opacity duration-200 opacity-0 pointer-events-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+</svg>
+
+    </button>
+
+
+    <!-- Bubble transition overlay -->
+    <div id="bubble-transition"></div>
+
+    <script src="~/js/transition.js"></script>
+    
+
     <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
     <script src="~/js/notifications.js"></script>
 </body>
@@ -237,6 +261,13 @@
                     </li>
                 }
             </ul> *@
+
+
+
+
+
+
+
 <script>
   (function(){
     const scopeInput = document.getElementById('scope-input');
@@ -258,6 +289,29 @@
   })();
 </script>
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const backToTop = document.getElementById('back-to-top');
 
+    // Show/hide button when scrolling
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 0) {
+        backToTop.classList.remove('opacity-0', 'pointer-events-none');
+        backToTop.classList.add('opacity-100');
+      } else {
+        backToTop.classList.add('opacity-0', 'pointer-events-none');
+        backToTop.classList.remove('opacity-100');
+      }
+    });
+
+    // Smooth scroll to top when clicked
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  });
+</script>
 
 

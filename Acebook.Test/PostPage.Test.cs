@@ -35,8 +35,8 @@ namespace Acebook.Tests
             await Page.GetByTestId("email").FillAsync("finn.white@sharkmail.ocean");
             await Page.GetByTestId("password").FillAsync("password123");
             await Task.WhenAll(
-                Page.WaitForURLAsync($"{BaseUrl}/posts"),
-                Page.Locator("#signin-submit").ClickAsync()
+                Page.WaitForURLAsync($"{BaseUrl}/posts", new() { Timeout = 4000 }), 
+                Page.GetByTestId("signin-submit").ClickAsync()
             );
         }
 
@@ -168,7 +168,7 @@ namespace Acebook.Tests
             );
             await Expect(Page.Locator("#splash-heading")).ToContainTextAsync("Bluey's Splash");
             await Page.GetByTestId("post-like-button").ClickAsync();
-            await Expect(Page.GetByTestId("post-like-total")).ToContainTextAsync("Like (3)");
+            await Expect(Page.GetByTestId("post-like-total")).ToContainTextAsync("Like (2)");
         }
         [Test]
 

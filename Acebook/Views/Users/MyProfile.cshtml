@@ -20,30 +20,27 @@
   <div class="flex flex-col lg:flex-row w-full max-w-7xl gap-8">
 
     <!-- 🧍 Left column: profile picture + bio + friends -->
-    <div class="flex flex-col top-20 self-start top-32 sticky items-center w-full lg:w-1/3 space-y-6">
+    <div class="flex flex-col sticky top-32 self-start items-center w-full lg:w-1/3 space-y-6">
       <!-- Profile Picture (hover reveal) -->
-      <div class="relative group flex justify-center w-full">
+      <div class="relative group flex justify-center w-full hover:-translate-y-1">
         <img id="profile-pic" src="@imagePath" 
           alt="Profile Picture"
           class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm transition-opacity duration-300 group-hover:opacity-50 cursor-pointer" />
         <div
           class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
           <form asp-action="UploadProfilePicture" asp-controller="Users" method="post" enctype="multipart/form-data">
-            <label class="cursor-pointer text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md z-100 pointer-events-auto">
+          @Html.AntiForgeryToken()
+            <label data-testid="changing-profile-picture-testing" class="cursor-pointer text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md z-100 pointer-events-auto">
               Change Picture
               <input type="file" name="profilePicture" accept="image/*" class="hidden" onchange="this.form.submit();" />
             </label>
           </form>
-        @* <img id="profile-pic" src="/images/Placeholder.png" alt="Profile Picture"
-          class="object-cover w-48 h-48 rounded-full border border-gray-400 shadow-sm transition-opacity duration-300 cursor-pointer group-hover:opacity-50" />
-        <div
-          class="absolute inset-0 flex items-center justify-center  opacity-0 group-hover:opacity-100 transition-opacity  duration-300 pointer-events-none">
-          <p class="text-white text-sm bg-gray-800 bg-opacity-70 px-3 py-1 rounded-md">Change Picture</p> *@
+
         </div>
       </div>
 
       <!-- Profile bio block -->
-      <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl">
+      <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl hover:-translate-y-1">
         <h2 data-testid="bio-name" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2"> @Model.FirstName's
           Bio</h2>
 
@@ -66,8 +63,8 @@
 
 
       <!-- Friends block -->
-      <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl">
-        <h2 data-testid="friends-header" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Friends</h2>
+      <div class="bg-white rounded-lg p-4 shadow-md w-full max-w-xs transition hover:shadow-xl hover:-translate-y-1">
+        <h2 data-testid="friends-header" class="text-md mb-3 text-gray-500 font-semibold border-b pb-2">Fronds</h2>
         @foreach (var friend in ViewBag.Friends)
         {
           User other;
@@ -89,7 +86,7 @@
                 otherImagePath = "/images/Placeholder.png";
             }
 
-          <div class="group flex items-center justify-between mb-4 hover:bg-gray-100 rounded-lg mb-1 transition">
+          <div class="group flex items-center justify-between hover:bg-gray-100 rounded-lg mb-2 p-1 transform transition duration-200 hover:scale-105">
             <div class="flex items-center space-x-3">
               <img src="@otherImagePath" class="w-10 h-10 rounded-full object-cover border border-gray-300">
               <a asp-controller="Users" asp-action="Index" asp-route-id="@other.Id" id="friend-name"
@@ -119,7 +116,7 @@
     <div class="flex flex-col w-full lg:w-2/3 space-y-6 bg-teal-700/10 shadow-[0_0_15px_rgba(15,118,110,0.3)]">
 
       <!-- Profile Name + Tagline -->
-      <div class="bg-white rounded-lg p-6 shadow-md transition hover:shadow-xl">
+      <div class="bg-white rounded-lg p-6 shadow-md transition hover:shadow-xl hover:-translate-y-1">
         <h1 class="text-4xl font-bold text-teal-700 mb-2">@Model.FirstName @Model.LastName</h1>
 
         <p id="under-name-tagline-text" data-testid="under-name-tagline-text" class="italic text-gray-400 mt-1">
@@ -129,6 +126,7 @@
         <!-- Tagline and edit tagline -->
         <form asp-action="Update" asp-controller="Users" asp-route-id="@userId" method="post" id="tagline-form"
           data-testid="tagline-form" label="update tagline form" class="hidden">
+          @Html.AntiForgeryToken()
           <input type="text" name="tagline" label="update tagline box" id="tagline-input" data-testid="tagline-input"
             class="border border-gray-300 rounded-md p-2 w-full" asp-for="ProfileBio.Tagline" />
           <input type="hidden" asp-for="ProfileBio.RelationshipStatus" name="relationshipStatus"
@@ -152,9 +150,10 @@
 
 
       <!-- Create Post Form -->
-      <div class="flex-1 bg-white rounded-lg overflow-y-auto px-4 py-4 p-4 shadow-md transition hover:shadow-xl space-x-3">
-        <h2 class="text-lg text-teal-700 font-bold mb-3">Create a Post</h2>
+      <div class="flex-1 bg-white rounded-lg overflow-y-auto px-4 py-4 p-4 shadow-md transition hover:shadow-xl space-x-3 hover:-translate-y-1">
+        <h2 class="text-lg text-teal-700 font-bold px-3 mb-3">Start a feeding frenzy</h2>
         <form action="@Url.Action("Create", "Posts")" method="post" enctype="multipart/form-data" >
+        @Html.AntiForgeryToken()
           <textarea required id="create-post-input" data-testid="create-post-input"
             class="w-full resize-none border p-3 rounded-md focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-25 transition-shadow duration-200"
             name="content" maxlength="2000" placeholder="Make a splash! (max 2000 characters)"></textarea>
@@ -178,13 +177,27 @@
       <!-- Posts Section -->
       <div class="flex flex-col w-full rounded-lg space-y-4 relative">
         <!-- Sticky Header -->
-        <div class="sticky top-32 z-20 py-1 px-2 rounded-md">
-          <h1 class="text-3xl font-bold text-teal-700">My Wall</h1>
+        <div class="sticky top-32 z-20 py-1 px-4 rounded-md">
+          <div class="flex items-center justify-between">
+            <!-- Left: Title -->
+            <h1 class="text-3xl font-bold text-teal-700">My Tank</h1>
+
+            <!-- Right: Back to Top -->
+            <button id="back-to-top"
+                    class="bg-teal-600 text-white p-3 rounded-full shadow-lg hover:bg-teal-500
+                          transition-opacity duration-200 opacity-0 pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+              </svg>
+            </button>
+          </div>
         </div>
+
 
         <!-- Scrollable Post List with Clipping -->
         <div class="relative overflow-hidden">
-          <div class="overflow-y-auto max-h-[70vh] pb-10 space-y-6"
+          <div id="posts-container" class="overflow-y-auto max-h-[70vh] pb-10 space-y-6"
             style="mask-image: linear-gradient(to bottom, transparent 0%, black 20%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 1%);">
 
             @if (ViewBag.Posts == null || !((List<Post>)ViewBag.Posts).Any())
@@ -205,7 +218,7 @@
       {
           profilePictureImagePath = "/images/Placeholder.png";
       }
-        <div class="bg-white rounded-lg w-[98%] p-4 mx-auto shadow-md transition hover:shadow-xl">
+        <div class="bg-white rounded-lg w-[98%] p-4 mx-auto shadow-md transition hover:shadow-xl hover:-translate-y-1">
                   <div class="flex justify-between items-center">
                     <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" id="post-user-name"
                       data-testid="Post-link @post.User.FirstName"
@@ -214,7 +227,7 @@
                     <img src="@profilePictureImagePath" class="w-10 h-10 rounded-full object-cover border border-gray-400" />
                   </div>
 
-          <p class="text-gray-700 mt-2 leading-relaxed break-all">
+          <p class="text-gray-700 mt-2 leading-relaxed break-words [overflow-wrap:anywhere] line-clamp-3">
           @if(!string.IsNullOrEmpty(post.Content)){
             @if (@post.CheckLength())
             {
@@ -272,17 +285,21 @@
                       </span>
                     </a>
 
-                    <!-- View Profile Button -->
-                    <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" id="post-user-name"
-                      data-testid="view-profile"
-                      class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
-                      <span
-                        class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
-                      <span
-                        class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
-                        View Profile
-                      </span>
-                    </a>
+                    
+                    @if (post.UserId != userId)
+                    {
+                      <!-- View Profile Button -->
+                      <a asp-controller="Users" asp-action="Index" asp-route-id="@post.User.Id" id="post-user-name"
+                        data-testid="view-profile"
+                        class="relative flex-1 inline-flex items-center justify-center overflow-hidden text-gray-600 text-sm bg-transparent hover:bg-white group py-2 px-4 font-medium transition-all">
+                        <span
+                          class="absolute w-96 h-72 bg-teal-600 bottom-0 left-0 translate-x-full translate-y-full ease-out duration-500 transition-all group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                        <span
+                          class="relative text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white">
+                          View Profile
+                        </span>
+                      </a>
+                    }
 
                   </div>
                 </div>
@@ -299,6 +316,9 @@
       </div>
 
       <script>
+        const csrf = document
+        .querySelector('meta[name="request-verification-token"]')
+        ?.getAttribute('content');
         document.addEventListener("DOMContentLoaded", function () {
           // 🟩 Tagline editing logic
           const button = document.getElementById('update-tagline');
@@ -365,7 +385,8 @@
               try {
                 const response = await fetch(`/posts/${postId}`, {
                   method: 'POST',
-                  headers: { 'Content-Type': 'application/json' }
+                  headers: { 'Content-Type': 'application/json',
+                  'RequestVerificationToken': csrf }
                 });
 
                 if (!response.ok) throw new Error('Network response was not ok');
@@ -433,5 +454,30 @@
       fileNameDisplay.textContent = "No file chosen";
       fileNameDisplay.classList.add("text-gray-500", "italic");
     }
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('posts-container');
+    const backToTop = document.getElementById('back-to-top');
+    if (!container || !backToTop) return; // guard
+
+    const toggleBtn = () => {
+      if (container.scrollTop > 100) {
+        backToTop.classList.remove('opacity-0', 'pointer-events-none');
+        backToTop.classList.add('opacity-100');
+      } else {
+        backToTop.classList.add('opacity-0', 'pointer-events-none');
+        backToTop.classList.remove('opacity-100');
+      }
+    };
+
+    container.addEventListener('scroll', toggleBtn, { passive: true });
+    toggleBtn(); // initialise state
+
+    backToTop.addEventListener('click', () => {
+      container.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   });
 </script>
