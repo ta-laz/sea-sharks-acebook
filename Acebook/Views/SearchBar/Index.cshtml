@@ -370,9 +370,9 @@
                 <img src="@PostUserImagePath" class="w-12 h-12 rounded-full object-cover border border-gray-400 mr-3">
 
                 <div class="flex-1">
-                    <h3 data-testid="comment-search-@comment.Post.User.FirstName" class="text-md font-semibold text-gray-800">
+                    <a asp-controller="Users" asp-action="Index" asp-route-id="@comment.Post.User.Id" data-testid="comment-search-@comment.Post.User.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600">
                         @comment.Post.User.FirstName @comment.Post.User.LastName
-                    </h3>
+                    </a>
                     <p class="text-gray-700 mt-1 leading-relaxed break-words [overflow-wrap:anywhere]">@comment.Post.Content</p>
                     <p class="text-xs text-gray-400 mt-2">Created on: @comment.Post.FormattedCreatedOn</p>
                 </div>
@@ -383,9 +383,9 @@
                     <img src="@CommentUserImagePath" class="w-8 h-8 rounded-full object-cover border border-gray-400 mr-3">
 
                     <div>
-                        <h3 class="text-sm font-semibold text-gray-800">
+                        <a asp-controller="Users" asp-action="Index" asp-route-id="@comment.User.Id" class="text-sm font-semibold text-gray-800 hover:text-teal-600">
                             @comment.User.FirstName @comment.User.LastName
-                        </h3>
+                        </a>
                         <p class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
                         <p class="text-xs text-gray-400 mt-2">Commented on: @comment.FormattedCreatedOn</p>
                     </div>
@@ -427,9 +427,9 @@
                 <img src="@PostUserImagePath" class="w-12 h-12 rounded-full object-cover border border-gray-400 mr-3">
 
                 <div class="flex-1">
-                    <h3 class="text-md font-semibold text-gray-800">
+                    <a asp-controller="Users" asp-action="Index" asp-route-id="@comment.Post.User.Id" data-testid="comment-search-@comment.Post.User.FirstName" class="text-md font-semibold text-gray-800 hover:text-teal-600">
                         @comment.Post.User.FirstName @comment.Post.User.LastName
-                    </h3>
+                    </a>
                     <p class="text-gray-700 mt-1 leading-relaxed" data-testid='comment-expanded-saw-more-comments'>@comment.Post.Content</p>
                     <p class="text-xs text-gray-400 mt-2">Created on: @comment.Post.FormattedCreatedOn</p>
                 </div>
@@ -440,9 +440,9 @@
                     <img src="@CommentUserImagePath" class="w-8 h-8 rounded-full object-cover border border-gray-400 mr-3">
 
                     <div>
-                        <h3 class="text-sm font-semibold text-gray-800">
+                        <a asp-controller="Users" asp-action="Index" asp-route-id="@comment.User.Id" class="text-sm font-semibold text-gray-800 hover:text-teal-600">
                             @comment.User.FirstName @comment.User.LastName
-                        </h3>
+                        </a>
                         <p class="text-gray-700 text-sm mt-1 leading-snug">@comment.Content</p>
                         <p class="text-xs text-gray-400 mt-2">Commented on: @comment.FormattedCreatedOn</p>
                     </div>
