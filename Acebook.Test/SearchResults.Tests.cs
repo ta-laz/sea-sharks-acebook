@@ -173,5 +173,25 @@ namespace Acebook.Tests
             await Page.GetByTestId("search-submit").ClickAsync();
             await Expect(Page.GetByTestId("already-friends")).ToBeVisibleAsync();
         }
+
+        [Test]
+        public async Task SearchForUserPendingRequest_SearchResultsPage_ShowsPending()
+        {
+            await Page.Locator("#dropdown-button").ClickAsync();
+            await Page.GetByTestId("user-test-button").ClickAsync();
+            await Page.Locator("#search-input").FillAsync("Coral");
+            await Page.GetByTestId("search-submit").ClickAsync();
+            await Expect(Page.GetByTestId("friend-request-sent")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task SearchForUserNotAFriend_SearchResultsPage_ShowsAddFriend()
+        {
+            await Page.Locator("#dropdown-button").ClickAsync();
+            await Page.GetByTestId("user-test-button").ClickAsync();
+            await Page.Locator("#search-input").FillAsync("Tigra");
+            await Page.GetByTestId("search-submit").ClickAsync();
+            await Expect(Page.GetByTestId("add-friend")).ToBeVisibleAsync();
+        }
     }
 }
