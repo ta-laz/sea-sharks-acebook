@@ -53,6 +53,7 @@ public class SearchBarController : Controller
                     EF.Functions.Like(u.FirstName.ToLower(), like) ||
                     EF.Functions.Like(u.LastName.ToLower(), like))
                 .OrderBy(u => u.FirstName).ThenBy(u => u.LastName)
+                .Include(u => u.ProfileBio)
                 .ToListAsync();
         }
 
@@ -115,6 +116,6 @@ public class SearchBarController : Controller
         ViewBag.Friends = friends.ToList();
         ViewBag.currentUserId = currentUserId;
 
-        return View();
+        return View(userResults);
     }
 }
