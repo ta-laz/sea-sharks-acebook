@@ -127,7 +127,7 @@
             <!-- Container for buttons and Delete form -->
             <div class=" flex-col items-center mt-4" role="group" aria-label="delete account">
                 <!-- Cancel button -->
-                <div class=" w-[450px] mb-5">
+                <div class=" w-[350px] mb-5">
                     <a href="javascript:history.back()" id="cancel"
                         class="bg-teal-600 flex items-center justify-center text-white text-sm font-medium w-full px-4 py-2 mr-4 rounded-md hover:bg-teal-400">Cancel</a>
                 </div>
@@ -142,7 +142,7 @@
                 <!-- Delete profile submit form -->
                 <form asp-action="Delete" asp-controller="Users" method="post" class="flex-1 hidden mt-4" id="delete-account-form" onsubmit="return confirm('Are you sure you want to delete your account?');">
                 @Html.AntiForgeryToken()
-                    <div class=" w-[450px] mb-5">
+                    <div class=" w-[350px] mb-5">
                         <input type="password" id="confirmDeletePassword" name="confirmDeletePassword" class="w-full border border-gray-400 rounded-lg p-2"
                             placeholder="Password" required/>
                     </div>
