@@ -129,7 +129,7 @@
                                             <a asp-controller="Users" asp-action="Index" asp-route-id="@userId" method="get" class="block px-4 py-2 hover:bg-gray-100" id="MyProfile">My Profile</a>
                                         </li>
                                         <li>
-                                            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Account Settings</a>
+                                            <a asp-controller="Users" asp-action="UpdateAccount" asp-route-id="@userId" method="get" class="block px-4 py-2 hover:bg-gray-100">Account Settings</a>
                                         </li>
                                         <li>
                                             <form asp-controller="Sessions" asp-action="Signout" method="post" class="d-inline">

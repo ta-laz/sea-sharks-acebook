@@ -3,11 +3,14 @@
 <div class="min-h-screen flex flex-col items-center justify-start p-4">
 
     <!-- Logo -->
-    <img src="@Url.Content("~/images/light_grey.png")" alt="SeaShark Logo" class="h-24 w-24" />
+    <img src="@Url.Content("~/images/light_grey.png")" alt="SeaShark Logo" class="h-24 w-auto" />
 
     <!-- Title -->
     <h1 class="text-3xl font-bold text-teal-600 text-center">Update Your Profile</h1>
-
+        @if (TempData["Sneaky"] != null)
+            {
+                <div id="sneaky-error-message" class="text-red-600 mt-2 font-bold">@TempData["Sneaky"]</div>
+            }
     <!-- sign-up form container -->
     <div class="bg-white rounded-lg p-6 shadow-md w-full max-w-md">
         <form asp-action="Update" asp-controller="Users" method="post" class="flex flex-col space-y-4" novalidate>

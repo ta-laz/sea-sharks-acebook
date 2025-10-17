@@ -6,16 +6,19 @@ using Acebook.ViewModels;
 using acebook.ActionFilters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 
 namespace acebook.Controllers;
 
 public class UsersController : Controller
 {
     private readonly ILogger<UsersController> _logger;
+    private readonly IPasswordHasher<User> _hasher;
 
-    public UsersController(ILogger<UsersController> logger)
+    public UsersController(ILogger<UsersController> logger, IPasswordHasher<User> hasher)
     {
         _logger = logger;
+        _hasher = hasher;
     }
 
     [Route("/signup")]
@@ -79,7 +82,7 @@ public class UsersController : Controller
         .Take(3)
         .ToList();
 
-        
+
         ViewBag.CurrentUserId = currentUserId;
         ViewBag.Friends = friends;
         ViewBag.ProfileUserId = id;
@@ -144,14 +147,15 @@ public class UsersController : Controller
             return View("New", suvm);
         }
 
-        string hashed = HashPassword(suvm.Password);
         User user = new User
         {
             FirstName = suvm.FirstName,
             LastName = suvm.LastName,
             Email = suvm.Email,
-            Password = hashed
         };
+
+        user.Password = _hasher.HashPassword(user, suvm.Password);
+
         dbContext.Users.Add(user);
         dbContext.SaveChanges();
 
@@ -173,20 +177,22 @@ public class UsersController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 
-    private static string HashPassword(string password)
-    {
-        using var sha256 = SHA256.Create();
-        var bytes = System.Text.Encoding.UTF8.GetBytes(password);
-        var hash = sha256.ComputeHash(bytes);
-        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-    }
-
     [ServiceFilter(typeof(AuthenticationFilter))]
     [Route("/users/{id}/update")]
     [HttpGet]
     public IActionResult Update(int id)
     {
         AcebookDbContext dbContext = new AcebookDbContext();
+
+        int? userId = HttpContext.Session.GetInt32("user_id");
+        if (userId != id)
+        {
+            var realUser = dbContext.Users
+                  .FirstOrDefault(u => u.Id == userId);
+            TempData["Sneaky"] = "You can only edit your own bio you sneaky shark!";
+            return RedirectToAction("Update", "Users", new { id = userId });
+        }
+
         var user = dbContext.Users
                   .Include(u => u.ProfileBio)
                   .Include(u => u.Posts)
@@ -219,6 +225,106 @@ public class UsersController : Controller
         return new RedirectResult($"/users/{id}");
     }
 
+
+    [ServiceFilter(typeof(AuthenticationFilter))]
+    [Route("/users/{id}/update-account")]
+    [HttpGet]
+    public IActionResult UpdateAccount(int id)
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+
+        int? userId = HttpContext.Session.GetInt32("user_id");
+        if (userId != id)
+        {
+            var realUser = dbContext.Users
+                  .FirstOrDefault(u => u.Id == userId);
+            TempData["Sneaky"] = "You can only edit your own account you sneaky shark!";
+            return RedirectToAction("UpdateAccount", "Users", new { id = userId });
+        }
+
+        var user = dbContext.Users
+                  .FirstOrDefault(u => u.Id == id);
+
+        if (user == null)
+            return NotFound();
+
+        ViewBag.SuccessMessage = TempData["SuccessMessage"];
+
+        return View(user);
+    }
+
+    [ServiceFilter(typeof(AuthenticationFilter))]
+    [Route("/users/{id}/update-account-name")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult UpdateAccountName(int id, string firstName, string lastName, string password)
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+        var user = dbContext.Users.Find(id);
+
+        if (user == null)
+            return NotFound();
+
+        var result = _hasher.VerifyHashedPassword(user, user.Password, password);
+        if (result == PasswordVerificationResult.Failed)
+        {
+            ViewBag.NameError = "Password incorrect";
+            return View("UpdateAccount", user);
+        }
+
+        if (result == PasswordVerificationResult.SuccessRehashNeeded)
+        {
+            user.Password = _hasher.HashPassword(user, password);
+            dbContext.SaveChanges();
+        }
+
+        user.FirstName = firstName;
+        user.LastName = lastName;
+        dbContext.SaveChanges();
+
+        TempData["SuccessMessage"] = $"Name successfully changed!<br> <a class='hover:underline text-teal-700 justify-center' href='/users/{id}'>Go to your profile</a>";
+        return RedirectToAction("UpdateAccount", new { id });
+
+    }
+
+    [ServiceFilter(typeof(AuthenticationFilter))]
+    [Route("/users/{id}/update-account-password")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult UpdateAccountPassword(int id, ChangePasswordViewModel cpvm)
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+        var user = dbContext.Users.Find(id);
+
+        if (!ModelState.IsValid)
+        {
+            return View("UpdateAccount", user);
+        }
+        if (user == null)
+            return NotFound();
+
+        var verify = _hasher.VerifyHashedPassword(user, user.Password, cpvm.CurrentPassword);
+        if (verify == PasswordVerificationResult.Failed)
+        {
+            ModelState.AddModelError("", "Incorrect password");
+            return View("UpdateAccount", user);
+        }
+
+        if (verify == PasswordVerificationResult.SuccessRehashNeeded)
+        {
+            user.Password = _hasher.HashPassword(user, cpvm.CurrentPassword);
+            dbContext.SaveChanges();
+        }
+
+        // --- Set NEW password (always hash with hasher) ---
+        user.Password = _hasher.HashPassword(user, cpvm.NewPassword);
+        dbContext.SaveChanges();
+
+        TempData["SuccessMessage"] = $"Password successfully changed!<br>  <a class='underline text-teal-700' href='/users/{id}'>Go to your profile</a>";
+
+        return RedirectToAction("UpdateAccount", new { id });
+    }
+
     [ServiceFilter(typeof(AuthenticationFilter))]
     [Route("/users/upload-profile-picture")]
     [HttpPost]
@@ -243,4 +349,58 @@ public class UsersController : Controller
 
         return Redirect($"/users/{currentUserId}");
     }
+
+
+    [ServiceFilter(typeof(AuthenticationFilter))]
+    [Route("/users/delete-account")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Delete(string confirmDeletePassword)
+    {
+
+        var currentUserId = HttpContext.Session.GetInt32("user_id");
+
+        if (currentUserId is null)
+        {
+            return RedirectToAction("SignIn", "Sessions");
+        }
+
+        AcebookDbContext dbContext = new AcebookDbContext();
+        var user = dbContext.Users.Find(currentUserId);
+
+        if (user == null)
+            return NotFound();
+
+        var verify = _hasher.VerifyHashedPassword(user, user.Password, confirmDeletePassword);
+        if (verify == PasswordVerificationResult.Failed)
+        {
+            TempData["DeleteError"] = "Unsuccessful - Password incorrect!";
+            return RedirectToAction("UpdateAccount", "Users", new { id = currentUserId });
+        }
+
+        using var tx = dbContext.Database.BeginTransaction();
+
+        var friendListEntries = dbContext.Friends
+            .Where(f => f.RequesterId == currentUserId || f.AccepterId == currentUserId)
+            .ToList();
+        dbContext.Friends.RemoveRange(friendListEntries);
+
+        dbContext.Users.Remove(user);
+        dbContext.SaveChanges();
+        tx.Commit();
+
+        HttpContext.Session.Clear();
+
+        return RedirectToAction("Index", "Home");
+    }
+
 }
+
+    // Legacy hasher
+    // private static string HashPassword(string password)
+    // {
+    //     using var sha256 = SHA256.Create();
+    //     var bytes = System.Text.Encoding.UTF8.GetBytes(password);
+    //     var hash = sha256.ComputeHash(bytes);
+    //     return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+    // }

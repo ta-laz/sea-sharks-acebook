@@ -1,3 +1,6 @@
+using acebook.Models;
+using Microsoft.AspNetCore.Identity;
+
 var configBuilder = new ConfigurationBuilder();
 configBuilder.AddEnvironmentVariables();
 
@@ -16,6 +19,8 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddScoped<acebook.ActionFilters.AuthenticationFilter>();
+
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 var app = builder.Build();
 
