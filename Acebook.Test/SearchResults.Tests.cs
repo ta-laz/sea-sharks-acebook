@@ -74,7 +74,7 @@ namespace Acebook.Tests
             await Expect(Page.GetByTestId("Coral-user-search")).ToBeVisibleAsync();
             await Expect(Page.GetByTestId("post-search-Bluey").First).ToBeVisibleAsync();
             await Expect(Page.GetByTestId("comment-search-Harbor").First).ToBeVisibleAsync();
-            await Expect(Page.GetByTestId("comment-search-Cerulean")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("comment-search-Cerulean").First).ToBeVisibleAsync();
 
         }
         [Test]
@@ -162,6 +162,36 @@ namespace Acebook.Tests
             await Page.GetByTestId("showing-all-results-test3").ClickAsync();
             var tag = Page.Locator("[data-testid='comment-expanded-saw-more-comments']");
             await Expect(tag).ToHaveCountAsync(45);
+        }
+
+        [Test]
+        public async Task SearchForFriend_SearchResultsPage_ShowsAlreadyFriends()
+        {
+            await Page.Locator("#dropdown-button").ClickAsync();
+            await Page.GetByTestId("user-test-button").ClickAsync();
+            await Page.Locator("#search-input").FillAsync("Shelly");
+            await Page.GetByTestId("search-submit").ClickAsync();
+            await Expect(Page.GetByTestId("already-friends")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task SearchForUserPendingRequest_SearchResultsPage_ShowsPending()
+        {
+            await Page.Locator("#dropdown-button").ClickAsync();
+            await Page.GetByTestId("user-test-button").ClickAsync();
+            await Page.Locator("#search-input").FillAsync("Coral");
+            await Page.GetByTestId("search-submit").ClickAsync();
+            await Expect(Page.GetByTestId("friend-request-sent")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task SearchForUserNotAFriend_SearchResultsPage_ShowsAddFriend()
+        {
+            await Page.Locator("#dropdown-button").ClickAsync();
+            await Page.GetByTestId("user-test-button").ClickAsync();
+            await Page.Locator("#search-input").FillAsync("Tigra");
+            await Page.GetByTestId("search-submit").ClickAsync();
+            await Expect(Page.GetByTestId("add-friend")).ToBeVisibleAsync();
         }
     }
 }

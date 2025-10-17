@@ -98,7 +98,7 @@ namespace Acebook.Tests
 
             await Page.WaitForURLAsync($"{BaseUrl}/friends");
 
-            var friendListSection = Page.Locator("div:has(h2:text('Friends'))");
+            var friendListSection = Page.Locator("div:has(h2:text('Fronds'))");
             await Expect(friendListSection.GetByText("Harbor")).ToBeVisibleAsync();
         }
 
