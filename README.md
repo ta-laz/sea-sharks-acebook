@@ -218,6 +218,9 @@ erDiagram
   FRIEND }o--|| USER : requester
   FRIEND }o--|| USER : accepter
 
+
+diagram for notifications:
+
   %% Notification with sender/receiver roles
   NOTIFICATION }o--|| USER : receiver
   NOTIFICATION }o--|| USER : sender
