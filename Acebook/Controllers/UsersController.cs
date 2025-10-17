@@ -282,7 +282,7 @@ public class UsersController : Controller
         user.LastName = lastName;
         dbContext.SaveChanges();
 
-        TempData["SuccessMessage"] = $"Name successfully changed!<br> <a class='hover-underline text-teal-700 text-center' href='/users/{id}'>Go to your profile</a>";
+        TempData["SuccessMessage"] = $"Name successfully changed!<br> <a class='hover:underline text-teal-700 justify-center' href='/users/{id}'>Go to your profile</a>";
         return RedirectToAction("UpdateAccount", new { id });
 
     }
@@ -320,7 +320,7 @@ public class UsersController : Controller
         user.Password = _hasher.HashPassword(user, cpvm.NewPassword);
         dbContext.SaveChanges();
 
-        TempData["SuccessMessage"] = $"Password successfully changed! <a class='underline text-teal-700' href='/users/{id}'>Go to your profile</a>";
+        TempData["SuccessMessage"] = $"Password successfully changed!<br>  <a class='underline text-teal-700' href='/users/{id}'>Go to your profile</a>";
 
         return RedirectToAction("UpdateAccount", new { id });
     }
@@ -374,7 +374,7 @@ public class UsersController : Controller
         var verify = _hasher.VerifyHashedPassword(user, user.Password, confirmDeletePassword);
         if (verify == PasswordVerificationResult.Failed)
         {
-            TempData["DeleteError"] = "Password incorrect";
+            TempData["DeleteError"] = "Unsuccessful - Password incorrect!";
             return RedirectToAction("UpdateAccount", "Users", new { id = currentUserId });
         }
 

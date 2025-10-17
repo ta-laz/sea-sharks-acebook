@@ -16,9 +16,13 @@
             }
         @if (ViewBag.SuccessMessage != null)
         {
-            <div class="text-teal-600 font-semibold mt-2">
+            <div class="text-teal-600 text-center font-semibold mt-2">
                 @Html.Raw(ViewBag.SuccessMessage)
             </div>
+        }
+        @if (TempData["DeleteError"] != null)
+        {
+            <div id="name-error-message" class="text-red-600 mt-2">@TempData["DeleteError"]</div>
         }
     <!-- change nameform container -->
     <div class="bg-white rounded-lg p-6 shadow-md w-full max-w-md mb-5">
@@ -46,7 +50,7 @@
             <!-- Password block with validation -->
             <div>
                 <label for="password" class="mb-1 block text-sm text-gray-700">Current Password</label>
-                <input required type="password" id="password" name="password" class="w-full border border-gray-400 rounded-lg p-2"
+                <input required type="password" id="nameChangePassword" name="password" class="w-full border border-gray-400 rounded-lg p-2"
                     placeholder="Password" />
                 @* <span asp-validation-for="Pets" class="text-teal-600 text-sm font-bold" id="pets-error"></span> *@
             </div>
@@ -55,6 +59,12 @@
             {
                 <div id="name-error-message" class="text-red-600 mt-2">@ViewBag.NameError</div>
             }
+
+            <div class="flex items-center mt-2">
+                <input id="Show-Password" class="h-4 w-4" type="checkbox" onclick="togglePasswordVisibility()">
+                <label for="Show-Password" class="ml-2 text-md text-gray-700">Show Password</label>
+            </div>
+
             <div class="flex justify-end mt-4" role="group" aria-label="post filters">
             <!-- Update Name submit form -->
                 <div class="flex justify-center">
@@ -135,10 +145,6 @@
                 <a id="delete-account"
                     class="bg-red-500 text-white flex items-center justify-center text-sm font-medium w-full px-4 py-2 mr-4 rounded-md hover:bg-red-700 hover:text-white">Delete Account
                 </a>
-                @if (TempData["DeleteError"] != null)
-                {
-                    <div id="name-error-message" class="text-red-600 mt-2">@TempData["DeleteError"]</div>
-                }
                 <!-- Delete profile submit form -->
                 <form asp-action="Delete" asp-controller="Users" method="post" class="flex-1 hidden mt-4" id="delete-account-form" onsubmit="return confirm('Are you sure you want to delete your account?');">
                 @Html.AntiForgeryToken()
@@ -175,17 +181,21 @@
     var newPass = document.getElementById("newPassword");
     var confirmNewPass = document.getElementById("confirmNewPassword");
     var confirmDeletePassword = document.getElementById("confirmDeletePassword");
+    var confirmNamePassword = document.getElementById("nameChangePassword");
 
     if (currentPass.type === "password") {
       currentPass.type = "text";
       newPass.type = "text";
       confirmNewPass.type = "text";
       confirmDeletePassword.type = "text";
+      confirmNamePassword.type = "text";
+
     } else {
       currentPass.type = "password";
       newPass.type = "password";
       confirmNewPass.type = "password";
       confirmDeletePassword.type = "password";
+      confirmNamePassword.type = "password";
     }
   }
 
