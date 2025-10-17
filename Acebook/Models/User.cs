@@ -18,6 +18,8 @@ public class User
   public ICollection<Friend> FriendRequestsSent { get; set; } = new List<Friend>();
   public ICollection<Friend> FriendRequestsReceived { get; set; } = new List<Friend>();
   public ICollection<Comment>? Comments { get; set; } = new List<Comment>();
+  public ICollection<Notification>? SentNotifications { get; set; }
+  public ICollection<Notification>? ReceivedNotifications { get; set; }
 
   public ProfileBio? ProfileBio { get; set; }
 }

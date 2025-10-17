@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using acebook.Models;
@@ -11,9 +12,11 @@ using acebook.Models;
 namespace acebook.Migrations
 {
     [DbContext(typeof(AcebookDbContext))]
-    partial class AcebookDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251016162138_FixNotificationSenderAGAIN")]
+    partial class FixNotificationSenderAGAIN
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -143,11 +146,19 @@ namespace acebook.Migrations
                     b.Property<string>("Url")
                         .HasColumnType("text");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("UserId1")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceiverId");
-
                     b.HasIndex("SenderId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Notifications");
                 });
@@ -312,16 +323,18 @@ namespace acebook.Migrations
 
             modelBuilder.Entity("acebook.Models.Notification", b =>
                 {
-                    b.HasOne("acebook.Models.User", null)
-                        .WithMany("ReceivedNotifications")
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("acebook.Models.User", "Sender")
-                        .WithMany("SentNotifications")
+                        .WithMany()
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("acebook.Models.User", null)
+                        .WithMany("ReceivedNotifications")
+                        .HasForeignKey("UserId");
+
+                    b.HasOne("acebook.Models.User", null)
+                        .WithMany("SentNotifications")
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("Sender");
                 });

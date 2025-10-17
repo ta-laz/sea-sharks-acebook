@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using acebook.Models;
@@ -11,9 +12,11 @@ using acebook.Models;
 namespace acebook.Migrations
 {
     [DbContext(typeof(AcebookDbContext))]
-    partial class AcebookDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251016155307_AddSenderToNotifications")]
+    partial class AddSenderToNotifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -144,8 +147,6 @@ namespace acebook.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ReceiverId");
 
                     b.HasIndex("SenderId");
 
@@ -312,16 +313,9 @@ namespace acebook.Migrations
 
             modelBuilder.Entity("acebook.Models.Notification", b =>
                 {
-                    b.HasOne("acebook.Models.User", null)
-                        .WithMany("ReceivedNotifications")
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("acebook.Models.User", "Sender")
-                        .WithMany("SentNotifications")
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .WithMany()
+                        .HasForeignKey("SenderId");
 
                     b.Navigation("Sender");
                 });
@@ -371,10 +365,6 @@ namespace acebook.Migrations
                     b.Navigation("Posts");
 
                     b.Navigation("ProfileBio");
-
-                    b.Navigation("ReceivedNotifications");
-
-                    b.Navigation("SentNotifications");
                 });
 #pragma warning restore 612, 618
         }

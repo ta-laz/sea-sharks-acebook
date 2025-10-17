@@ -10,6 +10,7 @@ public class AcebookDbContext : DbContext
   public DbSet<Like>? Likes { get; set; }
   public DbSet<Comment>? Comments { get; set; }
   public DbSet<Friend>? Friends { get; set; }
+  public DbSet<Notification> Notifications { get; set; }
 
 
   public string? DbPath { get; }
@@ -99,6 +100,20 @@ protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         .HasMany(c => c.Likes)
         .WithOne(l => l.Comment)
         .HasForeignKey(l => l.CommentId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+    base.OnModelCreating(modelBuilder);
+
+    modelBuilder.Entity<Notification>()
+        .HasOne(n => n.Sender)
+        .WithMany(u => u.SentNotifications)
+        .HasForeignKey(n => n.SenderId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+    modelBuilder.Entity<Notification>()
+        .HasOne<User>()               
+        .WithMany(u => u.ReceivedNotifications)
+        .HasForeignKey(n => n.ReceiverId)
         .OnDelete(DeleteBehavior.Cascade);
 
   }
