@@ -74,7 +74,7 @@ namespace Acebook.Tests
             await Expect(Page.GetByTestId("Coral-user-search")).ToBeVisibleAsync();
             await Expect(Page.GetByTestId("post-search-Bluey").First).ToBeVisibleAsync();
             await Expect(Page.GetByTestId("comment-search-Harbor").First).ToBeVisibleAsync();
-            await Expect(Page.GetByTestId("comment-search-Cerulean")).ToBeVisibleAsync();
+            await Expect(Page.GetByTestId("comment-search-Cerulean").First).ToBeVisibleAsync();
 
         }
         [Test]
