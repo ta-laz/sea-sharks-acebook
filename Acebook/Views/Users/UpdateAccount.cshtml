@@ -133,7 +133,7 @@
                 </div>
 
                 <a id="delete-account"
-                    class="bg-red-500 flex items-center justify-center text-sm font-medium w-full px-4 py-2 mr-4 rounded-md hover:bg-red-700 hover:text-white">Delete Account
+                    class="bg-red-500 text-white flex items-center justify-center text-sm font-medium w-full px-4 py-2 mr-4 rounded-md hover:bg-red-700 hover:text-white">Delete Account
                 </a>
                 @if (TempData["DeleteError"] != null)
                 {
@@ -152,16 +152,17 @@
                     <label for="Show-Password" class="ml-2 text-md text-gray-700">Show Password</label>
                 </div>
 
-                    <div class="flex justify-center mt-4">
-                        <button id="cancel-delete"
-                            class="bg-teal-600 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-teal-400">Cancel</button>
-                    </div>
+                <div class="flex items-center justify-between mt-2 px-4 mx-auto">
+                        <div class="flex mt-4">
+                            <button id="cancel-delete"
+                                class="bg-teal-600 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-teal-400">Cancel</button>
+                        </div>
 
-                    <div class="flex justify-center mt-4">
-                        <button id="confirm-delete" type="submit"
-                            class="bg-red-500 text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-red-700 hover:text-white">Confirm</button>
+                        <div class="flex mt-4">
+                            <button id="confirm-delete" type="submit"
+                                class="bg-red-500 text-white text-sm font-medium w-36 px-4 py-2 rounded-md hover:bg-red-700 hover:text-white">Confirm</button>
+                        </div>
                     </div>
-                    
                 </form>
                 
             </div>    
