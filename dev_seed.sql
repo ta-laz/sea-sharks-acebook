@@ -358,6 +358,5 @@ JOIN "Comments" c
  AND c."Content" ILIKE '%' || cl.content_hint || '%';
 
 
--- UPDATE "Posts"
--- SET "Content" = REGEXP_REPLACE("Content", '\[POST:[^]]+\]', '', 'g');
+-- UPDATE "Posts" SET "Content" = regexp_replace("Content", '\[POST:[^]]+\]\s*', '', 'gi');
 -- psql acebook_csharp_development < ../dev_seed.sql 
