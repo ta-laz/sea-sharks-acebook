@@ -9,6 +9,8 @@ const dropdown = document.getElementById("notifDropdown");
 const badge = document.getElementById("notifBadge");
 const list = document.getElementById("notifList");
 const markAllBtn = document.getElementById("markAllRead");
+const LAST_OPEN_KEY = "lastNotifSeenTime";
+
 
 // ---------------------------
 // Build SignalR connection
@@ -27,10 +29,19 @@ async function loadStoredNotifications() {
         if (!res.ok) throw new Error("Failed to load notifications");
         const notifs = await res.json();
 
-        // Update the badge count
+        // Update the badge count only if there are new notifications
         if (notifs.length > 0 && badge) {
-            badge.textContent = String(notifs.length);
-            badge.classList.remove("hidden");
+            const lastSeenTime = parseInt(localStorage.getItem(LAST_OPEN_KEY) || "0", 10);
+            const newestNotifTime = Math.max(...notifs.map(n => new Date(n.createdOn).getTime()));
+
+            // Only show the badge if the newest notification is newer than last seen
+            if (newestNotifTime > lastSeenTime) {
+                badge.textContent = String(notifs.length);
+                badge.classList.remove("hidden");
+            } else {
+                badge.classList.add("hidden");
+                badge.textContent = "0";
+            }
         }
 
         // Fill dropdown list
@@ -42,6 +53,17 @@ async function loadStoredNotifications() {
         console.error("Could not load notifications:", err);
     }
 }
+
+window.addEventListener("load", () => {
+    const lastSeenTime = parseInt(localStorage.getItem(LAST_OPEN_KEY) || "0", 10);
+
+    // If we've opened notifications recently, keep badge hidden
+    if (Date.now() - lastSeenTime < 60000) { // 60s grace period (optional)
+        badge.classList.add("hidden");
+        badge.textContent = "0";
+    }
+});
+
 
 // ---------------------------
 // Start connection
@@ -61,10 +83,20 @@ connection.start()
 connection.on("ReceiveNotification", (title, message, url) => {
     console.log("Notification received:", title, message, url);
 
-    showToast(title, message, url); // popup
-    bumpBadge();                    // red badge increment
-    if (list) renderNotifCard({ title, message, url, createdOn: new Date() }); // dropdown
+    showToast(title, message, url);
+
+    const newNotifTime = Date.now();
+    const lastSeenTime = parseInt(localStorage.getItem(LAST_OPEN_KEY) || "0", 10);
+
+    // Only bump badge if user hasn't opened notifications since the last time
+    if (newNotifTime > lastSeenTime) {
+        bumpBadge();
+    }
+
+    if (list) renderNotifCard({ title, message, url, createdOn: new Date() });
 });
+
+
 
 // ---------------------------
 // UI functions
@@ -89,16 +121,22 @@ function showToast(title, message, url) {
 }
 
 // Dropdown and badge
+let hasOpenedDropdown = false;
+
 if (bell && dropdown) {
     bell.addEventListener("click", () => {
-        dropdown.classList.toggle("hidden");
+        const isNowOpen = dropdown.classList.toggle("hidden");
 
-        // Reset badge when opened
+        // When dropdown opens
         if (!dropdown.classList.contains("hidden")) {
+            hasOpenedDropdown = true;
             badge.classList.add("hidden");
             badge.textContent = "0";
 
-            // Reload latest notifications
+            // save the time user last opened notifications
+            localStorage.setItem(LAST_OPEN_KEY, Date.now().toString());
+
+            // Load existing notifications
             fetch("/notifications/unread")
                 .then(res => res.json())
                 .then(notifs => {
@@ -108,6 +146,7 @@ if (bell && dropdown) {
         }
     });
 }
+
 
 // Close dropdown if clicking outside it
 document.addEventListener("click", (e) => {
