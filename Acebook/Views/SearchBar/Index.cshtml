@@ -32,7 +32,8 @@
 
 @if (ViewBag.UsersResults != null && users.Count > 0)
 {
-    <div class="bg-teal-700/10 p-2 mb-10 rounded-lg shadow-[0_0_15px_rgba(15,118,110,0.3)]">
+    <div class="flex justify-center">
+        <div class="w-full max-w-4xl bg-teal-700/10 p-4 mb-10 rounded-lg shadow-[0_0_15px_rgba(15,118,110,0.3)]">
         <h2 data-testid="user-results" class="mb-4 text-teal-600 text-3xl font-bold p-2 break-words [overflow-wrap:anywhere]">Other Sharks</h2>
         <br />
         @foreach (var user in users.Take(3))
@@ -66,20 +67,23 @@
                 {
 
             <!-- Show "Fronds" label (disabled) -->
-            <button disabled data-testid="already-friends"
-                    class="mt-1 flex justify-start italic text-gray-400 text-sm font-medium rounded">
-                Fronds - @(user.ProfileBio.Tagline ?? "Just keep swimming!")
-            </button>
-
+            <p data-testid="already-friends"
+   class="mt-1 flex justify-start text-gray-400 text-sm italic rounded">
+    <span class="font-bold not-italic">Fronds</span>
+    <span class="mx-2">-</span>
+    <span>@(user.ProfileBio.Tagline ?? "Just keep swimming!")</span>
+</p>
             }
             else if (pendingRequests.Any(f =>
                 (f.RequesterId == ViewBag.currentUserId && f.AccepterId == @user.Id) ||
                 (f.RequesterId == @user.Id && f.AccepterId == ViewBag.currentUserId)))
                 {
-                    <button data-testid="friend-request-sent" disabled
-                        class="mt-1 flex justify-start italic text-gray-400 text-sm font-medium rounded">
-                        Frond request pending - @(user.ProfileBio.Tagline ?? "Just keep swimming!")
-                    </button>
+                    <p data-testid="friend-request-sent"
+                        class="mt-1 flex justify-start text-gray-400 text-sm italic rounded">
+                        <span class="font-bold not-italic">Frond request pending</span>
+    <span class="mx-2">-</span>
+    <span>@(user.ProfileBio.Tagline ?? "Just keep swimming!")</span>
+                    </p>
                 }
                 else
                 {
@@ -173,20 +177,23 @@
                 {
 
             <!-- Show "Fronds" label (disabled) -->
-            <button disabled data-testid="already-friends"
-                    class="mt-1 flex justify-start italic text-gray-400 text-sm font-medium rounded">
-                Fronds - @(user.ProfileBio.Tagline ?? "Just keep swimming!")
-            </button>
-
+            <p data-testid="already-friends"
+   class="mt-1 flex justify-start text-gray-400 text-sm italic rounded">
+    <span class="font-bold not-italic">Fronds</span>
+    <span class="mx-2">-</span>
+    <span>@(user.ProfileBio.Tagline ?? "Just keep swimming!")</span>
+</p>
             }
             else if (pendingRequests.Any(f =>
                 (f.RequesterId == ViewBag.currentUserId && f.AccepterId == @user.Id) ||
                 (f.RequesterId == @user.Id && f.AccepterId == ViewBag.currentUserId)))
                 {
-                    <button data-testid="friend-request-sent" disabled
-                        class="mt-1 flex justify-start italic text-gray-400 text-sm font-medium rounded">
-                        Frond request pending - @(user.ProfileBio.Tagline ?? "Just keep swimming!")
-                    </button>
+                    <p data-testid="friend-request-sent"
+                        class="mt-1 flex justify-start text-gray-400 text-sm italic rounded">
+                        <span class="font-bold not-italic">Frond request pending</span>
+    <span class="mx-2">-</span>
+    <span>@(user.ProfileBio.Tagline ?? "Just keep swimming!")</span>
+                    </p>
                 }
 
                 else
@@ -249,6 +256,7 @@
             </div>
             <button class="see-more-btn text-teal-600 font-semibold p-2 hover:bg-teal-600/20 rounded-lg transition" data-target="users" data-testid="showing-all-results-test2"> Show All Sharks</button>
         }
+    </div>
     </div>
 }
 @{
