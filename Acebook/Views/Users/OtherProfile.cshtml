@@ -84,7 +84,7 @@
 
                 <a asp-controller="Friends" asp-action="ViewUserFriends" asp-route-id=@Model.Id
                     data-testid="see-all-friends" class="text-teal-500 hover:underline text-sm cursor-pointer">
-                    See All Friends
+                    See All Fronds
                 </a>
             </div>
         </div>
@@ -107,17 +107,17 @@
                 @if (alreadyFriends.Contains(@Model.Id))
                 {
                     <form asp-action="Remove" asp-controller="Friends" method="post"
-                        onsubmit="return confirm('Are you sure you want to unfriend this person?');">
+                        onsubmit="return confirm('Are you sure you want to unfrond this person?');">
                         @Html.AntiForgeryToken()
                     <button disabled data-testid="already-friends"
                         class="bg-gray-300 text-gray-700 text-sm font-medium py-1 px-3 rounded hover:bg-gray-200">
-                        Friends
+                        Fronds
                     </button>
                         <input type="hidden" name='friendId' value="@Model.Id" />
                         <input type="hidden" name="returnUrl"
                                 value="@Url.Action("Index", "Users", new { id = Model.Id })" />
                         <button type="submit"
-                            class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-1 px-3 rounded" data-testid="unfriend">Unfriend</button>
+                            class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-1 px-3 rounded" data-testid="unfriend">Unfrond</button>
                     </form> 
                 }
                 else if (pendingRequests.Any(f =>
@@ -126,7 +126,7 @@
                 {
                     <button data-testid="friend-request-sent" disabled
                         class="bg-orange-200 text-gray-700 text-sm font-medium py-1 px-3 rounded">
-                        Friend request pending
+                        Frond request pending
                     </button>
                 }
                 else
@@ -137,7 +137,7 @@
                         <input type="hidden" name="receiverId" value="@Model.Id" />
                         <button data-testid="add-friend" type="submit"
                             class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium py-1 px-3 rounded">
-                            Add Friend
+                            Add Frond
                         </button>
                     </form>
                 }

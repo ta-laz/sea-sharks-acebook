@@ -3,12 +3,12 @@
 <!-- Main Body -->
 <div class="min-h-screen flex flex-col items-center justify-start px-4 sm:px-6 py-6">
     <div class="flex flex-col items-center space-y-4 w-full max-w-screen-lg">
-        <h1 id="myFriendsPageTitle" data-testid="myFriendsPageTitle" class="text-4xl font-bold mb-3 text-teal-700 ">My Friends (@ViewBag.Friends.Count)</h1>
+        <h1 id="myFriendsPageTitle" data-testid="myFriendsPageTitle" class="text-4xl font-bold mb-3 text-teal-700 ">My Fronds (@ViewBag.Friends.Count)</h1>
         <!-- Filter buttons -->
         <div class="flex justify-center mt-4" role="group" aria-label="requests filters">
             <label id="received-label" for="received"
                 class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-l-md cursor-pointer hover:bg-gray-200 hover:text-gray-600 text-center transition-colors hover:shadow-md">
-                Friend Requests
+                Frond Requests
             </label>
             <label id="sent-label" data-testid="sent-requests-label" for="sent"
                 class="w-40 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 border-l-0 rounded-r-md cursor-pointer hover:bg-gray-200 text-center transition-colors hover:shadow-md">
@@ -51,7 +51,7 @@
                         </form>
 
                         <form asp-action="Remove" asp-controller="Friends" method="post"
-                            onsubmit="return confirm('Are you sure you do not want to be friends?');">
+                            onsubmit="return confirm('Are you sure you do not want to be fronds?');">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="friendId" value="@sender.Id" />
                             <button type="submit"
@@ -117,9 +117,9 @@
         <!-- Friend List Section -->
         <div class="bg-white rounded-lg w-full p-4 shadow-md md:block border hover:shadow-xl">
             <div id="search-form" class="flex justify-between mb-3">
-                <h2 class="text-xl font-bold mb-3" data-testid="friends-list-subheader">Friends</h2>
+                <h2 class="text-xl font-bold mb-3" data-testid="friends-list-subheader">Fronds</h2>
                 <form asp-action="Index" asp-controller="Friends" method="get" class="pr-2">
-                    <input type="text" name="SearchQuery" placeholder="Search friends..."
+                    <input type="text" name="SearchQuery" placeholder="Search fronds..."
                         class="border rounded px-3 py-1" value="@ViewBag.SearchQuery" />
                     <button id="search-button" type="submit"
                         class="bg-teal-600 text-white px-3 py-1 rounded hover:bg-teal-700">Search</button>
@@ -152,11 +152,11 @@
                     </div>
 
                     <form asp-action="Remove" asp-controller="Friends" method="post"
-                        onsubmit="return confirm('Are you sure you want to unfriend this person?');">
+                        onsubmit="return confirm('Are you sure you want to unfrond this person?');">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name='friendId' value="@other.Id" />
                         <button type="submit"
-                            class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-1 px-3 rounded">Unfriend</button>
+                            class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-1 px-3 rounded">Unfrond</button>
                     </form>
                 </div>
             }

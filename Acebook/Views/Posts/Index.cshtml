@@ -53,7 +53,7 @@
           <div class="flex items-center space-x-3">
             <img src="/images/temp_imgs/temp_6.png" class="w-10 h-10 rounded-full object-cover border border-gray-300">
             <a asp-controller="Friends" asp-action="Index" id="redirect-friends" data-testid="redirect-friends"
-              method="get" class="text-xs font-medium text-gray-700 hover:text-teal-600">Friends</a>
+              method="get" class="text-xs font-medium text-gray-700 hover:text-teal-600">Fronds</a>
           </div>
 
           <!-- Dots only appear on hover -->
@@ -247,7 +247,7 @@
                     @(ViewBag.Filter == "all" ? "bg-teal-600 text-white" : "bg-white text-gray-600 hover:bg-gray-200")">All Posts</a>
         <a href="@Url.Action("Index", "Posts", new { filter = "friends" })"
           class="w-40 px-4 py-2 text-sm font-medium border border-gray-300 border-l-0 rounded-r-md text-center
-                    @(ViewBag.Filter == "friends" ? "bg-teal-600 text-white" : "bg-white text-gray-600 hover:bg-gray-200")">Friends' Posts</a>
+                    @(ViewBag.Filter == "friends" ? "bg-teal-600 text-white" : "bg-white text-gray-600 hover:bg-gray-200")">Fronds' Posts</a>
         <button id="back-to-top" class="absolute right-4 bg-teal-600 text-white p-3 rounded-full hover:bg-teal-500
                  transition-opacity duration-200 opacity-0 pointer-events-none">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"

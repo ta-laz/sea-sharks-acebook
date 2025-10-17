@@ -5,6 +5,9 @@
     var searchString = ViewData["SearchString"] as string;
 }
 
+@{
+    int? userId = Context.Session.GetInt32("user_id");
+}
 
 
 @{
@@ -17,7 +20,7 @@
 @if (!string.IsNullOrWhiteSpace(searchString) && hasResults)
 {
     <h1 class="text-5xl font-bold mb-4 text-teal-600 pb-6 break-words [overflow-wrap:anywhere] text-center">
-        Search Results for: <strong>@searchString</strong>
+        Search results for: <strong>@searchString</strong>
     </h1>
 }
 
@@ -42,14 +45,69 @@
                 imagePath = "/images/Placeholder.png";
               }
 
-            <div data-testid="@($"{user.FirstName}-user-search")" class="flex items-center justify-between gap-3 mb-4 p-4 rounded-lg bg-white  transition">
+            <div data-testid="@($"{user.FirstName}-user-search")" class="flex items-center justify-between gap-3 mb-4 p-4 rounded-lg bg-white transition">
+
+            <!-- LEFT SIDE: profile picture + name -->
                 <div class="flex items-center gap-3">
                     <img src="@imagePath" class="w-12 h-12 rounded-full object-cover border border-gray-400">
                     <a asp-controller="Users" asp-action="Index" asp-route-id="@user.Id" id="friend-name"
                         data-testid="@user.FirstName"
-                        class="text-md font-semibold text-gray-800 hover:text-teal-600">@user.FirstName @user.LastName</a>
+                        class="text-md font-semibold text-gray-800 hover:text-teal-600">@user.FirstName @user.LastName
+                        </a>
+                        </div>
 
-                </div>
+                        <!-- RIGHT SIDE: frond buttons + view profile -->
+                        <div class="flex items-center gap-3">
+                        @{
+                    var alreadyFriends = ViewBag.AlreadyFriends as List<int>;
+                    var pendingRequests = ViewBag.PendingRequests as List<Friend>;
+                }
+
+                @if (alreadyFriends.Contains(@user.Id))
+                {
+                    <div class="flex gap-2">
+            <!-- Show "Fronds" label (disabled) -->
+            <button disabled data-testid="already-friends"
+                    class="h-10 px-3 flex items-center justify-center bg-gray-300 text-gray-700 text-sm font-medium rounded hover:bg-gray-200">
+                Fronds
+            </button>
+
+            <!-- Separate form for "Unfrond" -->
+            <form asp-action="Remove" asp-controller="Friends" method="post"
+                  onsubmit="return confirm('Are you sure you want to unfrond this person?');" class="inline-block">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name='friendId' value="@user.Id" />
+                <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Users", new { id = user.Id })" />
+                <button type="submit"
+                        class="h-10 px-3 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded"
+                        data-testid="unfriend">
+                    Unfrond
+                </button>
+            </form>
+        </div>
+                }
+                else if (pendingRequests.Any(f =>
+                (f.RequesterId == ViewBag.currentUserId && f.AccepterId == @user.Id) ||
+                (f.RequesterId == @user.Id && f.AccepterId == ViewBag.currentUserId)))
+                {
+                    <button data-testid="friend-request-sent" disabled
+                        class="relative h-10 w-full flex items-center justify-center bg-orange-200 text-gray-700 text-sm font-medium py-1 px-3 rounded">
+                        Frond request pending
+                    </button>
+                }
+                else
+                {
+                    <form asp-action="AddFriend" asp-controller="Friends" method="post"
+                        onsubmit="return confirm('Are you sure you want to add this person?');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="receiverId" value="@user.Id" />
+                        <button data-testid="add-friend" type="submit"
+                            class="relative h-10 w-full flex items-center justify-center bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium py-1 px-3 rounded">
+                            Add Frond
+                        </button>
+                    </form>
+                }
+
                 <a asp-controller="Users" asp-action="Index" asp-route-id="@user.Id" class="flex justify-center">
                     <button
                         class="relative h-10 w-28 flex items-center justify-center text-gray-600 bg-transparent group font-medium rounded-md transition-all  shadow-sm overflow-hidden">
@@ -59,6 +117,7 @@
                         </span>
                     </button>
                 </a>
+            </div>
             </div>
         }
         @if (users.Count > 3)
@@ -75,14 +134,69 @@
                         imagePath = "/images/Placeholder.png";
                     }
 
-                <div class="flex items-center justify-between gap-3 mb-4 mb-10 p-4 rounded-lg bg-white  transition">
-                <div class="flex items-center gap-3 mb-2">
+                <div class="flex items-center justify-between gap-3 mb-4 mb-10 p-4 rounded-lg bg-white transition">
+
+                <!-- LEFT SIDE: profile picture + name -->
+                <div class="flex items-center gap-3">
                     <img src="@imagePath" class="w-12 h-12 rounded-full object-cover border border-gray-400">
                     <a asp-controller="Users" asp-action="Index" asp-route-id="@user.Id" id="friend-name"
                         data-testid="@user.FirstName"
-                        class="text-md font-semibold text-gray-800 hover:text-teal-600">@user.FirstName @user.LastName</a>
+                        class="text-md font-semibold text-gray-800 hover:text-teal-600">@user.FirstName @user.LastName
+                        </a>
+                        </div>
 
-                </div>
+                        <!-- RIGHT SIDE: frond buttons + view profile -->
+                        <div class="flex items-center gap-3">
+                        @{
+                    var alreadyFriends = ViewBag.AlreadyFriends as List<int>;
+                    var pendingRequests = ViewBag.PendingRequests as List<Friend>;
+                }
+
+                @if (alreadyFriends.Contains(@user.Id))
+                {
+                    <div class="flex gap-2">
+            <!-- Show "Fronds" label (disabled) -->
+            <button disabled data-testid="already-friends"
+                    class="h-10 px-3 flex items-center justify-center bg-gray-300 text-gray-700 text-sm font-medium rounded hover:bg-gray-200">
+                Fronds
+            </button>
+
+            <!-- Separate form for "Unfrond" -->
+            <form asp-action="Remove" asp-controller="Friends" method="post"
+                  onsubmit="return confirm('Are you sure you want to unfrond this person?');" class="inline-block">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name='friendId' value="@user.Id" />
+                <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Users", new { id = user.Id })" />
+                <button type="submit"
+                        class="h-10 px-3 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded"
+                        data-testid="unfriend">
+                    Unfrond
+                </button>
+            </form>
+        </div> 
+                }
+                else if (pendingRequests.Any(f =>
+                (f.RequesterId == ViewBag.currentUserId && f.AccepterId == @user.Id) ||
+                (f.RequesterId == @user.Id && f.AccepterId == ViewBag.currentUserId)))
+                {
+                    <button data-testid="friend-request-sent" disabled
+                        class="relative h-10 w-full flex items-center justify-center bg-orange-200 text-gray-700 text-sm font-medium py-1 px-3 rounded">
+                        Frond request pending
+                    </button>
+                }
+                else
+                {
+                    <form asp-action="AddFriend" asp-controller="Friends" method="post"
+                        onsubmit="return confirm('Are you sure you want to add this person?');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="receiverId" value="@user.Id" />
+                        <button data-testid="add-friend" type="submit"
+                            class="relative h-10 w-28 flex items-center justify-center bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium py-1 px-3 rounded">
+                            Add Frond
+                        </button>
+                    </form>
+                }
+
                 <a asp-controller="Users" asp-action="Index" asp-route-id="@user.Id" class="flex justify-center">
                     <button
                         class="relative h-10 w-28 flex items-center justify-center text-gray-600 bg-transparent group font-medium rounded-md transition-all shadow-sm overflow-hidden">
@@ -92,6 +206,7 @@
                         </span>
                     </button>
                 </a>
+            </div>
             </div>
                 }
             </div>
