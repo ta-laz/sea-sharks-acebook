@@ -46,7 +46,7 @@
 
         <div class="group flex items-center justify-between mb-4 rounded-lg mb-1 transition">
           <ul>
-            <li data-testid="bio-tagline" class="italic text-gray-400 mt-1">@Model.ProfileBio.Tagline</li>
+            <li data-testid="bio-tagline" class="italic text-gray-400 mt-1 line-clamp-2">@Model.ProfileBio.Tagline</li>
             <li data-testid="bio-age" class="text-gray-400 mt-1">Age: @Model.ProfileBio.Age</li>
             <li data-testid="bio-relationshipstatus" class="text-gray-400 mt-1">Relationship Status:
               @Model.ProfileBio.RelationshipStatus</li>
@@ -253,7 +253,7 @@
 
                   <div class="flex justify-end mt-2">
                     <a asp-controller="Posts" asp-action="Post" asp-route-id="@post.Id" method="get">
-                      <button data-testid="see-more-button" class="text-teal-600 text-sm hover:underline">see more</button>
+                      <button data-testid="see-more-button" class="text-teal-600 text-sm hover:underline">Sea More</button>
                     </a>
                   </div>
 
