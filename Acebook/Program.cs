@@ -1,11 +1,17 @@
 using acebook.Hubs;
 using acebook.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore; 
 
 var configBuilder = new ConfigurationBuilder();
 configBuilder.AddEnvironmentVariables();
 
 var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddControllersWithViews();
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
