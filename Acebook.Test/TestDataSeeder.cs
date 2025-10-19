@@ -6,26 +6,28 @@ using Microsoft.AspNetCore.Identity;
 
 internal static class TestDataSeeder
 {
+    private static readonly PasswordHasher<User> Hasher = new();
+    private static readonly string PwHash = Hasher.HashPassword(new User(), "password123");
 
-	private static readonly PasswordHasher<User> Hasher = new();
-	private static readonly string PwHash = Hasher.HashPassword(new User(), "password123");
-	
-	public static async Task EnsureDbReadyAsync(AcebookDbContext db)
-	{
-		// If you use migrations in the app, prefer Migrate() over EnsureCreated()
-		await db.Database.EnsureCreatedAsync();
-	}
+    public static async Task EnsureDbReadyAsync(AcebookDbContext db)
+    {
+        // If you maintain migrations, prefer Migrate over EnsureCreated:
+        await db.Database.MigrateAsync();
+        // If you're *not* using migrations for tests, keep:
+        // await db.Database.EnsureCreatedAsync();
+    }
+    public static async Task ResetAndSeedAsync(AcebookDbContext db)
+    {
+        await using var tx = await db.Database.BeginTransactionAsync();
 
-	public static async Task ResetAndSeedAsync(AcebookDbContext db)
-	{
-		await db.Database.OpenConnectionAsync();
-		await db.Database.ExecuteSqlRawAsync("""
-        TRUNCATE TABLE "Likes","Comments","Posts",
-                         "Friends","ProfileBios","Users"
-        RESTART IDENTITY CASCADE;
-    """);
+        await db.Database.ExecuteSqlRawAsync("""
+            TRUNCATE TABLE "Likes","Comments","Posts",
+                             "Friends","ProfileBios","Users"
+            RESTART IDENTITY CASCADE;
+        """);
 
-		var createdAt = new DateTime(2025, 1, 1, 8, 0, 0, DateTimeKind.Utc);
+        var createdAt = new DateTime(2025, 1, 1, 8, 0, 0, DateTimeKind.Utc);
+
 
 		// var pwHash = "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f";
 

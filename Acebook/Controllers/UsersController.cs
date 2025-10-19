@@ -253,7 +253,6 @@ public class UsersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateAccountName(int id, string firstName, string lastName, string password)
     {
-        AcebookDbContext dbContext = new AcebookDbContext();
         var user = await _db.Users.FindAsync(id);
 
         if (user == null)
@@ -380,7 +379,10 @@ public class UsersController : Controller
             TempData["DeleteError"] = "Unsuccessful - Password incorrect!";
             return RedirectToAction("UpdateAccount", "Users", new { id = currentUserId });
         }
+        var strategy = _db.Database.CreateExecutionStrategy();
 
+        await strategy.ExecuteAsync(async () =>
+        {
         await using var tx = await _db.Database.BeginTransactionAsync();
 
         var sentNotes = await _db.Notifications
@@ -396,7 +398,7 @@ public class UsersController : Controller
         _db.Users.Remove(user);
         await _db.SaveChangesAsync();
         await tx.CommitAsync();
-
+        });
         HttpContext.Session.Clear();
 
         return RedirectToAction("Index", "Home");

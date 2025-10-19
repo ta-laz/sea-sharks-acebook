@@ -23,7 +23,7 @@ static string BuildConnectionString(IHostEnvironment env)
     {
         // Local dev from environment variables (e.g. via .env)
         var host = Environment.GetEnvironmentVariable("DB_HOST")     ?? "localhost";
-        var name = Environment.GetEnvironmentVariable("DB_NAME")     ?? "acebook_dev";
+        var name = Environment.GetEnvironmentVariable("DB_NAME")     ?? "acebook_csharp_dev";
         var user = Environment.GetEnvironmentVariable("DB_USER")     ?? "postgres";
         var pass = Environment.GetEnvironmentVariable("DB_PASS")     ?? "postgres";
 
