@@ -14,50 +14,49 @@ public class PostsController : Controller
 {
   private readonly ILogger<PostsController> _logger;
   private readonly IHubContext<NotificationHub> _hub;
-  private readonly AcebookDbContext _db;
 
-  public PostsController(ILogger<PostsController> logger, IHubContext<NotificationHub> hub, AcebookDbContext db)
+  public PostsController(ILogger<PostsController> logger, IHubContext<NotificationHub> hub)
   {
     _logger = logger;
     _hub = hub;
-    _db = db;
   }
 
   [Route("/posts")]
   [HttpGet]
-  public async Task<IActionResult> Index(string? filter)
+  public IActionResult Index(string? filter)
   {
+    AcebookDbContext dbContext = new AcebookDbContext();
     int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
-    var user = await _db.Users
-                  .FirstOrDefaultAsync(u => u.Id == currentUserId);
+    var user = dbContext.Users
+                  .FirstOrDefault(u => u.Id == currentUserId);
 
-    var friendIds = await _db.Friends //Logic to pull all of the Id's of the CURRENT users friends
+    var friendIds = dbContext.Friends //Logic to pull all of the Id's of the CURRENT users friends
                                       .Where(f => (f.RequesterId == currentUserId || f.AccepterId == currentUserId) && f.Status == FriendStatus.Accepted)
                                       .Select(f => f.RequesterId == currentUserId ? f.AccepterId : f.RequesterId)
-                                      .ToListAsync();
+                                      .ToList();
 
     List<Post> posts; 
 
     if (filter == "friends") //button will trigger a friends search which will pull just the posts of friends that match the friendIds 
     {
-      posts = await _db.Posts
+      posts = dbContext.Posts
                               .Where(p => friendIds.Contains(p.UserId) && p.UserId == p.WallId)
                               .Include(p => p.User)
                               .Include(p => p.Comments)
                                 .ThenInclude(c => c.Likes)
                               .Include(p => p.Likes)
-                              .ToListAsync();
+                              .ToList();
 
     }
     else //otherwise generate all posts 
     {
-      posts = await _db.Posts
-                              .Where(p => p.UserId == p.WallId)
-                              .Include(p => p.User)
-                              .Include(p => p.Comments)
-                                .ThenInclude(c => c.Likes)
-                              .Include(p => p.Likes)
-                              .ToListAsync();
+      posts = dbContext.Posts
+                               .Where(p => p.UserId == p.WallId)
+                               .Include(p => p.User)
+                               .Include(p => p.Comments)
+                                  .ThenInclude(c => c.Likes)
+                               .Include(p => p.Likes)
+                               .ToList();
     }
 
     foreach (var post in posts)
@@ -82,8 +81,9 @@ public class PostsController : Controller
   [Route("/posts/create")]
   [HttpPost]
   [ValidateAntiForgeryToken]
-  public async Task<IActionResult> Create(Post post, string returnUrl, IFormFile? postPicture, int? WallId = null)
+  public IActionResult Create(Post post, string returnUrl, IFormFile? postPicture, int? WallId = null)
   {
+    using var dbContext = new AcebookDbContext();
     int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
 
     post.UserId = currentUserId;
@@ -100,18 +100,18 @@ public class PostsController : Controller
 
       using (var stream = new FileStream(filePath, FileMode.Create))
       {
-        await postPicture.CopyToAsync(stream);
+        postPicture.CopyTo(stream);
       }
       post.PostPicturePath = $"/images/post_pics/{fileName}";
     }
-    _db.Posts.Add(post);
-    await _db.SaveChangesAsync();
+    dbContext.Posts.Add(post);
+    dbContext.SaveChanges();
 
     // logic for the notifications is here
     if (post.WallId != post.UserId)
     {
-      var poster = await _db.Users.FindAsync(currentUserId);
-      var wallOwner = await _db.Users.FindAsync(post.WallId);
+      var poster = dbContext.Users.Find(currentUserId);
+      var wallOwner = dbContext.Users.Find(post.WallId);
 
       if (poster != null && wallOwner != null)
       {
@@ -119,7 +119,7 @@ public class PostsController : Controller
         string message = $"{poster.FirstName} posted on your wall.";
         string url = $"/posts/{post.Id}";
 
-        _db.Notifications.Add(new Notification
+        dbContext.Notifications.Add(new Notification
         {
           ReceiverId = wallOwner.Id,
           SenderId = currentUserId,
@@ -128,10 +128,10 @@ public class PostsController : Controller
           Url = url
         });
 
-        await _db.SaveChangesAsync();
+        dbContext.SaveChanges();
 
         // Send live SignalR notification
-        await _hub.Clients.Group($"user-{wallOwner.Id}")
+        _hub.Clients.Group($"user-{wallOwner.Id}")
             .SendAsync("ReceiveNotification", title, message, url);
       }
     }
@@ -147,11 +147,12 @@ public class PostsController : Controller
   // READ a Post (individual post)
   [Route("/posts/{id}")]
   [HttpGet]
-  public async Task<IActionResult> Post(int id)
+  public IActionResult Post(int id)
   {
+    AcebookDbContext dbContext = new AcebookDbContext();
     int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
-    var post = await _db.Posts.Include(p => p.Comments).ThenInclude(c => c.Likes).Include(p => p.Likes).FirstOrDefaultAsync(p => p.Id == id);
-    var comments = await _db.Comments.Include(c => c.User).Where(c => c.PostId == id).OrderBy(c => c.CreatedOn).ToListAsync();
+    var post = dbContext.Posts.Include(p => p.Comments).ThenInclude(c => c.Likes).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
+    var comments = dbContext.Comments.Include(c => c.User).Where(c => c.PostId == id).OrderBy(c => c.CreatedOn).ToList();
     post.UserHasLiked = post.Likes.Any(l => l.UserId == currentUserId);
     foreach (var comment in post.Comments)
     {
@@ -169,17 +170,18 @@ public class PostsController : Controller
   [Route("/posts/{id}/update")]
   [HttpPost]
   [ValidateAntiForgeryToken]
-  public async Task<IActionResult> Update(int id, string content)
+  public IActionResult Update(int id, string content)
   {
+    AcebookDbContext dbContext = new AcebookDbContext();
     int? sessionUserId = HttpContext.Session.GetInt32("user_id");
-    var post = await _db.Posts.FindAsync(id);
+    var post = dbContext.Posts.Find(id);
     if (post.UserId != sessionUserId) // Server-side security (only post authors can update posts)
     {
       return Forbid();
     }
     post.Content = content;
     post.CreatedOn = DateTime.UtcNow;
-    await _db.SaveChangesAsync();
+    dbContext.SaveChanges();
 
     // Reload individual post page
     return RedirectToAction("Post", "Posts", new { id = post.Id });
@@ -190,19 +192,20 @@ public class PostsController : Controller
   [Route("/posts/{id}/delete")]
   [HttpPost]
   [ValidateAntiForgeryToken]
-  public async Task<IActionResult> Delete(int id)
+  public IActionResult Delete(int id)
   {
+    AcebookDbContext dbContext = new AcebookDbContext();
     int? sessionUserId = HttpContext.Session.GetInt32("user_id");
     if (sessionUserId == null)
         return Unauthorized(); // Checks user is logged in
-    Post post = await _db.Posts.Include(p => p.Comments).Include(p => p.Likes).FirstOrDefaultAsync(p => p.Id == id);
+    Post post = dbContext.Posts.Include(p => p.Comments).Include(p => p.Likes).FirstOrDefault(p => p.Id == id);
     if (post.UserId != sessionUserId && post.WallId != sessionUserId) // Server-side security (only authors or wall owners can delete comments)
     {
       return Forbid();
     }
     // Deletes the post from the db 
-    _db.Posts.Remove(post);
-    await _db.SaveChangesAsync();
+    dbContext.Posts.Remove(post);
+    dbContext.SaveChanges();
 
     // Redirect to My Profile:
     return Redirect($"/users/{sessionUserId}");

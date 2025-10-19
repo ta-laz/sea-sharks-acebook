@@ -3,7 +3,6 @@ using Microsoft.Playwright.NUnit;
 using NUnit.Framework;
 using acebook.Models;
 using Acebook.Test;
-using Acebook.TestHelpers;
 
 namespace Acebook.Tests
 {
@@ -14,7 +13,7 @@ namespace Acebook.Tests
         [OneTimeSetUp]
         public async Task OneTime()
         {
-            await using var context = DbFactory.CreateTestDb();
+            await using var context = new AcebookDbContext();
             await TestDataSeeder.EnsureDbReadyAsync(context);
         }
         public override BrowserNewContextOptions ContextOptions()
@@ -26,7 +25,7 @@ namespace Acebook.Tests
         [Obsolete]
         public async Task OnNewUser_TheyHaveProfilePicture()
         {
-            await using var context = DbFactory.CreateTestDb();
+            await using var context = new AcebookDbContext();
             await TestDataSeeder.ResetAndSeedAsync(context);
             await Page.GotoAsync("/signup");
             await Expect(Page).ToHaveURLAsync($"{BaseUrl}/signup");

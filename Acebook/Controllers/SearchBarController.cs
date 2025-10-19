@@ -8,17 +8,16 @@ public class SearchBarController : Controller
 {
 
     private readonly ILogger<SearchBarController> _logger;
-    private readonly AcebookDbContext _db;
 
-    public SearchBarController(ILogger<SearchBarController> logger, AcebookDbContext db)
+    public SearchBarController(ILogger<SearchBarController> logger)
     {
         _logger = logger;
-        _db = db;
     }
 
     [HttpGet("/Search")]
     public async Task<IActionResult> Index(string? SearchString, string scope = "all")
     {
+        using var db = new AcebookDbContext();
         int? currentUserId = HttpContext.Session.GetInt32("user_id");
 
         // Normalize scope/filter to one of: users | posts | comments | all
@@ -48,7 +47,7 @@ public class SearchBarController : Controller
         // Run only the queries needed for requested scope
         if (scope is "all" or "users")
         {
-            userResults = await _db.Users
+            userResults = await db.Users
                 .AsNoTracking()
                 .Where(u =>
                     EF.Functions.Like(u.FirstName.ToLower(), like) ||
@@ -63,7 +62,7 @@ public class SearchBarController : Controller
 
         if (scope is "all" or "posts")
         {
-            postResults = await _db.Posts
+            postResults = await db.Posts
                 .AsNoTracking()
                 .Include(p => p.User)
                 .Include(p => p.Likes)
@@ -78,7 +77,7 @@ public class SearchBarController : Controller
 
         if (scope is "all" or "comments")
         {
-            commentResults = await _db.Comments
+            commentResults = await db.Comments
                 .AsNoTracking()
                 .Include(c => c.User)
                 .Include(c => c.Post)
@@ -93,11 +92,11 @@ public class SearchBarController : Controller
                 .ToListAsync();
         }
 
-        var friends = await _db.Friends
+        var friends = await db.Friends
     .Where(f => (f.RequesterId == currentUserId || f.AccepterId == currentUserId) && f.Status == FriendStatus.Accepted)
     .ToListAsync();
 
-        var pendingRequests = await _db.Friends
+        var pendingRequests = await db.Friends
             .Where(f => f.Status == FriendStatus.Pending &&
                        (f.RequesterId == currentUserId || f.AccepterId == currentUserId))
             .ToListAsync();

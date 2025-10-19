@@ -9,29 +9,28 @@ namespace acebook.Controllers
     public class NotificationsController : Controller
     {
         private readonly IHubContext<NotificationHub> _hub;
-        private readonly AcebookDbContext _db;
 
-        public NotificationsController(IHubContext<NotificationHub> hub, AcebookDbContext db)
+        public NotificationsController(IHubContext<NotificationHub> hub)
         {
             _hub = hub;
-            _db = db;
         }
 
         [Route("/notifications")]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             int? userId = HttpContext.Session.GetInt32("user_id");
             if (userId == null)
                 return RedirectToAction("New", "Sessions");
 
+            using var dbContext = new AcebookDbContext();
 
-            var notifications = await _db.Notifications
+            var notifications = dbContext.Notifications
                 .Where(n => n.ReceiverId == userId)
                 .Include(n => n.Sender)
                 .OrderByDescending(n => n.CreatedOn)
                 .Take(10)
-                .ToListAsync();
+                .ToList();
 
             ViewBag.Notifications = notifications;
             return View("Index");
@@ -44,8 +43,9 @@ namespace acebook.Controllers
             if (userId == null)
                 return Unauthorized();
 
+            using var dbContext = new AcebookDbContext();
 
-            var notifications = await _db.Notifications
+            var notifications = await dbContext.Notifications
                 .Where(n => n.ReceiverId == userId && !n.IsRead)
                 .Include(n => n.Sender)
                 .OrderByDescending(n => n.CreatedOn)
@@ -77,15 +77,16 @@ namespace acebook.Controllers
             if (userId == null)
                 return Unauthorized();
 
+            using var dbContext = new AcebookDbContext();
 
-            var notification = await _db.Notifications
+            var notification = await dbContext.Notifications
                 .FirstOrDefaultAsync(n => n.Id == id && n.ReceiverId == userId);
 
             if (notification == null)
                 return NotFound();
 
             notification.IsRead = true;
-            await _db.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
             return Ok();
         }
@@ -95,6 +96,7 @@ namespace acebook.Controllers
         public async Task<IActionResult> SendNotification(int receiverId, string title, string message, string? url)
         {
             int? senderId = HttpContext.Session.GetInt32("user_id");
+            using var dbContext = new AcebookDbContext();
 
             // 1. Save it to the database
             var notification = new Notification
@@ -105,8 +107,8 @@ namespace acebook.Controllers
                 Title = title,
                 Message = message
             };
-            _db.Notifications.Add(notification);
-            await _db.SaveChangesAsync();
+            dbContext.Notifications.Add(notification);
+            await dbContext.SaveChangesAsync();
 
             // 2. Push it live via SignalR
             await _hub.Clients.Group($"user-{receiverId}")
@@ -123,10 +125,11 @@ namespace acebook.Controllers
             if (userId == null)
                 return Unauthorized();
 
+            using var dbContext = new AcebookDbContext();
 
-            var userNotifications = _db.Notifications.Where(n => n.ReceiverId == userId);
+            var userNotifications = dbContext.Notifications.Where(n => n.ReceiverId == userId);
             await userNotifications.ForEachAsync(n => n.IsRead = true);
-            await _db.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
             return RedirectToAction("Index");
 
