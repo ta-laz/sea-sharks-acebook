@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using acebook.Models;
-using System.Security.Cryptography;
 using Acebook.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace acebook.Controllers;
 
@@ -11,11 +11,13 @@ public class SessionsController : Controller
 {
   private readonly ILogger<SessionsController> _logger;
   private readonly IPasswordHasher<User> _hasher;
+  private readonly AcebookDbContext _db;
 
-  public SessionsController(ILogger<SessionsController> logger, IPasswordHasher<User> hasher)
+  public SessionsController(ILogger<SessionsController> logger, IPasswordHasher<User> hasher, AcebookDbContext db)
   {
     _logger = logger;
     _hasher = hasher;
+    _db = db;
   }
 
   [Route("/signin")]
@@ -33,15 +35,14 @@ public class SessionsController : Controller
   [Route("/signin")]
   [HttpPost]
   [ValidateAntiForgeryToken]
-  public IActionResult Create(SignInViewModel sivm)
+  public async Task<IActionResult> Create(SignInViewModel sivm)
   {
     if (!ModelState.IsValid)
     {
       return View("New", sivm);
     }
-    AcebookDbContext dbContext = new AcebookDbContext();
 
-    User? user = dbContext.Users.FirstOrDefault(user => user.Email == sivm.Email);
+    User? user = await _db.Users.FirstOrDefaultAsync(user => user.Email == sivm.Email);
     if (user == null)
     {
       ModelState.AddModelError("", "Incorrect email or password.");
@@ -57,7 +58,7 @@ public class SessionsController : Controller
     if (verify == PasswordVerificationResult.SuccessRehashNeeded)
     {
         user.Password = _hasher.HashPassword(user, sivm.Password);
-        dbContext.SaveChanges();
+        await _db.SaveChangesAsync();
     }
 
     HttpContext.Session.SetInt32("user_id", user.Id);

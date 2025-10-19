@@ -4,6 +4,7 @@ using NUnit.Framework;
 using acebook.Models;
 using Acebook.Test;
 using System.Text.RegularExpressions;
+using Acebook.TestHelpers;
 
 
 namespace Acebook.Tests
@@ -15,14 +16,14 @@ namespace Acebook.Tests
         [OneTimeSetUp]
         public async Task OneTime()
         {
-            await using var context = new AcebookDbContext();
+            await using var context = DbFactory.CreateTestDb();
             await TestDataSeeder.EnsureDbReadyAsync(context);
         }
 
         [SetUp]
         public async Task SetupDb()
         {
-            await using var context = new AcebookDbContext();
+            await using var context = DbFactory.CreateTestDb();
             await TestDataSeeder.ResetAndSeedAsync(context);
             // Accept all confirmation popups
             Page.Dialog += async (_, dialog) => await dialog.AcceptAsync();

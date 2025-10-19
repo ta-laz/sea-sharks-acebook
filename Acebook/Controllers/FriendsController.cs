@@ -15,23 +15,24 @@ public class FriendsController : Controller
 {
     private readonly ILogger<FriendsController> _logger;
     private readonly IHubContext<NotificationHub> _hub;
+    private readonly AcebookDbContext _db;
 
 
-    public FriendsController(ILogger<FriendsController> logger, IHubContext<NotificationHub> hub)
+    public FriendsController(ILogger<FriendsController> logger, IHubContext<NotificationHub> hub, AcebookDbContext db)
     {
         _logger = logger;
         _hub = hub;
+        _db = db;
     }
 
     [Route("/friends")]
     [HttpGet]
-    public IActionResult Index(string? SearchQuery)
+    public async Task<IActionResult> Index(string? SearchQuery)
     {
-        AcebookDbContext dbContext = new AcebookDbContext();
 
         int? currentUserId = HttpContext.Session.GetInt32("user_id");
 
-        var friends = dbContext.Friends
+        var friends = _db.Friends
         .Include(f => f.Requester)
         .Include(f => f.Accepter)
         .Where(f => (f.RequesterId == currentUserId || f.AccepterId == currentUserId) && f.Status == FriendStatus.Accepted);
@@ -52,20 +53,20 @@ public class FriendsController : Controller
             );
         }
 
-        var receivedRequests = dbContext.Friends
+        var receivedRequests = _db.Friends
         .Include(f => f.Requester)
         .Include(f => f.Accepter)
         .Where(f => f.AccepterId == currentUserId && f.Status == FriendStatus.Pending);
 
-        var sentRequests = dbContext.Friends
+        var sentRequests = _db.Friends
         .Include(f => f.Requester)
         .Include(f => f.Accepter)
         .Where(f => f.RequesterId == currentUserId && f.Status == FriendStatus.Pending);
 
-        ViewBag.Friends = friends.ToList();
+        ViewBag.Friends = await friends.ToListAsync();
         ViewBag.currentUserId = currentUserId;
-        ViewBag.ReceivedRequests = receivedRequests.ToList();
-        ViewBag.SentRequests = sentRequests.ToList();
+        ViewBag.ReceivedRequests = await receivedRequests.ToListAsync();
+        ViewBag.SentRequests = await sentRequests.ToListAsync();
         ViewBag.SearchQuery = SearchQuery;
 
         return View();
@@ -74,16 +75,15 @@ public class FriendsController : Controller
 
     [Route("/friends/{id}")]
     [HttpGet]
-    public IActionResult ViewUserFriends(int id, string? SearchQuery)
+    public async Task<IActionResult> ViewUserFriends(int id, string? SearchQuery)
     {
-        AcebookDbContext dbContext = new AcebookDbContext();
         int? currentUserId = HttpContext.Session.GetInt32("user_id");
 
         // get a user object back - this is the user whose friend list you are viewing
-        User user = dbContext.Users.Find(id);
+        User user = await _db.Users.FindAsync(id);
 
         //check who the user is friends with
-        var friends = dbContext.Friends
+        var friends = _db.Friends
             .Include(f => f.Requester)
             .Include(f => f.Accepter)
             .Where(f => (f.RequesterId == id || f.AccepterId == id) && f.Status == FriendStatus.Accepted);
@@ -106,10 +106,10 @@ public class FriendsController : Controller
 
         // this is where the logic for checking if I as the user am friends with people on the friend list
         // first, we pick out who our accepted friends are, and put them in a list
-        var relevantFriendships = dbContext.Friends.Where(f =>
+        var relevantFriendships = await _db.Friends.Where(f =>
                                 (f.RequesterId == currentUserId || f.AccepterId == currentUserId)
                                 && f.Status == FriendStatus.Accepted)
-                                .ToList();
+                                .ToListAsync();
 
         // here we create an empty new list, where we will check if people from the friend list displayed, are also already our friends
         var AlreadyFriends = new List<int>(); // list of IDs of people you're friends with
@@ -128,15 +128,15 @@ public class FriendsController : Controller
         }
 
         // this pulls out who we have a pending relationship with
-        var PendingRequests = dbContext.Friends
+        var PendingRequests = _db.Friends
                     .Where(f => (f.RequesterId == currentUserId || f.AccepterId == currentUserId)
                     && f.Status == FriendStatus.Pending);
 
         // bits in viewbag to make us of inside html
         ViewBag.user = user;
-        ViewBag.friends = friends.ToList();
+        ViewBag.friends = await friends.ToListAsync();
         ViewBag.currentUserId = currentUserId;
-        ViewBag.PendingRequests = PendingRequests.ToList();
+        ViewBag.PendingRequests = await PendingRequests.ToListAsync();
         ViewBag.AlreadyFriends = AlreadyFriends;
 
         return View();
@@ -146,15 +146,14 @@ public class FriendsController : Controller
     [Route("/friends/remove")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Remove(int friendId, string returnUrl)
+    public async Task<IActionResult> Remove(int friendId, string returnUrl)
     {
         int? currentUserId = HttpContext.Session.GetInt32("user_id");
         if (currentUserId == null) return RedirectToAction("Index"); // sanity check
 
-        AcebookDbContext dbContext = new AcebookDbContext();
 
         // Find the Friend entity where the current user and friendId match
-        var friend = dbContext.Friends
+        var friend = _db.Friends
             .FirstOrDefault(f =>
                 (f.RequesterId == currentUserId && f.AccepterId == friendId) ||
                 (f.RequesterId == friendId && f.AccepterId == currentUserId)
@@ -166,8 +165,8 @@ public class FriendsController : Controller
             return RedirectToAction("Index");
         }
 
-        dbContext.Friends.Remove(friend);
-        dbContext.SaveChanges();
+        _db.Friends.Remove(friend);
+        await _db.SaveChangesAsync();
 
         // Redirect to where the form came from
         if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
@@ -185,9 +184,8 @@ public class FriendsController : Controller
     public async Task<IActionResult> Accept(int friendId)
     {
         int? currentUserId = HttpContext.Session.GetInt32("user_id");
-        using var dbContext = new AcebookDbContext();
 
-        var friend = await dbContext.Friends
+        var friend = await _db.Friends
             .Include(f => f.Requester)
             .Include(f => f.Accepter)
             .FirstOrDefaultAsync(f => f.Id == friendId);
@@ -200,18 +198,18 @@ public class FriendsController : Controller
         }
 
         friend.Status = FriendStatus.Accepted;
-        await dbContext.SaveChangesAsync();
+        await _db.SaveChangesAsync();
 
         // double-check navigation props
-        var accepter = friend.Accepter ?? await dbContext.Users.FindAsync(friend.AccepterId);
-        var requester = friend.Requester ?? await dbContext.Users.FindAsync(friend.RequesterId);
+        var accepter = friend.Accepter ?? await _db.Users.FindAsync(friend.AccepterId);
+        var requester = friend.Requester ?? await _db.Users.FindAsync(friend.RequesterId);
 
         if (requester != null && accepter != null)
         {
             string title = "Friend Request Accepted";
             string message = $"{accepter.FirstName} accepted your friend request.";
 
-            dbContext.Notifications.Add(new Notification
+            _db.Notifications.Add(new Notification
             {
                 ReceiverId = requester.Id,
                 SenderId = currentUserId,
@@ -219,7 +217,7 @@ public class FriendsController : Controller
                 Message = message,
                 Url = $"/users/{accepter.Id}"
             });
-            await dbContext.SaveChangesAsync();
+            await _db.SaveChangesAsync();
 
             await _hub.Clients.Group($"user-{requester.Id}")
                 .SendAsync("ReceiveNotification", title, message, $"/users/{accepter.Id}");
@@ -236,12 +234,11 @@ public class FriendsController : Controller
     [Route("/friends/add")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult AddFriend(int receiverId)
+    public async Task<IActionResult> AddFriend(int receiverId)
     {
-        AcebookDbContext dbContext = new AcebookDbContext();
         int? currentUserId = HttpContext.Session.GetInt32("user_id");
 
-        var existingFriendship = dbContext.Friends.FirstOrDefault(f =>
+        var existingFriendship = await _db.Friends.FirstOrDefaultAsync(f =>
             (f.RequesterId == currentUserId && f.AccepterId == receiverId) ||
             (f.RequesterId == receiverId && f.AccepterId == currentUserId));
 
@@ -254,15 +251,15 @@ public class FriendsController : Controller
                 Status = FriendStatus.Pending
             };
 
-            dbContext.Friends.Add(newRequest);
-            dbContext.SaveChanges();
+            _db.Friends.Add(newRequest);
+            await _db.SaveChangesAsync();
 
             // sends notification that friend request was requested
-            var sender = dbContext.Users.Find(currentUserId);
+            var sender = await _db.Users.FindAsync(currentUserId);
             string title = "New Friend Request";
             string message = $"{sender.FirstName} sent you a friend request.";
 
-            dbContext.Notifications.Add(new Notification
+            _db.Notifications.Add(new Notification
             {
                 ReceiverId = receiverId,
                 SenderId = currentUserId,
@@ -271,9 +268,9 @@ public class FriendsController : Controller
                 Url = "/friends"
 
             });
-            dbContext.SaveChanges();
+            await _db.SaveChangesAsync();
 
-            _hub.Clients.Group($"user-{receiverId}")
+            await _hub.Clients.Group($"user-{receiverId}")
                 .SendAsync("ReceiveNotification", title, message, "/friends");
         }
         // this is used to pull information from the headers to redirect you to where you just were
