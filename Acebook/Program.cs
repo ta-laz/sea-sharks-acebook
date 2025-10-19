@@ -7,12 +7,40 @@ using Npgsql;
 // Optional: load .env only in Development (so teammates can keep local secrets out of git)
 try
 {
-    if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+    var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+    var envPath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+
+    if (File.Exists(envPath))
     {
-        DotNetEnv.Env.Load(); // dotnet add package DotNetEnv
+        DotNetEnv.Env.Load(envPath); // always loads .env if present
+        Console.WriteLine($"🔧 Loaded .env from: {envPath}");
+
+        // manual override behaviour for Development — re-apply .env vars
+        if (envName.Equals("Development", StringComparison.OrdinalIgnoreCase))
+        {
+            foreach (var line in File.ReadAllLines(envPath))
+            {
+                if (string.IsNullOrWhiteSpace(line) || line.TrimStart().StartsWith("#"))
+                    continue;
+
+                var parts = line.Split('=', 2);
+                if (parts.Length == 2)
+                {
+                    Environment.SetEnvironmentVariable(parts[0].Trim(), parts[1].Trim());
+                }
+            }
+            Console.WriteLine("🔁 Re-applied .env variables (overwrite mode for Development).");
+        }
+    }
+    else
+    {
+        Console.WriteLine("ℹ️  No .env file found in current directory.");
     }
 }
-catch { /* safe to ignore */ }
+catch (Exception ex)
+{
+    Console.WriteLine($"⚠️  .env load skipped: {ex.Message}");
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +51,7 @@ static string BuildConnectionString(IHostEnvironment env)
     {
         // Local dev from environment variables (e.g. via .env)
         var host = Environment.GetEnvironmentVariable("DB_HOST")     ?? "localhost";
-        var name = Environment.GetEnvironmentVariable("DB_NAME")     ?? "acebook_csharp_dev";
+        var name = Environment.GetEnvironmentVariable("DB_NAME")     ?? "acebook_csharp_development";
         var user = Environment.GetEnvironmentVariable("DB_USER")     ?? "postgres";
         var pass = Environment.GetEnvironmentVariable("DB_PASS")     ?? "postgres";
 
@@ -69,8 +97,18 @@ builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 // ✅ Register DbContext via DI (no hard-coded string)
 builder.Services.AddDbContext<AcebookDbContext>(options =>
 {
+    // Debug logs
+    Console.WriteLine($"ENV ASPNETCORE_ENVIRONMENT = {builder.Environment.EnvironmentName}");
+    Console.WriteLine($"ENV DB_NAME = {Environment.GetEnvironmentVariable("DB_NAME") ?? "(null)"}");
+
     var cs = BuildConnectionString(builder.Environment);
-    options.UseNpgsql(cs, npg => npg.EnableRetryOnFailure());
+    Console.WriteLine($"🌐 App DB cs: {cs}");
+
+    options.UseNpgsql(cs, npg =>
+    {
+        if (!builder.Environment.IsDevelopment())
+            npg.EnableRetryOnFailure();
+    });
 });
 
 var app = builder.Build();

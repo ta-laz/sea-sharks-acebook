@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using acebook.Models;
+using System.IO;
 
 namespace Acebook.TestHelpers
 {
@@ -7,19 +8,23 @@ namespace Acebook.TestHelpers
     {
         public static AcebookDbContext CreateTestDb()
         {
-            var cs = Environment.GetEnvironmentVariable("DB_NAME");
-            if (cs != "acebook_csharp_test")
+            try
             {
-                Console.WriteLine("⚠️  Dev database.");
-                // cs = "Host=localhost;Database=acebook_test;Username=postgres;Password=postgres";
+                // Load .env so tests share the same DB as the app by default
+                if (File.Exists(".env")) DotNetEnv.Env.Load(".env");
             }
-            else
-            {
-                Console.WriteLine("✅ Using TEST_DATABASE_URL from environment.");
-            }
+            catch {}
+
+            var host = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
+            var name = Environment.GetEnvironmentVariable("DB_NAME") ?? "acebook_csharp_test";
+            var user = Environment.GetEnvironmentVariable("DB_USER") ?? "postgres";
+            var pass = Environment.GetEnvironmentVariable("DB_PASS") ?? "postgres";
+
+            var cs = $"Host={host};Database={name};Username={user};Password={pass}";
+            Console.WriteLine($"🧪 Test DB cs: {cs}");
 
             var options = new DbContextOptionsBuilder<AcebookDbContext>()
-                .UseNpgsql(cs)
+                .UseNpgsql(cs) // no EnableRetryOnFailure for tests
                 .Options;
 
             return new AcebookDbContext(options);
