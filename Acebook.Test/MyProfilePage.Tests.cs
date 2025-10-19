@@ -3,7 +3,6 @@ using Microsoft.Playwright.NUnit;
 using NUnit.Framework;
 using acebook.Models;
 using Acebook.Test;
-using Acebook.TestHelpers;
 
 namespace Acebook.Tests
 {
@@ -14,14 +13,14 @@ namespace Acebook.Tests
         [OneTimeSetUp]
         public async Task OneTime()
         {
-            await using var context = DbFactory.CreateTestDb();
+            await using var context = new AcebookDbContext();
             await TestDataSeeder.EnsureDbReadyAsync(context);
         }
 
         [SetUp]
         public async Task SetupDb()
         {
-            await using var context = DbFactory.CreateTestDb();
+            await using var context = new AcebookDbContext();
             await TestDataSeeder.ResetAndSeedAsync(context);
             // Go to sign-in page
             await Page.GotoAsync("/signin");

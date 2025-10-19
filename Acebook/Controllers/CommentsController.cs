@@ -14,23 +14,22 @@ public class CommentsController : Controller
 {
     private readonly ILogger<CommentsController> _logger;
     private readonly IHubContext<NotificationHub> _hub;
-    private readonly AcebookDbContext _db;
 
-    public CommentsController(ILogger<CommentsController> logger, IHubContext<NotificationHub> hub, AcebookDbContext db)
+    public CommentsController(ILogger<CommentsController> logger, IHubContext<NotificationHub> hub)
     {
         _logger = logger;
         _hub = hub;
-        _db = db;
     }
 
     // See individual post
     [Route("post/")]
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        var posts = _db.Posts
+        AcebookDbContext dbContext = new AcebookDbContext();
+        var posts = dbContext.Posts
                                    .Include(p => p.User);
-        ViewBag.Posts = await posts.ToListAsync();
+        ViewBag.Posts = posts.ToList();
         ViewBag.Posts.Reverse();
 
         return View();
@@ -40,20 +39,21 @@ public class CommentsController : Controller
     [Route("post/create")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(int postId, Comment comment)
+    public IActionResult Create(int postId, Comment comment)
     {
         int currentUserId = HttpContext.Session.GetInt32("user_id").Value;
+        AcebookDbContext dbContext = new AcebookDbContext();
         comment.UserId = currentUserId;
         comment.CreatedOn = DateTime.UtcNow;
         comment.PostId = postId;
-        _db.Comments.Add(comment);
-        await _db.SaveChangesAsync();
+        dbContext.Comments.Add(comment);
+        dbContext.SaveChanges();
 
         // Fetch commenter, post, and post owner
-        var commenter = await _db.Users.FindAsync(currentUserId);
-        var post = await _db.Posts
+        var commenter = dbContext.Users.Find(currentUserId);
+        var post = dbContext.Posts
             .Include(p => p.User)
-            .FirstOrDefaultAsync(p => p.Id == postId);
+            .FirstOrDefault(p => p.Id == postId);
 
         if (post != null && commenter != null)
         {
@@ -64,7 +64,7 @@ public class CommentsController : Controller
                 string message = $"{commenter.FirstName} commented on your post.";
                 string url = $"/posts/{post.Id}";
 
-                _db.Notifications.Add(new Notification
+                dbContext.Notifications.Add(new Notification
                 {
                     ReceiverId = post.UserId,
                     SenderId = currentUserId,
@@ -72,9 +72,9 @@ public class CommentsController : Controller
                     Message = message,
                     Url = url
                 });
-                await _db.SaveChangesAsync();
+                dbContext.SaveChanges();
 
-                await _hub.Clients.Group($"user-{post.UserId}")
+                _hub.Clients.Group($"user-{post.UserId}")
                     .SendAsync("ReceiveNotification", title, message, url);
             }
             
@@ -83,7 +83,7 @@ public class CommentsController : Controller
                 string title = "New Comment on a Post on Your Wall";
                 string message = $"{commenter.FirstName} commented on a post on your wall.";
 
-                _db.Notifications.Add(new Notification
+                dbContext.Notifications.Add(new Notification
                 {
                     ReceiverId = post.WallId,
                     SenderId = currentUserId,
@@ -92,15 +92,15 @@ public class CommentsController : Controller
                     Url = $"/posts/{post.Id}"
                 });
 
-                await _hub.Clients.Group($"user-{post.WallId}")
+                _hub.Clients.Group($"user-{post.WallId}")
                     .SendAsync("ReceiveNotification", title, message, $"/posts/{post.Id}");
             }
             // Notify other people who commented on the post
-            var otherCommenters = await _db.Comments
+            var otherCommenters = dbContext.Comments
                 .Where(c => c.PostId == post.Id && c.UserId != currentUserId)
                 .Select(c => c.UserId)
                 .Distinct()
-                .ToListAsync();
+                .ToList();
 
             foreach (var commenterId in otherCommenters)
             {
@@ -110,7 +110,7 @@ public class CommentsController : Controller
                 string message = $"{commenter.FirstName} also commented on a post you commented on.";
                 string url = $"/posts/{post.Id}";
 
-                _db.Notifications.Add(new Notification
+                dbContext.Notifications.Add(new Notification
                 {
                     ReceiverId = commenterId,
                     SenderId = currentUserId,
@@ -119,11 +119,11 @@ public class CommentsController : Controller
                     Url = url
                 });
 
-                await _hub.Clients.Group($"user-{commenterId}")
+                _hub.Clients.Group($"user-{commenterId}")
                     .SendAsync("ReceiveNotification", title, message, url);
             }
 
-            await _db.SaveChangesAsync();
+            dbContext.SaveChanges();
         }
 
         return new RedirectResult($"/posts/{postId}");
@@ -134,12 +134,13 @@ public class CommentsController : Controller
     [Route("/posts/{postId}/{commentId}/update")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Update(int postId, int commentId, string comment_content)
+    public IActionResult Update(int postId, int commentId, string comment_content)
     {
+        AcebookDbContext dbContext = new AcebookDbContext();
         int? sessionUserId = HttpContext.Session.GetInt32("user_id");
-        var comment = await _db.Comments
+        var comment = dbContext.Comments
             .Include(c => c.Post)
-            .FirstOrDefaultAsync(c => c.Id == commentId && c.PostId == postId);
+            .FirstOrDefault(c => c.Id == commentId && c.PostId == postId);
 
         if (comment.UserId != sessionUserId) // Backend security, only comment authors can edit comments
         {
@@ -147,7 +148,7 @@ public class CommentsController : Controller
         }
         comment.Content = comment_content;
         comment.CreatedOn = DateTime.UtcNow;
-        await _db.SaveChangesAsync();
+        dbContext.SaveChanges();
 
         // Reload individual post page
         return new RedirectResult($"/posts/{postId}");
@@ -159,14 +160,15 @@ public class CommentsController : Controller
     [Route("/posts/{postId}/{commentId}/delete-comment")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete(int postId, int commentId)
+    public IActionResult Delete(int postId, int commentId)
     {
+        AcebookDbContext dbContext = new AcebookDbContext();
         int? sessionUserId = HttpContext.Session.GetInt32("user_id");
         if (sessionUserId == null) // Checks user is logged in
         {
             return Unauthorized(); 
         }
-        Comment comment = await _db.Comments.Include(c => c.Post).FirstOrDefaultAsync(c => c.Id == commentId);
+        Comment comment = dbContext.Comments.Include(c => c.Post).FirstOrDefault(c => c.Id == commentId);
         
         if (comment.UserId != sessionUserId && comment.Post.UserId != sessionUserId && comment.Post.WallId != sessionUserId) // Server-side security, if the current user is neither the post or the comment author, they can't delete the comment
         {
@@ -176,8 +178,8 @@ public class CommentsController : Controller
             return NotFound(); // If the comment doesn't exist
         
         // Deletes the post from the db 
-        _db.Comments.Remove(comment);
-        await _db.SaveChangesAsync();
+        dbContext.Comments.Remove(comment);
+        dbContext.SaveChanges();
 
         // Reload the individual post page
         return new RedirectResult($"/posts/{postId}");
